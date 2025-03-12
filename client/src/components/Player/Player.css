@@ -1,0 +1,173 @@
+#player-main-div{
+    /* border: 1px solid rgb(18, 21, 219); */
+    background-color: #F3F1F2;
+    height: 90.4vh;
+    width: 100%;
+    padding: 0 22px ;
+}
+
+#add-btn{
+    color: #132E35;
+    border: 1px solid #132E35;
+    height: 45px;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+#add-btn:hover{
+    color: white;
+    background-color: #132E35;
+}
+
+#player-inner-div{
+    /* border: 1px solid yellow; */
+    height: 99.5%;
+    width: 100%;
+}
+#player-header-div{
+    color: #132E35;
+    /* border: 1px solid black; */
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#player-body-div{
+    /* border: 1px solid rgb(211, 16, 16); */
+    border-top: 1px solid black;
+    height:86%;
+    padding: 10px;
+}
+
+.players-table-container{
+    /* border: 1px solid black; */
+    width: 100%;
+    height: 100%;
+}
+
+.players-table{
+    /* border: 1px solid black; */
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#thead{
+    height: 35px;
+}
+#tbody{
+    /* background-color: black; */
+    text-align: center;
+}
+
+th{
+    border-bottom:1px  solid black ;
+}
+
+td{
+    height: 30px;
+}
+#action{
+    /* border:1px  solid black ; */
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    
+
+
+}
+#row:hover{
+    background-color: #5654541f;
+}
+
+
+.player-card-head{
+    /* border: 1px solid black; */
+    height: 20%;
+    text-align: center;
+    line-height: 1.5;
+    background-color: #fff;
+}
+
+.player-card-body{
+    /* border: 1px solid black; */
+    height: 57%;
+    padding: 5px 0 0 10px;
+}
+.actions{
+    /* border: 1px solid black; */
+    height: 19%;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    background-color: #DDE1E6;
+}
+#player-header-div >  div{
+    /* border: 1px solid black; */
+    height: 100%;
+    width: 50%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+
+#player-form-popup {
+    height:100%;
+    background: #7f807a47;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    z-index: 1;
+    position: fixed;
+    top: 136px;
+    height: 84%;
+    width: 80.8%;
+}
+
+#player-form {
+    /* border: 1px solid black; */
+    height: 60%;
+    width: 40%;
+    background: #F3F1F2;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px gray;
+}
+
+.form-group-players {
+    /* border: 1px solid black; */
+    height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.form-group-players > div{
+    /* border: 1px solid black; */
+    width: 40%;    
+}
+
+#div > label{
+    padding: 0 0 0 40px;
+}
+
+.form-group-players > div > input{
+    height: 40px;
+    width: 200px;
+    border-radius: 5px;
+}
+
+#btn-div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+}
+
+

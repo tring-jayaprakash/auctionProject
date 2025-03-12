@@ -1,0 +1,51 @@
+#nav {
+    color: black;
+    background-color: #132E35;
+    display: flex;
+    height: 50px;
+    padding: 10px;
+}
+
+#logo {
+    /* background-color: #ADD9E6; */
+    color: white;
+    width: 400px;
+    height: 49px;
+    line-height: 1.5;
+    /* border: 1px solid yellow; */
+}
+
+.nav_btn{
+
+    /* border: 1px solid yellow; */
+    display: flex;
+    justify-content: end;
+    width: 100%;
+    gap: 10px;
+}
+
+.btn {
+    background-color: #132E35;
+    width: 100px;
+    border: none;
+    border-radius: 10px;
+    border: 1px solid #AFB3B7;
+    cursor: pointer;
+}
+
+.btn:hover{
+    /* background-color: #AFB3B7; */
+    color:#132E35 ;
+
+}
+
+.link {
+    color: white;
+    text-decoration: none;
+}
+
+#username {
+    color: #3A84A5;
+    line-height: 2.5;
+    font-size: 20px;
+}

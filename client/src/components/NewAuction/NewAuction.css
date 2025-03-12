@@ -1,0 +1,123 @@
+#New-main-div{
+    /* border: 1px solid rgb(18, 21, 219); */
+    background-color: #F3F1F2;
+    height: 90.4vh;
+    /* height: 200vh; */
+    width: 100%;
+    padding: 0 20px ;
+}
+#New-inner-div{
+    /* border: 1px solid yellow; */
+    height: 99.5%;
+    width: 100%;
+}
+#New-header-div{
+    border-bottom: 1px solid black;
+    color: #132E35;
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#New-body-div{
+    /* border: 1px solid rgb(211, 16, 16); */
+    height:90%;
+    /* padding: 10px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#img{
+    height: 100px;
+    width: 100px;
+    border-radius: 5px;
+}
+
+#img-div{
+    border: 1px solid black;
+    height: 100px;
+    width: 100px;
+    border-radius: 5px;
+}
+
+#new-form{
+    /* border: 1px solid black; */
+    /* width: 30%; */
+    /* height: 100%; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* padding: 10px 240px 0 240px; */
+    padding: 30px;
+    margin: 0px 240px;
+    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.308);
+    border-radius: 10px;
+}
+
+
+
+form > div{
+    /* border: 1px solid black; */
+    height: 80px;
+
+}
+
+.dropdown{
+    height: 50px;
+    width: 300px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.from-sub-div{
+    display: flex;
+    /* justify-content: center; */
+    gap: 10px;
+}
+
+.from-sub-div > div{
+    /* border: 1px solid black; */
+    width: 50%;
+}
+
+.inputs{
+    height: 50px;
+    width: 300px;
+    border-radius: 5px;
+}
+
+#login_btn{
+    width: 180px;
+    margin-top: 10px;
+    background-color: #F3F1F2;
+    color: black;
+    border: 1px solid black;
+}
+#auction-cancel{
+    width: 180px;
+    height: 50px;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #F3F1F2;
+    color: black;
+    border: 1px solid black;
+    cursor: pointer;
+    
+}
+#auction-cancel:hover{
+    background-color: #6e727371;
+    color: white;
+
+}
+
+
+
+#login_btn:hover{
+    background-color: #132E35;
+    color: white;
+    
+}
