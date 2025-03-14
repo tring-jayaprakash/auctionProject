@@ -207,7 +207,7 @@ const root = {
         try {
             console.log(auction_id);
             const result = await pool.query(
-                "SELECT * FROM team WHERE auction_id = $1",
+                "SELECT * FROM team WHERE auction_id = $1 ORDER BY team_id",
                 [auction_id]
             );
             console.log(result.rows);
@@ -230,7 +230,17 @@ const root = {
     getPlayersByAuction: async ({ auction_id }) => {
 
         try {
-            const result = await pool.query("SELECT * FROM player WHERE auction_id = $1", [auction_id])
+            const result = await pool.query("SELECT * FROM player WHERE auction_id = $1 ", [auction_id])
+            console.log(result.rows);
+            return result.rows
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+    getPlayersByAuctionTeamNull: async ({ auction_id }) => {
+
+        try {
+            const result = await pool.query("SELECT * FROM player WHERE auction_id = $1 AND  team_id IS null", [auction_id])
             console.log(result.rows);
             return result.rows
         } catch (error) {
@@ -296,6 +306,8 @@ const root = {
             throw new Error("Failed to delete player.");
         }
     },
+
+
     updatePlayerForTeam: async ({ player_id, team_id, bid_amount }) => {
         try {
             const result = await pool.query("UPDATE player SET bid_amount = $3, team_id = $2 WHERE player_id = $1", [player_id, team_id, bid_amount])
@@ -308,19 +320,34 @@ const root = {
             throw new Error("Failed to delete player.");
         }
     },
-    updateTeamBudget: async ({ auction_id, budget }) => {
+    updateTeamBudget: async ({ auction_id, budget,total_budget }) => {
         try {
-            const result = await pool.query("update team set budget = $2 where auction_id =$1", [auction_id, budget])
+            const result = await pool.query("update team set budget = $2 , total_budget =$3 where auction_id =$1" , [auction_id, budget,total_budget])
             if (result.rowCount === 0) {
                 throw new Error("Player not found or already deleted.");
             }
             return `Updated successfully.`
         } catch (error) {
-            console.error("Error deleting player:", error.message);
+            console.error("Failed to Update player:", error.message);
+            throw new Error("Failed to Update player.");
+        }
+
+    },
+    updateTeamBudgetByTeamId: async ({ team_id, budget }) => {
+        try {
+            const result = await pool.query("UPDATE team  SET budget = CAST(budget AS INTEGER) - $2 WHERE team_id = $1", [team_id, budget])
+            if (result.rowCount === 0) {
+                throw new Error("Player not found or already deleted.");
+            }
+            return `Updated successfully.`
+        } catch (error) {
+            console.error("Failed to Update player :", error.message);
             throw new Error("Failed to Update player.");
         }
 
     }
+
+    
 
 }
 

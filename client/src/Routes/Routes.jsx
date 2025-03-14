@@ -1,22 +1,23 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import LandingPage from '../components/LandingPage/LandingPage'
-import Register from '../components/Register/Register'
-import Login from '../components/Login/Login'
+import LandingPage from '../Pages/LandingPage/LandingPage'
+import Register from '../Pages/Register/Register'
+import Login from '../Pages/Login/Login'
 import ProtectedRoutes from '../ProductedRoute/ProtectedRoutes'
-import { DashBoard } from '../components/DashBoard/DashBoard'
-import Dash from '../components/Dash/Dash'
-import NewAuction from '../components/NewAuction/NewAuction'
-import MyAuction from '../components/MyAuction/MyAuction'
-import AuctionalPanel from '../components/AuctionalPanel/AuctionalPanel'
-import MyProfile from '../components/MyProfile/MyProfile'
-import Team from '../components/Team/Team'
-import Player from '../components/Player/Player'
+import { DashBoard } from '../Pages/DashBoard/DashBoard'
+import Dash from '../Pages/Dash/Dash'
+import NewAuction from '../Pages/NewAuction/NewAuction'
+import MyAuction from '../Pages/MyAuction/MyAuction'
+import AuctionalPanel from '../Pages/AuctionalPanel/AuctionalPanel'
+import MyProfile from '../Pages/MyProfile/MyProfile'
+import Team from '../Pages/Team/Team'
+import Player from '../Pages/Player/Player'
+import AuctionResult from '../Pages/AuctionResult/AuctionResult'
 
 const Router = () => {
     return (
         <Routes>
-            <Route path='/' element={<LandingPage />} />
+            <Route path='/Home' element={<LandingPage />} />
             <Route path='/Register' element={<Register />} />
             <Route path="/Login" element={<Login />} />
 
@@ -30,6 +31,8 @@ const Router = () => {
                     <Route path='MyProfile' element={<MyProfile />} />
                     <Route path='MyAuction/Team' element={<Team />} />
                     <Route path='MyAuction/Player' element={<Player />} />
+                    <Route path='Auction/Reault' element={<AuctionResult />} />
+                    
                 </Route>
             </Route>
         </Routes>

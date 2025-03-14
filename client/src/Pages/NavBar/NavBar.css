@@ -1,0 +1,98 @@
+#nav {
+    color: black;
+    background-color: #132E35;
+    display: flex;
+    height: 50px;
+    padding: 10px;
+    position: fixed;
+    width: 99%;
+}
+
+#logo {
+    /* background-color: #ADD9E6; */
+    color: white;
+    width: 400px;
+    height: 49px;
+    line-height: 1.5;
+    /* border: 1px solid yellow; */
+}
+
+.nav_btn{
+
+    /* border: 1px solid yellow; */
+    display: flex;
+    justify-content: end;
+    width: 100%;
+    gap: 10px;
+}
+
+.btn {
+    background-color: #132E35;
+    width: 100px;
+    border: none;
+    border-radius: 10px;
+    border: 1px solid #AFB3B7;
+    cursor: pointer;
+}
+
+.btn:hover{
+    /* background-color: #AFB3B7; */
+    color:#132E35 ;
+
+}
+
+.link {
+    color: white;
+    text-decoration: none;
+}
+
+#username {
+    color: #3A84A5;
+    line-height: 2.5;
+    font-size: 20px;
+}
+
+.profile-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-icon {
+    /* border: 1px solid ; */
+    margin-top: 10px;
+    margin-right: 15px;
+    font-size: 30px;
+    cursor: pointer;
+    color: white;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown-item {
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.dropdown-item:hover {
+    background: #f0f0f0;
+}
+
+.logout-btn {
+    border: none;
+    background: none;
+    width: 100%;
+}

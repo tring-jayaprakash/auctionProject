@@ -1,5 +1,5 @@
 import React, { createContext, useState } from 'react'
-import { NavBar } from '../components/NavBar/NavBar';
+import { NavBar } from '../Pages/NavBar/NavBar';
 import Router from '../Routes/Routes';
 import { ToastContainer } from 'react-toastify';
 
@@ -12,13 +12,14 @@ const GlobalProvider = () => {
     const [playerAuction, setPlayerAuction] = useState(null);
     const [user, setUser] = useState(null);
     const [auctionPanal, setAuctionPanal] = useState(null);
+    const [teamBudget, setTeamBudget] = useState(0)
 
     return (
         <>
             <ToastContainer />
-            <GlobalContext.Provider value={{ auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, user, setUser, auctionPanal, setAuctionPanal }}>
-                <NavBar/>
-                <Router/>
+            <GlobalContext.Provider value={{ auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, user, setUser, auctionPanal, setAuctionPanal, teamBudget, setTeamBudget }}>
+                <NavBar />
+                <Router />
             </GlobalContext.Provider>
         </>
     );

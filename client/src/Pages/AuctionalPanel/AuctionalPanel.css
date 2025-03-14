@@ -1,0 +1,224 @@
+#panel-main-div {
+    /* border: 1px solid rgb(12, 12, 12); */
+    background-color: #F3F1F2;
+    min-height: 80%;
+    width: 100%;
+    padding: 0 20px;
+    margin-top: 69px;
+}
+
+#panel-inner-div {
+    /* border: 1px solid yellow; */
+    height: 99.5%;
+}
+
+#panel-header-div {
+    color: #132E35;
+    border-bottom: 1px solid black;
+    margin-bottom: 20px;
+    padding: 5px 0;
+    height: 7%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#panel-header-div >div{
+    /* border: 1px solid black; */
+    width: 50%;
+    display: flex;
+    justify-content: end;
+
+}
+
+#add-btt{
+    width: 90px;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+#add-btt:hover{
+    color: white;
+    background-color: #132E35;
+}
+
+
+
+#panel-body-div {
+    /* border: 1px solid rgb(211, 16, 16); */
+    height: 88%;
+    display: flex;
+    gap: 10px;
+}
+
+#body-div1 {
+    width: 40%;
+    /* border: 1px solid  black; */
+    /* height: 80%; */
+}
+
+#auction-name-div {
+    /* border: 1px solid  black; */
+    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.375);
+    height: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#auction-player-div {
+    margin-top: -20px;
+    /* border: 1px solid  rgb(218, 12, 12); */
+    padding: 10px;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#auction-player-inner-div {
+    /* border: 1px solid rgb(14, 14, 14); */
+    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.375);
+    width: 90%;
+    height: 80%;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+#auction-player-inner-div>div {
+    /* border: 1px solid  rgb(214, 9, 9); */
+    height: 45%;
+
+}
+
+#player-img-div {
+    /* border: 1px solid  black; */
+    width: 50%;
+    height: 100%;
+    display: flex;
+}
+
+#next_player {
+    width: 100px;
+    height: 40px;
+    cursor: pointer;
+
+}
+
+#player-head {
+    display: flex;
+}
+
+
+#player-img-div>img {
+    width: 90%;
+    height: 90%;
+    border-radius: 150px;
+    margin: 10px 0 0 10px;
+    border: 1px solid black;
+}
+
+#player-content-div {
+    /* border: 1px solid  black; */
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+}
+
+#player-content-div>p {
+    /* border: 1px solid  black; */
+    background-color: #83818133;
+    border-radius: 0px 15px 15px 0px;
+}
+
+#auction-control-panal {
+    border-top: 1px solid black;
+}
+
+#div_btn {
+    /* border: 1px solid black; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+}
+
+#div_btn>button {
+    width: 100px;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid ;
+    cursor: pointer;
+}
+
+#forward{
+    display: flex;
+    gap: 5px;
+}
+
+#table-div {
+    padding: 10px 0;
+}
+
+
+
+#bit_teamName {
+    height: 110%;
+    /* border: 1px solid  black; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#bit_teamName>div {
+    /* border: 1px solid  black; */
+    text-align: center;
+    width: 50%;
+
+}
+
+
+#team-table {
+    /* border: 1px solid black; */
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+}
+
+#item {
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+#item:hover{
+    background-color: #81808084;
+}
+
+
+
+#body-div2 {
+    /* border: 1px solid  black; */
+    /* height: 96.5%; */
+    /* box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.375); */
+
+    width: 60%;
+    /* padding: 10px; */
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto auto auto auto auto auto;
+    gap: 10px;
+}
+
+#body-div2>div {
+    /* border: 1px solid  black; */
+    height: 90px;
+    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.375);
+    padding: 10px;
+
+}
