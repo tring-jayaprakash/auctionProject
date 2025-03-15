@@ -82,10 +82,15 @@ label{
 
 .req::after{
   content: "*";
+  color: red;
 }
 
-input::placeholder{
+/* input::placeholder{
   padding-left: 10px;
+} */
+
+input{
+  padding-left:10px ;
 }
 
 

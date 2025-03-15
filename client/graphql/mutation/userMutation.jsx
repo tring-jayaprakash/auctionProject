@@ -39,3 +39,10 @@ export const REGISTER_USER_MUTATION = `
         register(city: $city,ph_number: $ph_number,user_name: $user_name,email: $email,password: $password)
     }
 `;
+
+
+export const DELETE_AUCTION = `
+    mutation DeleteAuction($auction_id: ID!) {
+        deleteAuction(auction_id: $auction_id)
+    }
+`;

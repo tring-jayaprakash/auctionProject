@@ -29,7 +29,7 @@ function Login() {
 
         console.log("Sending variables:", variables);
         try {
-            const response = await axios.post("http://localhost:2500/graphql", { query, variables });
+            const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL,{ query, variables });
 
             console.log("Response:", response);
             if (response.data.errors) {

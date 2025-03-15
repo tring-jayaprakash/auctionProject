@@ -17,6 +17,7 @@ import AuctionResult from '../Pages/AuctionResult/AuctionResult'
 const Router = () => {
     return (
         <Routes>
+            <Route path='/Reault' element={<AuctionResult />} />
             <Route path='/Home' element={<LandingPage />} />
             <Route path='/Register' element={<Register />} />
             <Route path="/Login" element={<Login />} />
@@ -31,8 +32,6 @@ const Router = () => {
                     <Route path='MyProfile' element={<MyProfile />} />
                     <Route path='MyAuction/Team' element={<Team />} />
                     <Route path='MyAuction/Player' element={<Player />} />
-                    <Route path='Auction/Reault' element={<AuctionResult />} />
-                    
                 </Route>
             </Route>
         </Routes>

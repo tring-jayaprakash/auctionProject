@@ -1,16 +1,17 @@
 #SideNavbar {
-    border-right: 1px solid #132E35;
     width: 20%;
-    /* margin: 50px 0 0 0; */
+    height: 100vh;
     display: flex;
-    background-color: #F3F1F2;
     flex-direction: column;
-    /* border: 1px solid black; */
-    margin-top: 69px;
+    border-right: 1px solid #132E35;
+    background-color:white;
+    height: 91.7%;
+    position: fixed;
+    left: 0;
+    top: 60px; 
 }
 
-#sideNavbar {
-    /* border: 1px solid black; */
+.sideNavbarItem {
     text-align: center;
     height: 50px;
     cursor: pointer;
@@ -18,13 +19,12 @@
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid #10292c;
-    /* border-bottom-right-radius: 10px; */
+    transition: 0.3s;
 }
 
-#sideNavbar:hover {
+.sideNavbarItem:hover {
     background-color: #1b464b;
     color: white;
-    transition: 0.3s;
 }
 
 #logoutNavBar {
@@ -32,23 +32,43 @@
     background-color: #7a2020;
     color: white;
     height: 50px;
-    margin-top: 406px;
-    /* border: 1px solid black; */
+    margin-top: auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* border-radius: 5px; */
 }
 
-/* #logoutNavBar {
-    background-color: #F3F1F2;
-    color: #10292c;
-    border: 1px solid #10292c;
-    padding: 10px 20px;
-    cursor: pointer;
-    }*/
-
 #logoutNavBar:hover {
-    background-color: #7a2020;
-    color: #F3F1F2;
+    background-color: darkred;
+}
+
+
+
+
+
+@media screen and (max-width: 768px) {
+    #SideNavbar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 200px;
+        transform: translateX(-100%);
+        z-index: 1000;
+        background-color: #fff;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    #SideNavbar.open {
+        transform: translateX(0);
+    }
+
+    #hamburgerMenu {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1100;
+        cursor: pointer;
+        background-color: transparent;
+    }
 }

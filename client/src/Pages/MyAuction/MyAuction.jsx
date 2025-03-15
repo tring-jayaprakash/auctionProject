@@ -9,15 +9,12 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { GlobalContext } from '../../context/GlobalContext';
 import { GET_AUCTION_BY_USER_ID, GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery';
+import { DELETE_AUCTION } from '../../../graphql/mutation/userMutation';
 
 const MyAuction = () => {
     const { auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal } = useContext(GlobalContext)
     const navigater = useNavigate()
     const [auctionData, setAuctionData] = useState([])
-    const [completedAuctions, setCompletedAuctions] = useState(() => {
-        const storedAuctions = localStorage.getItem("completedAuctions");
-        return storedAuctions ? JSON.parse(storedAuctions) : {};
-    });
     const [showButton, setShowButton] = useState(true)
 
     useEffect(() => {
@@ -25,6 +22,7 @@ const MyAuction = () => {
         let localUser = localStorage.getItem("user")
         const jsonUser = JSON.parse(localUser)
         console.log(jsonUser.user_id);
+
         let localPanal = localStorage.getItem("AuctionPanel")
         const panal = JSON.parse(localPanal)
         console.log(panal);
@@ -38,12 +36,11 @@ const MyAuction = () => {
             const variables = { user_id: Number(jsonUser.user_id) };
 
             try {
-                const response = await axios.post("http://localhost:2500/graphql", { query, variables });
+                const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL, { query, variables });
                 if (response.data.errors) {
                     console.error("GraphQL Error:", response.data.errors[0].message);
                     return;
                 }
-
                 const auctionData = response.data.data.getAuctionByUserId;
                 console.log("Auction Data:", auctionData);
                 setAuctionData(auctionData);
@@ -53,6 +50,7 @@ const MyAuction = () => {
             }
         }
 
+
         getAuction()
     }, [])
 
@@ -60,24 +58,19 @@ const MyAuction = () => {
     const handleDelete = async (index, id) => {
         console.log(index);
         console.log(id);
+        const variables = { auction_id: id };
 
-        const query = `
-        mutation {
-            deleteAuction(auction_id: "${id}")
-        }
-        `;
+        const query =DELETE_AUCTION
 
         try {
-            const response = await axios.post("http://localhost:2500/graphql", { query });
+            const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL, { query, variables});
 
             if (response.data.errors) {
                 console.log(response.data.errors[0].message)
                 return;
             }
             console.log(response.data.data.deleteAuction);
-
             setAuctionData(auctionData.filter((auction) => auction.auction_id !== id));
-
         } catch (error) {
             console.error("Delete error:", error);
         }
@@ -124,7 +117,7 @@ const MyAuction = () => {
 
 
         try {
-            const response = await axios.post("http://localhost:2500/graphql", { query });
+            const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL, { query });
             // const response = await axios.post("http://localhost:2500/graphql", { query, variables });
 
             if (response.data.errors) {
@@ -235,8 +228,9 @@ const MyAuction = () => {
                 toast.error("Not enough players for the auction!", { position: "top-right", autoClose: 2000 });
             }
         } catch (error) {
-            console.error("Error in handleStartAction:", error);
-            toast.error("An error occurred while starting the auction.", { position: "top-right", autoClose: 2000 });
+            return
+            // console.error("Error in handleStartAction:", error);
+            // toast.error("An error occurred while starting the auction.", { position: "top-right", autoClose: 2000 });
         }
     };
 
@@ -281,6 +275,14 @@ const MyAuction = () => {
                                             <div>
                                                 <time dateTime={dateObj.toISOString()}>{formattedDate}   {timeString}</time>
                                             </div>
+                                            <p>
+                                                Auction State :
+                                                {element.auction_status === "pending" ? (
+                                                    <b style={{ color: "orange" }}>{" "+element.auction_status}</b>
+                                                ) : (
+                                                    <b style={{ color: "green" }}>{" "+element.auction_status}</b>
+                                                )}
+                                            </p>
                                         </div>
                                         <div className='auction-div-body'>
                                             <div>
@@ -297,6 +299,7 @@ const MyAuction = () => {
                                                 <p><GrGroup size={25} title='add teams' style={{ cursor: "pointer" }} onClick={() => handleTeam(index, element)} /></p>
                                                 <p><GiBabyfootPlayers size={25} title='add players' style={{ cursor: "pointer" }} onClick={() => handlePlayer(index, element)} /></p>
                                             </div>
+
                                             <div>
                                                 {/* {
                                                     showButton && !completedAuctions[element.auction_id] && (
@@ -307,10 +310,14 @@ const MyAuction = () => {
 
                                                     )
                                                 } */}
-                                                <p>
-                                                    <AiFillEdit size={25} title='edit' style={{ cursor: "pointer", color: "#008000" }}
-                                                        onClick={() => { handleEdit(index, element) }} />
-                                                </p>
+
+                                                {
+                                                    element.auction_status == "pending" &&
+                                                    <p>
+                                                        <AiFillEdit size={25} title='edit' style={{ cursor: "pointer", color: "#008000" }}
+                                                            onClick={() => { handleEdit(index, element) }} />
+                                                    </p>
+                                                }
 
                                                 <p>
                                                     <MdDeleteForever size={25} title='delete' style={{ cursor: "pointer", color: "#FF0000" }}

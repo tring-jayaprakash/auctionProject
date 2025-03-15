@@ -67,7 +67,7 @@ const NewAuction = () => {
         
             console.log("Sending to GraphQL:", { query, variables });
         
-            const response = await axios.post("http://localhost:2500/graphql", { query, variables });
+            const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL, { query, variables });
         
             if (response.data.errors) {
                 console.error("GraphQL Error:", response.data.errors);
@@ -83,29 +83,6 @@ const NewAuction = () => {
             console.error("Request Failed:", error.response ? error.response.data : error.message);
             toast.error("Something went wrong. Please try again.", { position: "top-right", autoClose: 2000 });
         }
-        
-
-        // try {
-        //     const query = auction ? UPDATE_AUCTION_MUTATION : ADD_AUCTION_MUTATION;
-        //     const variables = auction ? { auction_id: auction.auction_id, ...newEntity } : { ...newEntity, user_id: jsonUser.user_id };
-
-        //     console.log(variables);
-
-        //     const response = await axios.post("http://localhost:2500/graphql", { query, variables });
-
-        //     if (response.data.errors) {
-        //         toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
-        //         return;
-        //     }
-
-        //     toast.success(auction ? "Auction Updated Successfully" : "Auction Created Successfully", { position: "top-right", autoClose: 1000 });
-        //     navigator('/Dashboard/MyAuction');
-        //     setAuction(null);
-        //     reset();
-        // } catch (error) {
-        //     toast.error("Something went wrong. Please try again.", { position: "top-right", autoClose: 2000 });
-        //     console.error(error);
-        // }
     };
 
 

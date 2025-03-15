@@ -6,14 +6,17 @@ import { AiFillEdit } from "react-icons/ai";
 import { MdDeleteForever } from "react-icons/md";
 import "./Player.css";
 import { GlobalContext } from "../../context/GlobalContext";
+import { useNavigate } from "react-router-dom";
 
 const Player = () => {
-    const {playerAuction, setPlayerAuction} = useContext(GlobalContext)
+    const { playerAuction, setPlayerAuction, teamId, setTeamId } = useContext(GlobalContext)
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
     const [players, setPlayers] = useState([]);
     const [formVisible, setFormVisible] = useState(false);
     const [editIndex, setEditIndex] = useState(-1)
     const [playerEditData, setPlayerEditData] = useState(null)
+    const navigate = useNavigate()
+    
 
 
     useEffect(() => {
@@ -30,39 +33,74 @@ const Player = () => {
         const id = playerAuction.auction_id
         async function fetchPlayers() {
             if (!id) return;
-            const query = `
-                query{
-                    getPlayersByAuction(auction_id:${id})
-                    {
-                        player_id
-                        player_pic
-                        player_name
-                        father_name
-                        player_ph_number
-                        age
-                        form_number
-                        player_style
-                        team_id
+
+            if (!teamId) {
+
+                const query = `
+                        query{
+                            getPlayersByAuction(auction_id:${id})
+                            {
+                                player_id
+                                player_pic
+                                player_name
+                                father_name
+                                player_ph_number
+                                age
+                                form_number
+                                player_style
+                                team_id
+                            }
+                        }
+                    `
+                try {
+                    const response = await axios.post("http://localhost:2500/graphql", { query });
+
+                    if (response.data.errors) {
+                        toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
+                        return;
                     }
+                    console.log(response.data.data.getPlayersByAuction);
+                    setPlayers(response.data.data.getPlayersByAuction);
+                } catch (error) {
+                    console.error("Error fetching players:", error);
+                    toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
                 }
-            `
+            } else {
 
-            try {
-                const response = await axios.post("http://localhost:2500/graphql", { query });
 
-                if (response.data.errors) {
-                    toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
-                    return;
+                const query = `query{
+                        getPlayersByTeam(team_id:${Number(teamId.team_id)}){
+                            player_id
+                            player_pic
+                            player_name
+                            father_name
+                            player_ph_number
+                            age
+                            form_number
+                            player_style
+                            team_id
+                        }
+                      }`
+                try {
+                    const response = await axios.post("http://localhost:2500/graphql", { query });
+
+                    if (response.data.errors) {
+                        toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
+                        return;
+                    }
+                    console.log(response.data.data.getPlayersByTeam);
+                    setPlayers(response.data.data.getPlayersByTeam);
+                } catch (error) {
+                    console.error("Error fetching players:", error);
+                    toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
                 }
-                console.log(response.data.data.getPlayersByAuction);
-                setPlayers(response.data.data.getPlayersByAuction);
-            } catch (error) {
-                console.error("Error fetching players:", error);
-                toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
             }
+
+
+
         }
 
-        fetchPlayers();
+        fetchPlayers()
     }, [playerAuction]);
 
 
@@ -204,7 +242,7 @@ const Player = () => {
                 deletePlayer(player_id: ${player.player_id})
             }
         `
-            const response =await axios.post("http://localhost:2500/graphql", { query })
+            const response = await axios.post("http://localhost:2500/graphql", { query })
             if (response.data.errors) {
                 toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
                 return;
@@ -220,11 +258,16 @@ const Player = () => {
         }
     }
 
-    const handleAddPlayer=() =>{
+    const handleAddPlayer = () => {
         setFormVisible(!formVisible)
         setEditIndex(-1)
         reset()
-    } 
+    }
+
+    const handleBack = ()=>{
+        navigate('/Dashboard/MyAuction/Team')
+        setTeamId(0)
+    }
 
     return (
         <>
@@ -232,14 +275,24 @@ const Player = () => {
                 <div id="player-inner-div">
                     <div id="player-header-div">
                         <div>
-                            <h1>PLAYERS</h1>
+                            <h3 style={{marginRight:"200px"}}>{teamId.team_name}</h3>
+                            <h1> PLAYERS</h1>
                         </div>
                         <div>
-                            <button id="add-btn" onClick={handleAddPlayer}>
-                                <b>
-                                    + ADD PLAYER
-                                </b>
-                            </button>
+                            {!teamId.team_name ?
+
+                                <button id="add-btn" onClick={handleAddPlayer}>
+                                    <b>
+                                        + ADD PLAYER
+                                    </b>
+                                </button>
+                                :
+                                <button id="add-btn" onClick={handleBack} style={{width:"100px"}}>
+                                    <b>
+                                        BACK
+                                    </b>
+                                </button>
+                            }
                         </div>
                     </div>
 
@@ -257,7 +310,7 @@ const Player = () => {
                                 </div>
                                 <div className="form-group-players">
                                     <div id="div">
-                                        <label >Father Name </label>
+                                        <label >Last Name </label>
                                     </div>
                                     <div>
                                         <input type="text" {...register("father_name")} />
@@ -308,7 +361,10 @@ const Player = () => {
                                             <th>Phone</th>
                                             <th>Age</th>
                                             <th>Style</th>
-                                            <th>Actions</th>
+                                            {
+                                                !teamId.team_id &&
+                                                <th>Actions</th>
+                                            }
                                         </tr>
                                     </thead>
                                     <tbody id="tbody">
@@ -320,10 +376,14 @@ const Player = () => {
                                                 <td>{player.player_ph_number || "N/A"}</td>
                                                 <td>{player.age || "N/A"}</td>
                                                 <td>{player.player_style || "N/A"}</td>
-                                                <td id="action">
-                                                    <AiFillEdit size={20} className="edit-icon" onClick={() => handleEdit(player, index)} style={{cursor:"pointer"}}/>
-                                                    <MdDeleteForever size={20} className="delete-icon" onClick={() => handleDelete(player, index)} style={{cursor:"pointer"}}/>
-                                                </td>
+
+                                                {
+                                                    !teamId.team_id &&
+                                                    < td id="action">
+                                                        <AiFillEdit size={20} className="edit-icon" onClick={() => handleEdit(player, index)} style={{ cursor: "pointer" }} />
+                                                        <MdDeleteForever size={20} className="delete-icon" onClick={() => handleDelete(player, index)} style={{ cursor: "pointer" }} />
+                                                    </td>
+                                                }
                                             </tr>
                                         ))}
                                     </tbody>
@@ -334,7 +394,7 @@ const Player = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 };

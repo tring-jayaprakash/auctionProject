@@ -1,10 +1,79 @@
-#nav-div{
-    background-image: url(https://theplayerauction.com/imgs/sports.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    border: 1px solid  black;
-    height: 99.8vh;
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
+
+.home-container {
+    /* border: 1px solid black; */
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #f8f9fa;
+    margin-top: 70px;
+    height:76.5vh;
 }
+
+.hero {
+    margin-bottom: 50px;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: bold;
+    color: #333;
+}
+
+.highlight {
+    color: #10B981;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: #555;
+    margin-top: 10px;
+}
+
+.explore-btn {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background-color: #10B981;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.explore-btn.hovered {
+    background-color:  #0E846C;
+    transform: scale(1.05);
+}
+
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+.feature {
+    width: 300px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.feature:hover {
+    transform: translateY(-5px);
+}
+
+.feature h2 {
+    font-size: 20px;
+    color: #10B981;
+}
+
+.feature p {
+    color: #555;
+    margin-top: 10px;
+}
+

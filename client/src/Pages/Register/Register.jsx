@@ -29,10 +29,7 @@ const Register = () => {
             console.log(variables);
             
             try {
-                const response = await axios.post("http://localhost:2500/graphql", {
-                    query,
-                    variables,
-                });
+                const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL, {query,variables,});
 
                 console.log(response.data.data.register);
 

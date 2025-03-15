@@ -1,50 +1,72 @@
-#main-div{
-    /* border: 1px solid rgb(12, 12, 12); */
-    background-color: #F3F1F2;
-    min-height: 50%;
-    width: 100%;
-    padding: 0 20px ;
-    margin-top: 69px;
+#main-div {
+    margin-top: 40px;
+    width: calc(100% - 275px);
+    margin-left: 275px;
+    padding: 20px;
 }
-#inner-div{
-    /* border: 1px solid yellow; */
+
+
+#inner-div {
     height: 99.5%;
-}
-#header-div{
-    color: #132E35;
-    border-bottom: 1px solid black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 8%;
-    margin-bottom: 10px;
-}
-#body-div{
-    /* border: 1px solid rgb(211, 16, 16); */
-    height:86%;
-    display: grid;
-    grid-template-columns: auto auto auto;
-    grid-template-rows: auto;
-    gap: 10px;
-    padding: 10px;
-}
-#body-div > div{
     /* border: 1px solid black; */
-    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+
+#header-div {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+}
+
+
+#body-div {
+    height: 86%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    padding: 50px 10px 0  50px;
+    justify-content: center;
+}
+
+#body-div>div {
+    background-color: white;
     color: #132E35;
     height: 250px;
     width: 250px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 10px;
+    border-radius: 12px;
     flex-direction: column;
-    box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.308);
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    transition: 0.4s ease-in-out;
 }
-#body-div > div:hover {
+
+#body-div>div:hover {
     color: white;
-    background-color: #1b464b;
-    /* box-shadow: 1px 1px 1px 1px black; */
+    background-color:  #1b464b;
     cursor: pointer;
-    scale: 1;
+    transform: scale(1.08);
+}
+
+@media screen and (max-width: 1063px) {
+    #main-div {
+        width: calc(100% -100px); 
+        margin-left: 150px;
+    }
+}
+@media screen and (max-width: 1400px) {
+    #main-div {
+        width: calc(100% - 200px); 
+        margin-left: 150px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #main-div {
+        width: 100%; 
+        margin-left: 0; 
+    }
 }

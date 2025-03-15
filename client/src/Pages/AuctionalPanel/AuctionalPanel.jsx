@@ -251,7 +251,37 @@ const AuctionalPanel = () => {
 
     const handleEnd = () => {
         setAuctionPanal(null)
-        localStorage.removeItem("AuctionPanel")
+        
+        
+        async function updateAuctionStatus(auction_id, auction_status) {
+            const query = `
+            mutation {
+                updateAuctionStatus(auction_id: ${Number(auction_id)}, auction_status: "${auction_status}")
+                }
+                `;
+        
+                try {
+                const response = await axios.post("http://localhost:2500/graphql", { query });
+                
+                if (response.data.errors) {
+                    toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
+                    return;
+                }
+                
+                console.log("Auction status updated:", response.data);
+                toast.success("Auction status updated successfully!", { position: "top-right", autoClose: 2000 });
+            } catch (error) {
+                console.error("Error updating auction status:", error);
+                toast.error("Failed to update auction status. Please try again.", { position: "top-right", autoClose: 2000 });
+            }
+        }
+        
+
+        updateAuctionStatus(auctionPanal.auction_id,"completed")
+
+        console.log(auctionPanal.auction_id);
+        
+        // localStorage.removeItem("AuctionPanel")
         navigator('/Dashboard/MyAuction')
     }
 
@@ -266,6 +296,8 @@ const AuctionalPanel = () => {
                 toast.info("Auction ended successfully", { position: "top-right", autoClose: 2000 });
                 return;
             }
+
+            setBitCheck("")
 
             const playerWithTeam = auctionPlayer.find(player => player.team_id);
             console.log(playerWithTeam)
@@ -341,6 +373,9 @@ const AuctionalPanel = () => {
                         : team
                 )
             );
+
+            
+
 
             updatePlayerForTeam();
             updateTeamBudgetByTeamId();

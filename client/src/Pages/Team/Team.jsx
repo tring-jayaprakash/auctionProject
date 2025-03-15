@@ -9,16 +9,15 @@ import { MdDeleteForever } from 'react-icons/md';
 import { GlobalContext } from '../../context/GlobalContext';
 
 const Team = () => {
-    const { teamAuction, setTeamAuction } = useContext(GlobalContext)
+    const { teamAuction, setTeamAuction, teamId, setTeamId } = useContext(GlobalContext)
     const [teams, setTeams] = useState([])
     const [editIndex, setEditIndex] = useState(null)
     const [eInde, setEIndex] = useState(null)
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
     const [teamFlag, setTeamFlag] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(() => {
-
-        console.log(teamAuction);
 
         let storedAuction = localStorage.getItem("teamAuction");
         if (storedAuction) {
@@ -37,6 +36,8 @@ const Team = () => {
                     team_name
                     team_short_name
                     auction_id
+                    budget
+                    total_budget
                 }
             }
         `;
@@ -48,7 +49,7 @@ const Team = () => {
                 toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 })
                 return;
             }
-
+            console.log(response.data.data.getTeamsByAuction);
             setTeams(response.data.data.getTeamsByAuction)
         } catch (error) {
             console.error("Error fetching teams:", error)
@@ -61,8 +62,8 @@ const Team = () => {
 
     useEffect(() => {
         if (!teamAuction) return
-      
-        
+
+
         localStorage.setItem("teamAuction", JSON.stringify(teamAuction))
         const id = teamAuction.auction_id
 
@@ -196,7 +197,13 @@ const Team = () => {
         }
     };
 
+    const handleViewPlayers = (index, team) => {
 
+        console.log(index);
+        console.log(team);
+        setTeamId(team)
+        navigate('/Dashboard/MyAuction/Player')
+    }
 
     return (
         <>
@@ -225,16 +232,38 @@ const Team = () => {
                                             <div>
                                                 <h3>{team.team_name}</h3>
                                             </div>
+                                            {
+
+                                                team.budget &&
+                                                <>
+                                                    <div>
+                                                        <h4>Balance : {team.budget}</h4>
+                                                    </div>
+                                                    <div>
+                                                        <h4>Total Budget : {team.total_budget}</h4>
+                                                    </div>
+                                                </>
+                                            }
+
                                         </div>
-                                        <div className='card-div-footer'>
-                                            <div>
-                                                <p>
-                                                    <AiFillEdit size={25} style={{ cursor: "pointer", color: "#008000" }} onClick={() => handleEdit(index, team)} />
-                                                </p>
-                                                <p>
-                                                    <MdDeleteForever size={25} style={{ cursor: "pointer", color: "#FF0000" }} onClick={() => handleDelete(index, team)} />
-                                                </p>
-                                            </div>
+                                        <div className='card-div-footer' style={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
+                                            {
+
+                                                !team.budget ?
+
+                                                    <div>
+                                                        <p>
+                                                            <AiFillEdit size={25} style={{ cursor: "pointer", color: "#008000" }} onClick={() => handleEdit(index, team)} />
+                                                        </p>
+                                                        <p>
+                                                            <MdDeleteForever size={25} style={{ cursor: "pointer", color: "#FF0000" }} onClick={() => handleDelete(index, team)} />
+                                                        </p>
+                                                    </div>
+                                                    :
+                                                    <div >
+                                                        <h4 style={{ cursor: "pointer", border: "1px  solid black ", padding: "5px", borderRadius: "5px", backgroundColor: "#000066", color: "white" }} onClick={() => handleViewPlayers(index, team)}>view players </h4>
+                                                    </div>
+                                            }
                                         </div>
                                     </div>
                                 ))

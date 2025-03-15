@@ -28,6 +28,7 @@ export const GET_AUCTION_BY_USER_ID = `
             max_player
             min_player
             user_id
+            auction_status
         }
     }
 `;

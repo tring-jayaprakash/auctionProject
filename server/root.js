@@ -31,7 +31,7 @@ const root = {
             throw new Error("Registration failed: " + error.message);
         }
     },
-    
+
     login: async ({ email, password }) => {
         try {
             const result = await pool.query("SELECT * FROM userDetail WHERE email = $1", [email]);
@@ -147,6 +147,28 @@ const root = {
             throw new Error("Failed to update auction: " + err.message);
         }
     },
+    updateAuctionStatus: async ({ auction_id, auction_status }) => {
+        try {
+            const query = `
+            UPDATE auction 
+            SET auction_status = $1
+            WHERE auction_id = $2
+            RETURNING *;
+            `;
+
+            const values = [auction_status, auction_id];
+            const result = await pool.query(query, values);
+
+            if (result.rows.length === 0) {
+                throw new Error("Auction not found or update failed.");
+            }
+
+            return `Auction with ID ${auction_id} status updated to ${auction_status} successfully!`;
+        } catch (err) {
+            console.error("Error updating auction status:", err.message);
+            throw new Error("Failed to update auction status: " + err.message);
+        }
+    },
     getTeams: async () => {
         try {
             const result = await pool.query("SELECT * FROM team");
@@ -176,8 +198,8 @@ const root = {
                     team_name = COALESCE($2, team_name),
                     team_short_name = COALESCE($3, team_short_name),
                     auction_id = COALESCE($4, auction_id)
-                WHERE team_id = $5
-                RETURNING *;
+                    WHERE team_id = $5
+                    RETURNING *;
             `;
 
             const values = [team_logo, team_name, team_short_name, auction_id, team_id];
@@ -225,6 +247,20 @@ const root = {
             return result.rows
         } catch (error) {
             throw new Error(error.message);
+        }
+    },
+    getPlayersByTeam: async ({ team_id }) => {
+        try {
+            const result = await pool.query(`SELECT * FROM player WHERE team_id = $1`,[team_id]);
+
+            if (result.rows.length === 0) {
+                throw new Error("No players found for this team.");
+            }
+
+            return result.rows; 
+        } catch (error) {
+            console.error("Error fetching players:", error.message);
+            throw new Error("Failed to fetch players: " + error.message);
         }
     },
     getPlayersByAuction: async ({ auction_id }) => {
@@ -320,9 +356,9 @@ const root = {
             throw new Error("Failed to delete player.");
         }
     },
-    updateTeamBudget: async ({ auction_id, budget,total_budget }) => {
+    updateTeamBudget: async ({ auction_id, budget, total_budget }) => {
         try {
-            const result = await pool.query("update team set budget = $2 , total_budget =$3 where auction_id =$1" , [auction_id, budget,total_budget])
+            const result = await pool.query("update team set budget = $2 , total_budget =$3 where auction_id =$1", [auction_id, budget, total_budget])
             if (result.rowCount === 0) {
                 throw new Error("Player not found or already deleted.");
             }
@@ -347,7 +383,7 @@ const root = {
 
     }
 
-    
+
 
 }
 

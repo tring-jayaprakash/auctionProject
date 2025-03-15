@@ -13,11 +13,20 @@ const GlobalProvider = () => {
     const [user, setUser] = useState(null);
     const [auctionPanal, setAuctionPanal] = useState(null);
     const [teamBudget, setTeamBudget] = useState(0)
+    const [teamId,setTeamId] = useState(0)
+    const theme = {
+        background: "#E5E7EB",
+        text: "#132E35",
+        primary: "#0D4D4D",
+        cardBg: "#FFFFFF",
+        cardText: "#132E35",
+        hoverBg: "#1b464b",
+      };
 
     return (
         <>
             <ToastContainer />
-            <GlobalContext.Provider value={{ auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, user, setUser, auctionPanal, setAuctionPanal, teamBudget, setTeamBudget }}>
+            <GlobalContext.Provider value={{ auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, user, setUser, auctionPanal, setAuctionPanal, teamBudget, setTeamBudget ,teamId,setTeamId , theme}}>
                 <NavBar />
                 <Router />
             </GlobalContext.Provider>

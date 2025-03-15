@@ -6,10 +6,20 @@ import "./NavBar.css";
 
 export const NavBar = () => {
     const { user, setUser } = useContext(GlobalContext);
-
     const [showDropdown, setShowDropdown] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
     const navigate = useNavigate();
 
+    // Check scroll position to dynamically change navbar styles
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    // Retrieve stored user data
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -25,7 +35,6 @@ export const NavBar = () => {
         navigate("/home");
     };
 
-
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (!event.target.closest(".profile-container")) {
@@ -37,49 +46,45 @@ export const NavBar = () => {
     }, []);
 
     return (
-        <div id="nav">
+        <nav id="nav" className={isScrolled ? "scrolled" : ""}>
             <div>
                 <h1 id="logo">PLAYERS AUCTION..!</h1>
             </div>
             <div className="nav_btn">
-                <button className="btn" style={{ border: "none" }}>
-                    <Link to="/Home" className="link" style={{ fontWeight: "bolder", fontSize: "14px" }}>
-                        Home Page
-                    </Link>
+                <button className="btn" style={{border:"none"}}>
+                    <Link to="/Reault" className="link">Explore Auction</Link>
                 </button>
-                {user == null ?
-                    (<>
+                <button className="btn" style={{border:"none"}}>
+                    <Link to="/Home" className="link" >Home</Link>
+                </button>
+                {user ? (
+                    <div className="profile-container">
+                        <FaUserCircle className="profile-icon" onClick={() => setShowDropdown((prev) => !prev)} />
+                        {showDropdown && (
+                            <div className="dropdown-menu">
+                                <Link to="/Dashboard" className="dropdown-item" onClick={() => setShowDropdown(false)}>
+                                    Dashboard
+                                </Link>
+                                <Link to="/Dashboard/MyProfile" className="dropdown-item" onClick={() => setShowDropdown(false)}>
+                                    Profile
+                                </Link>
+                                <button className="dropdown-item logout-btn" onClick={handleLogout}>
+                                    Logout
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <>
                         <button className="btn">
-                            <Link className="link" to="/Login" style={{ fontWeight: "bolder" }}>
-                                Login
-                            </Link>
+                            <Link className="link" to="/Login">Login</Link>
                         </button>
                         <button className="btn">
-                            <Link className="link" to="/Register" style={{ fontWeight: "bolder" }}>
-                                Register
-                            </Link>
+                            <Link className="link" to="/Register">Register</Link>
                         </button>
-                    </>)
-                    :
-                    (<>
-                        <div className="profile-container">
-                            <FaUserCircle className="profile-icon" onClick={() => setShowDropdown((prev) => !prev)} />
-                            {showDropdown && (
-                                <div className="dropdown-menu">
-                                    <Link to="/Dashboard" className="dropdown-item" onClick={() => setShowDropdown(false)}>
-                                        Dashboard
-                                    </Link>
-                                    <Link to="/Dashboard/MyProfile" className="dropdown-item" onClick={() => setShowDropdown(false)}>
-                                        Profile
-                                    </Link>
-                                    <button className="dropdown-item logout-btn" onClick={handleLogout}>
-                                        Logout
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </>)}
+                    </>
+                )}
             </div>
-        </div >
+        </nav>
     );
 };

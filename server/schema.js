@@ -24,6 +24,7 @@
             max_player: Int
             min_player: Int
             user_id: Int
+            auction_status:String
         }
 
         type Team {
@@ -61,6 +62,7 @@
             getPlayers:[player]
             getPlayersByAuction(auction_id: Int!):[player]
             getPlayersByAuctionTeamNull(auction_id: Int!):[player]
+            getPlayersByTeam(team_id:ID!):[player]
         }
 
 
@@ -68,6 +70,8 @@
             register(city:String!,ph_number:String!,user_name:String!,email:String!,password:String!):String
             addAuction(  logo: String,   sports: String!,   auction_name: String!,   date: String!,   time: String!,   base_bit: Int!,   bit_increse_by: Int!,   max_player: Int,   min_player: Int,   user_id: Int ): String
             updateAuction( auction_id: ID!, logo: String, sports: String, auction_name: String, date: String, time: String, base_bit: Int, bit_increse_by: Int, max_player: Int, min_player: Int ): String
+            updateAuctionStatus(auction_id: ID!,auction_status:String!):String
+
             deleteAuction(auction_id: ID!): String
             addTeam(team_logo: String, team_name: String!, team_short_name: String!, auction_id: Int): Team
             updateTeam(team_id: ID!, team_logo: String, team_name: String, team_short_name: String, auction_id: Int): Team
