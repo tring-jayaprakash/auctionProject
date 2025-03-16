@@ -1,11 +1,15 @@
 
 .home-container {
-    /* border: 1px solid black; */
+    border: 1px solid black;
     text-align: center;
-    padding: 50px 20px;
+    padding-top: 150px ;
     background-color: #f8f9fa;
-    margin-top: 70px;
+    margin-top: 60px;
     height:76.5vh;
+    height: 71vh;
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
 }
 
 .hero {
