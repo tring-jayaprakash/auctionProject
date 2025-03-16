@@ -138,3 +138,13 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software.
 
 
+# Demo
+
+landing page
+![Demo Screenshot](./client/assets/image.png)
+register
+![Demo Screenshot](./client/assets/register.png)
+login
+![Demo Screenshot](./client/assets/login.png)
+dashbord
+![Demo Screenshot](./client/assets/dashbord.png)
