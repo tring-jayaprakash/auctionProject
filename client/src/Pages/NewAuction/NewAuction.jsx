@@ -9,7 +9,9 @@ import { ADD_AUCTION_MUTATION, UPDATE_AUCTION_MUTATION } from '../../../graphql/
 import { GlobalContext } from '../../context/GlobalContext';
 
 
+
 const NewAuction = () => {
+    const url = import.meta.env.VITE_GRAPHQL_URL
     const navigator = useNavigate()
     const { auction, setAuction} = useContext(GlobalContext)
     const defaultImage = "https://superplayerauction.com/user/static/media/logo-auction.e6b9bfb3.png";
@@ -28,7 +30,6 @@ const NewAuction = () => {
                 const dateObject = new Date(Number(auction.date));
                 if (!isNaN(dateObject.getTime())) {
                     formattedDate = dateObject.toISOString().split("T")[0];
-                    // console.log(formattedDate);
                 }
             }
             setValue("date", formattedDate);
@@ -40,14 +41,11 @@ const NewAuction = () => {
             setImage(auction.logo || defaultImage);
 
         }
-        // setAuction(null);
     }, [auction, setValue]);
 
 
     let localUser = localStorage.getItem("user")
     const jsonUser = JSON.parse(localUser)
-    // console.log(jsonUser.user_id);
-
     const onSubmit = async (auctionData) => {
         const newEntity = {
             logo: auctionData.logo || "",
@@ -67,7 +65,7 @@ const NewAuction = () => {
         
             console.log("Sending to GraphQL:", { query, variables });
         
-            const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL, { query, variables });
+            const response = await axios.post(url, { query, variables });
         
             if (response.data.errors) {
                 console.error("GraphQL Error:", response.data.errors);

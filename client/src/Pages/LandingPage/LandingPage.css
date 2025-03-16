@@ -28,6 +28,8 @@
     margin-top: 10px;
 }
 
+
+
 .explore-btn {
     margin-top: 20px;
     padding: 12px 24px;
@@ -41,7 +43,7 @@
     transition: all 0.3s ease-in-out;
 }
 
-.explore-btn.hovered {
+.explore-btn:hover {
     background-color:  #0E846C;
     transform: scale(1.05);
 }

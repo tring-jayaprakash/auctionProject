@@ -3,12 +3,12 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './Team.css'
+import './TeamResult.css'
 import { AiFillEdit } from 'react-icons/ai';
 import { MdDeleteForever } from 'react-icons/md';
 import { GlobalContext } from '../../context/GlobalContext';
 
-const Team = () => {
+const TeamResult = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const { teamAuction, setTeamAuction, teamId, setTeamId } = useContext(GlobalContext)
     const [teams, setTeams] = useState([])
@@ -203,21 +203,21 @@ const Team = () => {
         console.log(index);
         console.log(team);
         setTeamId(team)
-        navigate('/Dashboard/MyAuction/Player')
+        navigate('/Reault/PlayerResult')
     }
 
     return (
         <>
-            <div id='team-main-div'>
+            <div id='team-result-main-div'>
                 <div id='team-inner-div'>
-                    <div id='team-header-div'>
+                    <div id='team-result-header-div'>
                         <div >
-                            <h1>TEAMS</h1>
+                            <h1>Teams Result</h1>
                         </div>
                         <div>
-                            <button id='add-bt' onClick={() => setTeamFlag(!teamFlag)}>
+                            {/* <button id='add-bt' onClick={() => setTeamFlag(!teamFlag)}>
                                 <b>+  ADD</b>
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                     <div id='team-body-div'>
@@ -248,23 +248,9 @@ const Team = () => {
 
                                         </div>
                                         <div className='card-div-footer' style={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
-                                            {
-
-                                                !team.budget ?
-
-                                                    <div>
-                                                        <p>
-                                                            <AiFillEdit size={25} style={{ cursor: "pointer", color: "#008000" }} onClick={() => handleEdit(index, team)} />
-                                                        </p>
-                                                        <p>
-                                                            <MdDeleteForever size={25} style={{ cursor: "pointer", color: "#FF0000" }} onClick={() => handleDelete(index, team)} />
-                                                        </p>
-                                                    </div>
-                                                    :
-                                                    <div >
-                                                        <h4 style={{ cursor: "pointer", border: "1px  solid black ", padding: "5px", borderRadius: "5px", backgroundColor: "#000066", color: "white" }} onClick={() => handleViewPlayers(index, team)}>view players </h4>
-                                                    </div>
-                                            }
+                                            <div >
+                                                <h4 style={{ cursor: "pointer", border: "1px  solid #0E846C ", padding: "5px", borderRadius: "5px", backgroundColor: "#0E846C", color: "white" }} onClick={() => handleViewPlayers(index, team)}>view players </h4>
+                                            </div>
                                         </div>
                                     </div>
                                 ))
@@ -302,4 +288,4 @@ const Team = () => {
     );
 };
 
-export default Team;
+export default TeamResult

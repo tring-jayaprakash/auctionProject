@@ -1,19 +1,20 @@
-const express = require('express')
-const { graphqlHTTP } = require('express-graphql')
-const cors = require('cors')
-const schema = require('./schema')
-const root = require('./root')
+const express = require('express');
+const { graphqlHTTP } = require('express-graphql');
+const corsConfig = require('./config/corsConfig');
+const { PORT, GRAPHQL_PATH } = require('./config/serverConfig');
+const schema = require('./graphql/schema');
+const root = require('./graphql/root');
 
+const app = express();
 
-const app = express()
-app.use(cors())
-app.use('/graphql', graphqlHTTP({
+app.use(corsConfig);
+
+app.use(GRAPHQL_PATH, graphqlHTTP({
     schema: schema,
     rootValue: root,
     graphiql: true,
-}))
+}));
 
-
-app.listen("2500", () => {
-    console.log("server running in port 2500");
-})
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});

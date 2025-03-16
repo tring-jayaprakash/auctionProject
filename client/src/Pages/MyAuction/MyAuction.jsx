@@ -12,6 +12,7 @@ import { GET_AUCTION_BY_USER_ID, GET_TEAM_BY_AUCTION_ID } from '../../../graphql
 import { DELETE_AUCTION } from '../../../graphql/mutation/userMutation';
 
 const MyAuction = () => {
+    const url = import.meta.env.VITE_GRAPHQL_URL
     const { auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal } = useContext(GlobalContext)
     const navigater = useNavigate()
     const [auctionData, setAuctionData] = useState([])
@@ -36,7 +37,7 @@ const MyAuction = () => {
             const variables = { user_id: Number(jsonUser.user_id) };
 
             try {
-                const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL, { query, variables });
+                const response = await axios.post(url, { query, variables });
                 if (response.data.errors) {
                     console.error("GraphQL Error:", response.data.errors[0].message);
                     return;
@@ -63,7 +64,7 @@ const MyAuction = () => {
         const query =DELETE_AUCTION
 
         try {
-            const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL, { query, variables});
+            const response = await axios.post(url, { query, variables});
 
             if (response.data.errors) {
                 console.log(response.data.errors[0].message)
@@ -117,7 +118,7 @@ const MyAuction = () => {
 
 
         try {
-            const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL, { query });
+            const response = await axios.post(url, { query });
             // const response = await axios.post("http://localhost:2500/graphql", { query, variables });
 
             if (response.data.errors) {
@@ -136,6 +137,7 @@ const MyAuction = () => {
 
 
     async function fetchPlayers(element) {
+        // const variable = {auction_id : Number(element.auction_id)}
         const query = `
             query {
                 getPlayersByAuction(auction_id: ${element.auction_id}) {
@@ -151,9 +153,11 @@ const MyAuction = () => {
                 }
             }
         `;
+        // const query = GET_PLAYERS_BY_AUCTION;
 
         try {
-            const response = await axios.post("http://localhost:2500/graphql", { query });
+            // const response = await axios.post(url, { query , variable });
+            const response = await axios.post(url, { query  });
 
             if (response.data.errors) {
                 toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
@@ -175,7 +179,7 @@ const MyAuction = () => {
         }
         `
         try {
-            const response = await axios.post("http://localhost:2500/graphql", { query });
+            const response = await axios.post(url, { query });
 
             if (response.data.errors) {
                 toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
@@ -301,16 +305,6 @@ const MyAuction = () => {
                                             </div>
 
                                             <div>
-                                                {/* {
-                                                    showButton && !completedAuctions[element.auction_id] && (
-                                                        <p>
-                                                            <AiFillEdit size={25} title='edit' style={{ cursor: "pointer", color: "#008000" }}
-                                                                onClick={() => { handleEdit(index, element) }} />
-                                                        </p>
-
-                                                    )
-                                                } */}
-
                                                 {
                                                     element.auction_status == "pending" &&
                                                     <p>

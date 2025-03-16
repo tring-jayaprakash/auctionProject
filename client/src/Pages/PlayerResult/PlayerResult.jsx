@@ -4,11 +4,11 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { AiFillEdit } from "react-icons/ai";
 import { MdDeleteForever } from "react-icons/md";
-import "./Player.css";
+import "./PlayerResult.css";
 import { GlobalContext } from "../../context/GlobalContext";
 import { useNavigate } from "react-router-dom";
 
-const Player = () => {
+const PlayerResult = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const { playerAuction, setPlayerAuction, teamId, setTeamId } = useContext(GlobalContext)
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
@@ -272,28 +272,18 @@ const Player = () => {
 
     return (
         <>
-            <div id="player-main-div">
+            <div id="player-result-main-div">
                 <div id="player-inner-div">
                     <div id="player-header-div">
                         <div>
-                            <h3 style={{marginRight:"200px"}}>{teamId.team_name}</h3>
+                            <h3 style={{marginRight:"200px",padding:"20px"}}>{teamId.team_name}</h3>
                             <h1> PLAYERS</h1>
                         </div>
                         <div>
-                            {!teamId.team_name ?
 
-                                <button id="add-btn" onClick={handleAddPlayer}>
-                                    <b>
-                                        + ADD PLAYER
-                                    </b>
+                                <button id="add-btn" onClick={handleAddPlayer}  style={{display:"none"}}>
+                                    
                                 </button>
-                                :
-                                <button id="add-btn" onClick={handleBack} style={{width:"100px"}}>
-                                    <b>
-                                        BACK
-                                    </b>
-                                </button>
-                            }
                         </div>
                     </div>
 
@@ -358,14 +348,14 @@ const Player = () => {
                                         <tr>
                                             <th>Sno</th>
                                             <th>Name</th>
-                                            <th>Father</th>
-                                            <th>Phone</th>
+                                            <th>Last name</th>
+                                            {/* <th>Phone</th> */}
                                             <th>Age</th>
                                             <th>Style</th>
-                                            {
+                                            {/* {
                                                 !teamId.team_id &&
                                                 <th>Actions</th>
-                                            }
+                                            } */}
                                         </tr>
                                     </thead>
                                     <tbody id="tbody">
@@ -374,17 +364,17 @@ const Player = () => {
                                                 <td>{index + 1}</td>
                                                 <td>{player.player_name}</td>
                                                 <td>{player.father_name || "N/A"}</td>
-                                                <td>{player.player_ph_number || "N/A"}</td>
+                                                {/* <td>{player.player_ph_number || "N/A"}</td> */}
                                                 <td>{player.age || "N/A"}</td>
                                                 <td>{player.player_style || "N/A"}</td>
 
-                                                {
+                                                {/* {
                                                     !teamId.team_id &&
                                                     < td id="action">
                                                         <AiFillEdit size={20} className="edit-icon" onClick={() => handleEdit(player, index)} style={{ cursor: "pointer" }} />
                                                         <MdDeleteForever size={20} className="delete-icon" onClick={() => handleDelete(player, index)} style={{ cursor: "pointer" }} />
                                                     </td>
-                                                }
+                                                } */}
                                             </tr>
                                         ))}
                                     </tbody>
@@ -400,4 +390,4 @@ const Player = () => {
     );
 };
 
-export default Player;
+export default PlayerResult;

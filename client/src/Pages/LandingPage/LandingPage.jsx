@@ -1,9 +1,13 @@
 import { useState } from "react";
 import "./LandingPage.css";
+import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
     const [isHovered, setIsHovered] = useState(false);
-
+    const navigator = useNavigate()
+    const handleExplore = ()=>{
+        navigator('/Reault')
+    }
     return (
         <div className="home-container">
             <div className="hero">
@@ -14,10 +18,7 @@ function LandingPage() {
                     Join the most exciting auction platform and grab amazing deals in real time.
                 </p>
                 <button 
-                    className={`explore-btn ${isHovered ? "hovered" : ""}`}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                >
+                    className="explore-btn" onClick={handleExplore}>
                     Explore Auctions
                 </button>
             </div>
@@ -25,15 +26,15 @@ function LandingPage() {
             <div className="features">
                 <div className="feature">
                     <h2>&#128260; Real-Time Bidding</h2>
-                    <p>Compete in live auctions and grab the best deals.</p>
+                    <p>Compete auctions and grab the best deals.</p>
                 </div>
                 <div className="feature">
-                    <h2>&#128230; Wide Range of Items</h2>
-                    <p>Bid on electronics, antiques, cars, and more.</p>
+                    <h2>&#128230; Wide Range </h2>
+                    <p>Bid with Cricket , Football , Volleyball , Tennis ,Badminton and more.</p>
                 </div>
                 <div className="feature">
-                    <h2>&#128274; Secure Transactions</h2>
-                    <p>Your payments and personal data are always protected.</p>
+                    <h2>&#128274; Secure </h2>
+                    <p>Your  personal data are always protected.</p>
                 </div>
             </div>
         </div>

@@ -13,14 +13,18 @@ import MyProfile from '../Pages/MyProfile/MyProfile'
 import Team from '../Pages/Team/Team'
 import Player from '../Pages/Player/Player'
 import AuctionResult from '../Pages/AuctionResult/AuctionResult'
+import TeamResult from '../Pages/TeamResult/TeamResult'
+import PlayerResult from '../Pages/PlayerResult/PlayerResult'
 
 const Router = () => {
     return (
         <Routes>
-            <Route path='/Reault' element={<AuctionResult />} />
-            <Route path='/Home' element={<LandingPage />} />
+            <Route path='/' element={<LandingPage />} />
             <Route path='/Register' element={<Register />} />
             <Route path="/Login" element={<Login />} />
+            <Route path='/Reault' element={<AuctionResult />} />
+            <Route path='/Reault/TeamResult' element={<TeamResult />} />
+            <Route path='/Reault/PlayerResult' element={<PlayerResult/>} />
 
 
             <Route element={<ProtectedRoutes />}>

@@ -11,15 +11,13 @@ import InputField from "../../components/InputField";
 
 
 function Login() {
+    const url = import.meta.env.VITE_GRAPHQL_URL
     const navigate = useNavigate();
-    const { auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, user, setUser } = useContext(GlobalContext)
+    const {  user, setUser } = useContext(GlobalContext)
     const { register, handleSubmit, formState: { errors } } = useForm();
 
 
     const onSubmit = async (data) => {
-
-        const email = data.email;
-        const password = data.password;
 
         const query = LOGIN_USER_QUERY;
         const variables = {
@@ -29,7 +27,7 @@ function Login() {
 
         console.log("Sending variables:", variables);
         try {
-            const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL,{ query, variables });
+            const response = await axios.post(url,{ query, variables });
 
             console.log("Response:", response);
             if (response.data.errors) {

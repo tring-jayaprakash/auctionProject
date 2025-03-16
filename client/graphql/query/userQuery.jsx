@@ -47,3 +47,19 @@ export const GET_TEAM_BY_AUCTION_ID = `
             }
         }  
 ` 
+
+export const GET_PLAYERS_BY_AUCTION = `
+    query GetPlayersByAuction($auction_id: Int!) {
+        getPlayersByAuction(auction_id: $auction_id) {
+            player_id
+            player_pic
+            player_name
+            father_name
+            player_ph_number
+            age
+            form_number
+            player_style
+            team_id
+        }
+    }
+`;

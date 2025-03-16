@@ -8,6 +8,7 @@ import { REGISTER_USER_MUTATION } from "../../../graphql/mutation/userMutation";
 import InputField from "../../components/InputField";
 
 const Register = () => {
+    const url = import.meta.env.VITE_GRAPHQL_URL
     const navigate = useNavigate();
     const {
         register,
@@ -29,7 +30,7 @@ const Register = () => {
             console.log(variables);
             
             try {
-                const response = await axios.post(import.meta.env.VITE_GRAPHQL_URL, {query,variables,});
+                const response = await axios.post(url, {query,variables,});
 
                 console.log(response.data.data.register);
 
@@ -65,24 +66,6 @@ const Register = () => {
                     <h1 id="title">Register</h1>
                     <form onSubmit={handleSubmit(onSubmit)} id="form">
                         <div className="sub-div">
-                            {/* <InputField 
-                label="Enter your name"
-                type="text"
-                placeholder="Enter your name"
-                register={register}
-                name="user_name"
-                error={errors.user_name}
-                validation={{ required: "Username is required" }}
-              />
-              <InputField
-                label="Enter your city"
-                type="text"
-                placeholder="Enter your city"
-                register={register}
-                name="user_city"
-                error={errors.user_city}
-                validation={{ required: "City is required" }}
-              /> */}
                             <div className='input-group'>
                                 <label htmlFor="">Enter your name :</label>
                                 <input
@@ -142,34 +125,6 @@ const Register = () => {
 
 
                         <div className="sub-div">
-                            {/* <InputField
-                            label="Enter your password"
-                            type="password"
-                            placeholder="Enter your password"
-                            register={register}
-                            name="user_password"
-                            error={errors.user_password}
-                            validation={{
-                                required: "Password is required",
-                                minLength: {
-                                    value: 6,
-                                    message: "Password must be at least 6 characters long",
-                                },
-                            }}
-                        />
-                        <InputField
-                            label="Confirm your password"
-                            type="password"
-                            placeholder="Confirm your password"
-                            register={register}
-                            name="user_confirmPassword"
-                            error={errors.user_confirmPassword}
-                            validation={{
-                                required: "Confirm Password is required",
-                                validate: (value) =>
-                                    value === watch("user_password") || "Passwords do not match",
-                            }}
-                        /> */}
                             <div className='input-group'>
                                 <label htmlFor="">Enter your password :</label>
                                 <input

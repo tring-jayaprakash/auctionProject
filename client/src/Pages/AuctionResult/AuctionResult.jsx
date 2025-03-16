@@ -1,62 +1,335 @@
-import React from 'react'
-import '../AuctionResult/AuctionResult.css'
+
+import React, { useContext, useEffect, useState } from 'react'
+import { GrCursor, GrGroup } from "react-icons/gr";
+import { GiBabyfootPlayers } from "react-icons/gi";
+import { AiFillEdit } from "react-icons/ai";
+import { MdDeleteForever } from "react-icons/md";
+import './AuctionResult.css'
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { GlobalContext } from '../../context/GlobalContext';
+import { GET_AUCTION_BY_USER_ID, GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery';
+import { DELETE_AUCTION } from '../../../graphql/mutation/userMutation';
 
 const AuctionResult = () => {
+    const url = import.meta.env.VITE_GRAPHQL_URL
+    const { auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal } = useContext(GlobalContext)
+    const navigater = useNavigate()
+    const [auctionData, setAuctionData] = useState([])
+    const [showButton, setShowButton] = useState(true)
+
+    useEffect(() => {
+
+        // let localUser = localStorage.getItem("user")
+        // const jsonUser = JSON.parse(localUser)
+        // console.log(jsonUser.user_id);
+
+        let localPanal = localStorage.getItem("AuctionPanel")
+        const panal = JSON.parse(localPanal)
+        console.log(panal);
+
+        if (!panal) {
+            setShowButton(false)
+
+        }
+        async function getAuction() {
+            // const query = GET_AUCTION_BY_USER_ID;
+            // const variables = { user_id: Number(jsonUser.user_id) };
+            const query =`
+            query{
+              getAuction{
+                auction_id
+                logo
+                sports
+                auction_name
+                date
+                time
+                base_bit
+                bit_increse_by
+                min_player
+                max_player
+                auction_status
+              }
+            }    
+            `
+
+            try {
+                // const response = await axios.post(url, { query, variables });
+                const response = await axios.post(url, { query});
+                if (response.data.errors) {
+                    console.error("GraphQL Error:", response.data.errors[0].message);
+                    return;
+                }
+                const auctionData = response.data.data.getAuction;
+                console.log("Auction Data:", auctionData);
+                setAuctionData(auctionData);
+
+            } catch (error) {
+                console.error("Error fetching auctions:", error.message);
+            }
+        }
 
 
-    
+        getAuction()
+        
+    }, [])
+
+
+    const handleDelete = async (index, id) => {
+        console.log(index);
+        console.log(id);
+        const variables = { auction_id: id };
+
+        const query = DELETE_AUCTION
+
+        try {
+            const response = await axios.post(url, { query, variables });
+
+            if (response.data.errors) {
+                console.log(response.data.errors[0].message)
+                return;
+            }
+            console.log(response.data.data.deleteAuction);
+            setAuctionData(auctionData.filter((auction) => auction.auction_id !== id));
+        } catch (error) {
+            console.error("Delete error:", error);
+        }
+    }
+
+    const handleEdit = (index, element) => {
+        console.log(element);
+        setAuction(element)
+        navigater('/Dashboard/NewAuction')
+    }
+
+    const handleTeam = (index, element) => {
+        setTeamAuction(element)
+        // navigater('/Dashboard/MyAuction')
+        navigater('/Reault/TeamResult')
+    }
+    const handlePlayer = (index, element) => {
+        console.log(index);
+        console.log(element);
+        setPlayerAuction(element)
+        navigater('/Dashboard/MyAuction/Player')
+    }
+
+
+
+    async function fetchTeams(element) {
+
+        let localUser = localStorage.getItem("user")
+        const jsonUser = JSON.parse(localUser)
+
+        const query = `
+            query {
+                getTeamsByAuction(auction_id: ${element.auction_id}) {
+                    team_id
+                    team_logo
+                    team_name
+                    team_short_name
+                    auction_id
+                }
+            }
+        `;
+
+        // const query = GET_TEAM_BY_AUCTION_ID
+        // const variables = { user_id: Number(jsonUser.user_id) };
+
+
+        try {
+            const response = await axios.post(url, { query });
+            // const response = await axios.post("http://localhost:2500/graphql", { query, variables });
+
+            if (response.data.errors) {
+                toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
+                return [];
+            }
+            console.log("Fetched Teams:", response.data.data.getTeamsByAuction);
+            // toast.success("sucessfully fetch teams.", { position: "top-right", autoClose: 2000 });
+            return response.data.data.getTeamsByAuction;
+        } catch (error) {
+            console.error("Error fetching teams:", error);
+            toast.error("Failed to fetch teams.", { position: "top-right", autoClose: 2000 });
+            return [];
+        }
+    }
+
+
+    async function fetchPlayers(element) {
+        // const variable = {auction_id : Number(element.auction_id)}
+        const query = `
+            query {
+                getPlayersByAuction(auction_id: ${element.auction_id}) {
+                    player_id
+                    player_pic
+                    player_name
+                    father_name
+                    player_ph_number
+                    age
+                    form_number
+                    player_style
+                    team_id
+                }
+            }
+        `;
+        // const query = GET_PLAYERS_BY_AUCTION;
+
+        try {
+            // const response = await axios.post(url, { query , variable });
+            const response = await axios.post(url, { query });
+
+            if (response.data.errors) {
+                toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
+                return [];
+            }
+            console.log("Fetched Players:", response.data.data.getPlayersByAuction);
+            return response.data.data.getPlayersByAuction;
+        } catch (error) {
+            console.error("Error fetching players:", error);
+            toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
+            return [];
+        }
+    }
+
+    async function updateTeamBudget(element, finalBudget) {
+        const query = `
+        mutation{
+          updateTeamBudget(auction_id:${element.auction_id},budget:${finalBudget},total_budget:${finalBudget})
+        }
+        `
+        try {
+            const response = await axios.post(url, { query });
+
+            if (response.data.errors) {
+                toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
+                return [];
+            }
+            console.log("Fetched Players:", response.data.data.updateTeamBudget);
+        } catch (error) {
+            console.error("Error fetching players:", error);
+            toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
+        }
+    }
+
+    const handleStartAction = async (element, index) => {
+        try {
+            const playerData = await fetchPlayers(element);
+            const teamData = await fetchTeams(element);
+            const minPlayer = Number(element.min_player);
+            console.log(playerData);
+
+            const playerWithTeam = playerData.find(player => player.team_id);
+            if (playerWithTeam) {
+                toast.info("Auction ended", { position: "top-right", autoClose: 2000 });
+
+                setCompletedAuctions(prev => {
+                    const updated = { ...prev, [element.auction_id]: true };
+                    localStorage.setItem("completedAuctions", JSON.stringify(updated));
+                    return updated;
+                });
+
+                return;
+            }
+
+            const budget = element.base_bit * teamData.length * playerData.length
+            const finalBudget = budget + budget * 50 / 100
+            await updateTeamBudget(element, finalBudget);
+
+            if (teamData.length * minPlayer <= playerData.length) {
+                const auctionDate = new Date(Number(element.date));
+                const [hours, minutes, seconds] = element.time.split(":").map(Number);
+                auctionDate.setHours(hours, minutes, seconds, 0);
+                const now = new Date();
+
+                if (now.getTime() >= auctionDate.getTime()) {
+                    setAuctionPanal(element);
+                    navigater('/Dashboard/AuctionalPanel');
+                } else {
+                    toast.info("The auction can only start at the scheduled time!", { position: "top-right", autoClose: 2000 });
+                }
+            } else {
+                toast.error("Not enough players for the auction!", { position: "top-right", autoClose: 2000 });
+            }
+        } catch (error) {
+            return
+            // console.error("Error in handleStartAction:", error);
+            // toast.error("An error occurred while starting the auction.", { position: "top-right", autoClose: 2000 });
+        }
+    };
+
+
 
     return (
         <>
-            <div id='Result-main-div'>
-                <div id='Result-inner-div'>
-                    <div id='Result-header-div'>
-                        <h1>
-                            Auction Result
-                        </h1>
+            <div id='result-main-div'>
+                <div id='my-inner-div'>
+                    <div id='result-header-div'>
+                        <div >
+                            <h1>
+                                Explore Auction Results
+                            </h1>
+                        </div>
+                        <div>
+                            
+                        </div>
                     </div>
-                    <div id='Result-body-div'>
-                        <div id='Result-titel-div'>
-                            <h1>Auction Name :</h1>
-                        </div>
-                        <div id='Result-Contant-div'>
-                            <div id='teams-div'>
-                                <div id='team-name'>
-                                    <h2>Team name : </h2>
-                                </div>
-                                <div id='team-content'>
-                                    <p>players count : </p>
-                                    <p>balance amount :</p>
-                                    <p>Total amount :</p>
-                                </div>
-                            </div>
-                            <div id='teams-div'>
-                                <div id='team-name'>
-                                    <h2>Team name : </h2>
-                                </div>
-                                <div id='team-content'>
-                                    <p>players count : </p>
-                                    <p>balance amount :</p>
-                                    <p>Total amount :</p>
-                                </div>
-                            </div>
-                            <div id='teams-div'>
-                                <div id='team-name'>
-                                    <h2>Team name : </h2>
-                                </div>
-                                <div id='team-content'>
-                                    <p>players count : </p>
-                                    <p>balance amount :</p>
-                                    <p>Total amount :</p>
-                                </div>
-                            </div>
+                    <div id='my-body-div'>
+                        {
+                            auctionData.map((element, index) => {  
+                                if (element.auction_status === "pending") {
+                                    return
+                                }
+                                const auction_date = Number(element.date);
+                                const timeString = element.time;
 
-                        </div>
+                                if (isNaN(auction_date)) {
+                                    console.log("Invalid Date:", element.date);
+                                }
+
+                                const dateObj = new Date(auction_date);
+                                const day = dateObj.getDate().toString().padStart(2, '0');
+                                const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+                                const year = dateObj.getFullYear();
+                                const formattedDate = `${day}-${month}-${year}`;
+
+                                return (
+                                    <div className='result-auction-div' key={index}  onClick={() => handleTeam(index, element)} style={{cursor:"pointer"}}>
+                                        <div className='auction-div-head'>
+                                            <h1>{element.auction_name}</h1>
+                                            <div>
+                                                <time dateTime={dateObj.toISOString()}>{formattedDate}   {timeString}</time>
+                                            </div>
+                                            <p>
+                                                Auction State :
+                                                {element.auction_status === "pending" ? (
+                                                    <b style={{ color: "orange" }}>{" " + element.auction_status}</b>
+                                                ) : (
+                                                    <b style={{ color: "green" }}>{" " + element.auction_status}</b>
+                                                )}
+                                            </p>
+                                        </div>
+                                        <div className='auction-result-div-body'>
+                                            <div>
+                                                <p>Base Bid: {element.base_bit}</p>
+                                                <p>Bid Increment: {element.bit_increse_by}</p>
+                                            </div>
+                                            <div>
+                                                <p>Max Player: {element.max_player}</p>
+                                                <p>Min Player: {element.min_player}</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                );
+                            })
+                        }
                     </div>
                 </div>
             </div>
         </>
     )
 }
-
 export default AuctionResult
+

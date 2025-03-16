@@ -32,7 +32,7 @@ export const NavBar = () => {
         setUser(null);
         localStorage.removeItem("user");
         setShowDropdown(false);
-        navigate("/home");
+        navigate("/");
     };
 
     useEffect(() => {
@@ -55,7 +55,7 @@ export const NavBar = () => {
                     <Link to="/Reault" className="link">Explore Auction</Link>
                 </button>
                 <button className="btn" style={{border:"none"}}>
-                    <Link to="/Home" className="link" >Home</Link>
+                    <Link to="/" className="link" >Home</Link>
                 </button>
                 {user ? (
                     <div className="profile-container">

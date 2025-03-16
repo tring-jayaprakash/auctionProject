@@ -70,7 +70,7 @@
     height: 45px;
     border-radius: 10px;
     border: none;
-    background-color: #132E35;
+    background-color: #0E846C;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -79,6 +79,6 @@
 
 #log_btn:hover {
     background-color: white;
-    color: #132E35;
-    border: 1px solid #132E35;
+    color: #0E846C;
+    border: 1px solid #0E846C;
 }

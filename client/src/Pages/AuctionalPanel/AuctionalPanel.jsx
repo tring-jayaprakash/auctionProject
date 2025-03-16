@@ -8,6 +8,7 @@ import { GlobalContext } from '../../context/GlobalContext'
 
 
 const AuctionalPanel = () => {
+    const url = import.meta.env.VITE_GRAPHQL_URL
 
     const navigator = useNavigate()
 
@@ -27,6 +28,7 @@ const AuctionalPanel = () => {
     const [endAuction, setEndAuction] = useState(true)
     const [bidCheck, setBitCheck] = useState("")
 
+    
 
 
     useEffect(() => {
@@ -75,7 +77,7 @@ const AuctionalPanel = () => {
                         }     
                     `
             try {
-                const response = await axios.post("http://localhost:2500/graphql", { query })
+                const response = await axios.post(url, { query })
                 const condetion = response.data.data.getAuctionByauction_id
                 console.log(condetion);
                 // setStartAuction(condetion)
@@ -101,7 +103,7 @@ const AuctionalPanel = () => {
             `
 
             try {
-                const response = await axios.post("http://localhost:2500/graphql", { query })
+                const response = await axios.post(url, { query })
 
                 if (response.data.errors) {
                     toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 })
@@ -137,7 +139,7 @@ const AuctionalPanel = () => {
             `
 
             try {
-                const response = await axios.post("http://localhost:2500/graphql", { query });
+                const response = await axios.post(url, { query });
 
                 if (response.data.errors) {
                     toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
@@ -171,7 +173,7 @@ const AuctionalPanel = () => {
             `
 
             try {
-                const response = await axios.post("http://localhost:2500/graphql", { query });
+                const response = await axios.post(url, { query });
 
                 if (response.data.errors) {
                     toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
@@ -261,7 +263,7 @@ const AuctionalPanel = () => {
                 `;
         
                 try {
-                const response = await axios.post("http://localhost:2500/graphql", { query });
+                const response = await axios.post(url, { query });
                 
                 if (response.data.errors) {
                     toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
@@ -332,7 +334,7 @@ const AuctionalPanel = () => {
                 }
                 `;
                 try {
-                    const response = await axios.post("http://localhost:2500/graphql", { query });
+                    const response = await axios.post(url, { query });
 
                     if (response.data.errors) {
                         toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
@@ -352,14 +354,14 @@ const AuctionalPanel = () => {
                 }
                 `;
                 try {
-                    const response = await axios.post("http://localhost:2500/graphql", { query });
+                    const response = await axios.post(url, { query });
 
                     if (response.data.errors) {
                         toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
                         return;
                     }
                     console.log("Budget updated:", response.data);
-                    toast.success("Budget updated successfully!", { position: "top-right", autoClose: 1000 });
+                    toast.success("player sold out successfully!", { position: "top-right", autoClose: 1000 });
                 } catch (error) {
                     console.error("Error updating budget:", error);
                     toast.error("Failed to update budget. Please try again.", { position: "top-right", autoClose: 2000 });

@@ -1,63 +1,142 @@
-#Result-main-div{
-    border: 1px solid rgb(12, 12, 12);
-    background-color: #F3F1F2;
-    height: 100%;
-    width: 100%;
-    padding: 100px 20px  0 20px;
+#result-main-div {
+    background-color: white;
+    border: 1px solid  black;
+    min-height: 91.5vh;
+    width: 90%;
+    padding: 0 76px;
+    margin-top: 60px;
+    /* margin-left: 278px; */
+    transition: all 0.3s ease-in-out;
 }
-#Result-inner-div{
-    height: 99.7%;
+
+#my-inner-div {
+    height: 99.5%;
 }
-#Result-header-div{
+
+
+#result-header-div {
     color: #132E35;
-    border-bottom: 1px solid black;
+    border-bottom: 2px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 8%;
     margin-bottom: 10px;
-}
-#Result-body-div{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    height: 90.1%;
+    height: 50px;
 }
 
-#Result-titel-div{
+#my-header-div > div {
+    width: 50%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 10%;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.288);
+    justify-content: end;
 }
 
-#Result-Contant-div{
-    height: 90%;
-    padding: 20px;
+#my-body-div {
+    height: 86%;
     display: grid;
-    grid-template-columns: auto auto;
-    grid-template-rows: auto auto auto auto auto auto;
-    gap: 20px;
-    
-}
-
-#teams-div{
-    height: 80px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.288);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
     padding: 10px;
-    cursor: pointer;
 }
 
-#team-name{
+.result-auction-div {
+    height: 200px;
+    width: 300px;
+    border-radius: 10px;
+    box-shadow:  1px 1px 10px 1px rgba(0, 0, 0, 0.308);
+    background-color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 10px;
+}
+
+.result-auction-div:hover {
+    transform: scale(1.05);
+    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.4);
+}
+
+.auction-div-head {
+    height: 50%;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: white;
+    margin-top: 5px;
+}
+.auction-result-div-body > div{
+    /* border: 1px solid black; */
+    display: flex;
+    gap: 10px;
+}
+
+
+.auction-result-div-body {
+    height: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid black;
-    height: 30%;
+    flex-direction: column;
+    gap: 20px;
 }
 
-#team-content{
-    height: 67%;
+/* .auction-div-footer {
+    background-color: #DDE1E6;
+    border-radius: 5px;
+    height: 12%;
+    padding-top: 8px;
+    display: flex;
+} */
+
+.auction-div-footer > div {
+    border-radius: 5px;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 }
 
+.auction-div-body > div {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.auction-div-footer > div > p {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.auction-div-footer > div > p:hover {
+    color: #007bff;
+}
+
+@media (max-width: 1024px) {
+    #my-main-div {
+        margin-left: 0;
+        padding: 0 10px;
+    }
+
+    #my-body-div {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    #my-header-div {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    #my-body-div {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .auction-div {
+        width: 100%;
+        height: auto;
+    }
+}
