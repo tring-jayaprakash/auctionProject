@@ -134,13 +134,8 @@ const AuctionResult = () => {
             }
         `;
 
-        // const query = GET_TEAM_BY_AUCTION_ID
-        // const variables = { user_id: Number(jsonUser.user_id) };
-
-
         try {
             const response = await axios.post(url, { query });
-            // const response = await axios.post("http://localhost:2500/graphql", { query, variables });
 
             if (response.data.errors) {
                 toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
@@ -158,7 +153,6 @@ const AuctionResult = () => {
 
 
     async function fetchPlayers(element) {
-        // const variable = {auction_id : Number(element.auction_id)}
         const query = `
             query {
                 getPlayersByAuction(auction_id: ${element.auction_id}) {
@@ -174,10 +168,8 @@ const AuctionResult = () => {
                 }
             }
         `;
-        // const query = GET_PLAYERS_BY_AUCTION;
 
         try {
-            // const response = await axios.post(url, { query , variable });
             const response = await axios.post(url, { query });
 
             if (response.data.errors) {

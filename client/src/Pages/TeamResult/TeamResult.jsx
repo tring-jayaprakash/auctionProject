@@ -215,9 +215,6 @@ const TeamResult = () => {
                             <h1>Teams Result</h1>
                         </div>
                         <div>
-                            {/* <button id='add-bt' onClick={() => setTeamFlag(!teamFlag)}>
-                                <b>+  ADD</b>
-                            </button> */}
                         </div>
                     </div>
                     <div id='team-body-div'>

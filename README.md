@@ -1,5 +1,5 @@
 ## Auction System
-An online auction system where users can bid on items in real-time.
+An online auction system where users can bid on players in real-time.
 
 # Tech Stack
 

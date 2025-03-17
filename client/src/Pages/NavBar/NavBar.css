@@ -10,13 +10,10 @@
     top: 0;
     left: 0;
     z-index: 1000;
-    transition: all 0.3s ease-in-out;
-}
-
-#nav.scrolled {
-    background-color: #0F2228;
+    transition: 0.3s ;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
+
 
 #logo {
     color: white;
@@ -89,7 +86,7 @@
     color: black;
     text-align: center;
     cursor: pointer;
-    transition: background 0.3s;
+    transition:  0.3s;
 }
 
 .dropdown-item:hover {
@@ -102,16 +99,6 @@
     width: 100%;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 @media (max-width: 768px) {
     #nav {

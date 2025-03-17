@@ -8,7 +8,7 @@ function App() {
 
   return (
     <>
-      {/* <CombinedComponents /> */}
+      <h1>App</h1>
     </>
   )
 }

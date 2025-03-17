@@ -61,10 +61,10 @@ const MyAuction = () => {
         console.log(id);
         const variables = { auction_id: id };
 
-        const query =DELETE_AUCTION
+        const query = DELETE_AUCTION
 
         try {
-            const response = await axios.post(url, { query, variables});
+            const response = await axios.post(url, { query, variables });
 
             if (response.data.errors) {
                 console.log(response.data.errors[0].message)
@@ -113,13 +113,10 @@ const MyAuction = () => {
             }
         `;
 
-        // const query = GET_TEAM_BY_AUCTION_ID
-        // const variables = { user_id: Number(jsonUser.user_id) };
 
 
         try {
             const response = await axios.post(url, { query });
-            // const response = await axios.post("http://localhost:2500/graphql", { query, variables });
 
             if (response.data.errors) {
                 toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
@@ -137,7 +134,6 @@ const MyAuction = () => {
 
 
     async function fetchPlayers(element) {
-        // const variable = {auction_id : Number(element.auction_id)}
         const query = `
             query {
                 getPlayersByAuction(auction_id: ${element.auction_id}) {
@@ -150,14 +146,13 @@ const MyAuction = () => {
                     form_number
                     player_style
                     team_id
+                    bid_amount
                 }
             }
         `;
-        // const query = GET_PLAYERS_BY_AUCTION;
 
         try {
-            // const response = await axios.post(url, { query , variable });
-            const response = await axios.post(url, { query  });
+            const response = await axios.post(url, { query });
 
             if (response.data.errors) {
                 toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
@@ -215,7 +210,10 @@ const MyAuction = () => {
             const budget = element.base_bit * teamData.length * playerData.length
             const finalBudget = budget + budget * 50 / 100
             await updateTeamBudget(element, finalBudget);
-
+            console.log(teamData.length);
+            console.log(minPlayer);
+            console.log(playerData.length);
+            
             if (teamData.length * minPlayer <= playerData.length) {
                 const auctionDate = new Date(Number(element.date));
                 const [hours, minutes, seconds] = element.time.split(":").map(Number);
@@ -282,9 +280,9 @@ const MyAuction = () => {
                                             <p>
                                                 Auction State :
                                                 {element.auction_status === "pending" ? (
-                                                    <b style={{ color: "orange" }}>{" "+element.auction_status}</b>
+                                                    <b style={{ color: "orange" }}>{" " + element.auction_status}</b>
                                                 ) : (
-                                                    <b style={{ color: "green" }}>{" "+element.auction_status}</b>
+                                                    <b style={{ color: "green" }}>{" " + element.auction_status}</b>
                                                 )}
                                             </p>
                                         </div>

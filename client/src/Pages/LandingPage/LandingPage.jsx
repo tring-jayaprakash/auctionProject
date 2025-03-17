@@ -3,18 +3,17 @@ import "./LandingPage.css";
 import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
-    const [isHovered, setIsHovered] = useState(false);
     const navigator = useNavigate()
     const handleExplore = ()=>{
         navigator('/Reault')
     }
     return (
         <div className="home-container">
-            <div className="hero">
-                <h1 className="hero-title">
+            <div className="landing">
+                <h1 className="landing-title">
                     <span className="highlight">Bid</span>. Win. Own.
                 </h1>
-                <p className="hero-subtitle">
+                <p className="landing-subtitle">
                     Join the most exciting auction platform and grab amazing deals in real time.
                 </p>
                 <button 

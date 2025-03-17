@@ -50,6 +50,7 @@ const PlayerResult = () => {
                                 form_number
                                 player_style
                                 team_id
+                                bid_amount
                             }
                         }
                     `
@@ -80,6 +81,7 @@ const PlayerResult = () => {
                             form_number
                             player_style
                             team_id
+                            bid_amount
                         }
                       }`
                 try {
@@ -141,6 +143,7 @@ const PlayerResult = () => {
                         form_number
                         team_id
                         auction_id
+                        bid_amount
                     }
                 }
             `;
@@ -188,6 +191,7 @@ const PlayerResult = () => {
                     form_number
                     team_id
                     auction_id
+                    bid_amount
                   }
                 }
             `;
@@ -199,9 +203,8 @@ const PlayerResult = () => {
                     return;
                 }
 
-                // setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
                 setPlayers((prevPlayers) => [...prevPlayers, response.data.data.addPlayer]);
-
+                
                 toast.success("Player Added Successfully", { position: "top-right", autoClose: 1000 });
                 reset();
 
@@ -249,7 +252,6 @@ const PlayerResult = () => {
                 return;
             }
 
-            // setPlayers((prevPlayers) => prevPlayers.filter((f) => f.player_id != player.player_id))
             setPlayers((prevPlayers) => prevPlayers.filter((f) => f.player_id !== player.player_id));
 
             toast.success("Player deleted successfully", { position: "top-right", autoClose: 1000 });
@@ -349,13 +351,9 @@ const PlayerResult = () => {
                                             <th>Sno</th>
                                             <th>Name</th>
                                             <th>Last name</th>
-                                            {/* <th>Phone</th> */}
                                             <th>Age</th>
                                             <th>Style</th>
-                                            {/* {
-                                                !teamId.team_id &&
-                                                <th>Actions</th>
-                                            } */}
+                                            <th>bid amount</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbody">
@@ -364,17 +362,9 @@ const PlayerResult = () => {
                                                 <td>{index + 1}</td>
                                                 <td>{player.player_name}</td>
                                                 <td>{player.father_name || "N/A"}</td>
-                                                {/* <td>{player.player_ph_number || "N/A"}</td> */}
                                                 <td>{player.age || "N/A"}</td>
                                                 <td>{player.player_style || "N/A"}</td>
-
-                                                {/* {
-                                                    !teamId.team_id &&
-                                                    < td id="action">
-                                                        <AiFillEdit size={20} className="edit-icon" onClick={() => handleEdit(player, index)} style={{ cursor: "pointer" }} />
-                                                        <MdDeleteForever size={20} className="delete-icon" onClick={() => handleDelete(player, index)} style={{ cursor: "pointer" }} />
-                                                    </td>
-                                                } */}
+                                                <td>{player.bid_amount || "N/A"}</td>
                                             </tr>
                                         ))}
                                     </tbody>

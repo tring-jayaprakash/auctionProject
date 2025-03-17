@@ -80,6 +80,7 @@ const Player = () => {
                             form_number
                             player_style
                             team_id
+                            bid_amount
                         }
                       }`
                 try {
@@ -141,6 +142,7 @@ const Player = () => {
                         form_number
                         team_id
                         auction_id
+                        bid_amount
                     }
                 }
             `;
@@ -188,6 +190,7 @@ const Player = () => {
                     form_number
                     team_id
                     auction_id
+                    bid_amount
                   }
                 }
             `;
@@ -363,8 +366,9 @@ const Player = () => {
                                             <th>Age</th>
                                             <th>Style</th>
                                             {
-                                                !teamId.team_id &&
-                                                <th>Actions</th>
+                                                !teamId.team_id ?
+                                                <th>Actions</th> :
+                                                <th>bid amount</th>
                                             }
                                         </tr>
                                     </thead>
@@ -379,11 +383,13 @@ const Player = () => {
                                                 <td>{player.player_style || "N/A"}</td>
 
                                                 {
-                                                    !teamId.team_id &&
+                                                    !teamId.team_id ?
                                                     < td id="action">
                                                         <AiFillEdit size={20} className="edit-icon" onClick={() => handleEdit(player, index)} style={{ cursor: "pointer" }} />
                                                         <MdDeleteForever size={20} className="delete-icon" onClick={() => handleDelete(player, index)} style={{ cursor: "pointer" }} />
                                                     </td>
+                                                    :
+                                                    <td>{player.bid_amount || "N/A"}</td>
                                                 }
                                             </tr>
                                         ))}

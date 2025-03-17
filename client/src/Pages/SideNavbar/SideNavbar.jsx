@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../context/GlobalContext";
-import { GiHamburgerMenu } from "react-icons/gi"; // Import Hamburger Menu Icon
+import { GiHamburgerMenu } from "react-icons/gi"; 
 import "./SideNavbar.css";
 
 const SideNavbar = () => {
   const { user, setUser, theme } = useContext(GlobalContext);
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar State
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
   const handleLogout = () => {
     setUser(null);

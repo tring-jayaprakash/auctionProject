@@ -49,6 +49,7 @@
             player_style : String
             team_id : String
             auction_id : Int
+            bid_amount:Int
         }
 
         type Query {

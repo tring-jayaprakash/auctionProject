@@ -42,7 +42,6 @@ const AuctionalPanel = () => {
             setBidIncrese(storedAuction.base_bit);
 
             console.log(storedAuction);
-            // console.log(!onePlayer);
         }
 
 
@@ -80,7 +79,6 @@ const AuctionalPanel = () => {
                 const response = await axios.post(url, { query })
                 const condetion = response.data.data.getAuctionByauction_id
                 console.log(condetion);
-                // setStartAuction(condetion)
             } catch (error) {
                 console.log(error.message)
             }
@@ -197,7 +195,6 @@ const AuctionalPanel = () => {
 
 
     useEffect(() => {
-        // console.log(count);
         if (count == 1) {
             if (!auctionTeam) return;
             console.log(auctionTeam);
@@ -211,7 +208,6 @@ const AuctionalPanel = () => {
     const handleName = (element, index) => {
         if (start) return
 
-        // setBitCheck
 
         setBitCheck(element.team_short_name)
 
@@ -222,8 +218,6 @@ const AuctionalPanel = () => {
         setBidIncrese((prevBid) => prevBid + auctionPanal.bit_increse_by);
 
 
-        // setBitCheck((prevBid)=> prevBid == element.team_short_name ) return
-        // console.log(bidIncrese);
 
     }
 
@@ -239,15 +233,13 @@ const AuctionalPanel = () => {
         setBidIncrese(auctionPanal.base_bit);
         setTeamName("");
 
-        // if (!auctionPlayer[count]) {
         if (!playerWithNull[count]) {
             toast.info("No more players available", { position: "top-right", autoClose: 2000 });
             return;
         }
 
-        setOnePlayerNull(playerWithNull[count]) //__________________________
-        setOnePlayer(playerWithNull[count]) //__________________________
-        // setOnePlayer(auctionPlayer[count]);
+        setOnePlayerNull(playerWithNull[count]) 
+        setOnePlayer(playerWithNull[count]) 
         setCount(count + 1);
     };
 
@@ -283,18 +275,15 @@ const AuctionalPanel = () => {
 
         console.log(auctionPanal.auction_id);
         
-        // localStorage.removeItem("AuctionPanel")
         navigator('/Dashboard/MyAuction')
     }
 
 
     const handleSold = () => {
-        // if (start) return;
 
         if (bidIncrese > auctionPanal.base_bit) {
             setTeamName("")
             if (!auctionPlayer[count - 1]) {
-                // if (!playerWithNull[count]) {
                 toast.info("Auction ended successfully", { position: "top-right", autoClose: 2000 });
                 return;
             }
