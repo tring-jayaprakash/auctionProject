@@ -14,7 +14,6 @@ const AuctionalPanel = () => {
 
     const { auctionPanal, setAuctionPanal } = useContext(GlobalContext)
     const [start, setStart] = useState(true)
-    const [startAuction, setStartAuction] = useState([]) //fetchAuction
     const [auctionTeam, setAuctionTeam] = useState([]) //fetchTeams
     const [auctionPlayer, setAuctionPlayer] = useState([]) //fetchPlayers
     const [playerWithNull, setPlayerWithNull] = useState([]) //fetchPlayersWithNull
@@ -210,15 +209,11 @@ const AuctionalPanel = () => {
 
 
         setBitCheck(element.team_short_name)
-
         if (bidCheck == element.team_short_name) return
-
+        if (bidCheck > auctionTeam.total_budget) return
         setTeamName(element.team_short_name)
         setTeamIndex(element.team_id)
         setBidIncrese((prevBid) => prevBid + auctionPanal.bit_increse_by);
-
-
-
     }
 
 

@@ -361,7 +361,7 @@ const Player = () => {
                                         <tr>
                                             <th>Sno</th>
                                             <th>Name</th>
-                                            <th>Father</th>
+                                            <th>Last name</th>
                                             <th>Phone</th>
                                             <th>Age</th>
                                             <th>Style</th>

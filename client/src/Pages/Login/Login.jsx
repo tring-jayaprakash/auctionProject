@@ -63,8 +63,6 @@ function Login() {
                     <form onSubmit={handleSubmit(onSubmit)} id="formData">
                         <InputField label="Email" type="email" placeholder="Enter the Email" register={register} name="email" error={errors.email} />
                         <InputField label="Password" type="password" placeholder="Enter the Password" register={register} name="password" error={errors.password} />
-
-
                         <div id="login-box-footer" >
                             <button type="submit" id="log_btn">
                                 <b> Login</b>

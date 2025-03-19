@@ -1,13 +1,12 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../context/GlobalContext";
-import { GiHamburgerMenu } from "react-icons/gi"; 
+import { GiHamburgerMenu } from "react-icons/gi";
 import "./SideNavbar.css";
 
 const SideNavbar = () => {
   const { user, setUser, theme } = useContext(GlobalContext);
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
   const handleLogout = () => {
     setUser(null);
@@ -24,23 +23,9 @@ const SideNavbar = () => {
 
   return (
     <>
-      <div id="hamburgerMenu" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-        <GiHamburgerMenu size={30} color={"black"} />
-      </div>
-
-      <div
-        id="SideNavbar"
-        className={isSidebarOpen ? "open" : "closed"}>
+      <div id="SideNavbar" className={ "closed"}>
         {menuItems.map((item, index) => (
-          <div
-            key={index}
-            className="sideNavbarItem"
-            onClick={() => {
-              navigate(item.path);
-              setIsSidebarOpen(false); 
-            }}
-            style={{ color: theme.sidebarText }}
-          >
+          <div key={index} className="sideNavbarItem" onClick={() => { navigate(item.path) }}>
             <b>{item.name}</b>
           </div>
         ))}

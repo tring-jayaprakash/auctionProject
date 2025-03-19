@@ -28,9 +28,9 @@ const Register = () => {
                 password: userData.user_password,
             };
             console.log(variables);
-            
+
             try {
-                const response = await axios.post(url, {query,variables,});
+                const response = await axios.post(url, { query, variables, });
 
                 console.log(response.data.data.register);
 
@@ -85,7 +85,7 @@ const Register = () => {
                                 {errors.user_city && <p className='error-message'>{errors.user_city.message}</p>}
                             </div>
                         </div>
-                        <div style={{marginTop:"-20px"}}>
+                        <div style={{ marginTop: "-20px" }}>
 
                             <InputField
                                 label="Enter your phone number"
