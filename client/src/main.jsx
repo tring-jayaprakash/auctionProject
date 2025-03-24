@@ -1,12 +1,21 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
 import { CombinedComponents } from './components/CombinedComponents/CombinedComponents.jsx'
+import { ApolloClient, ApolloProvider, InMemoryCache, createHttpLink } from "@apollo/client";
+
+// ✅ Correctly instantiate Apollo Client
+const globalClient = new ApolloClient({
+  link: createHttpLink({
+    uri: "http://localhost:5000/graphql",
+    credentials: "include",
+  }),
+  cache: new InMemoryCache(),
+});
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <CombinedComponents/>
-    {/* <App/> */}
+    {/* <ApolloProvider client={globalClient}> */}
+      <CombinedComponents />
+    {/* </ApolloProvider> */}
   </StrictMode>
 )

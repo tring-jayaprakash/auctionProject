@@ -2,17 +2,15 @@ const { Pool } = require('pg')
 const bcrypt = require('bcryptjs')
 
 
-// const pool = new Pool({
-//     user: "postgres",
-//     host: "localhost",
-//     database: "players-auctions",
-//     password: "1234",
-//     port: 5432,
-// })
+const pool = new Pool({
+    user: "postgres",
+    host: "localhost",
+    database: "players-auctions",
+    password: "1234",
+    port: 5432,
+})
 
 var id;
-
-
 
 
 const root = {
@@ -46,6 +44,7 @@ const root = {
             console.log(user);
             id = user.user_id;
 
+        
             const dehashPassword = await bcrypt.compare(password, user.password)
             console.log(dehashPassword);
             if (!dehashPassword) {

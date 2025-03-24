@@ -8,24 +8,23 @@ const { postgraphile } = require('postgraphile');
 require("dotenv").config();
 
 const app = express();
-
 app.use(corsConfig);
 
-// app.use(GRAPHQL_PATH, graphqlHTTP({
-//     schema: schema,
-//     rootValue: root,
-//     graphiql: true,
-// }));
+app.use(GRAPHQL_PATH, graphqlHTTP({
+    schema: schema,
+    rootValue: root,
+    graphiql: true,
+}));
 
-app.use(
-    postgraphile(process.env.DATABASE_URL, "public", {
-      watchPg: true, // Automatically update schema changes
-      graphiql: true, // Enable GraphiQL interface
-      enhanceGraphiql: true, // Better UI for GraphiQL
-      dynamicJson: true, // Return JSON fields as objects
-      enableCors: true, // Allow CORS
-    })
-  );
+// app.use(
+//     postgraphile(process.env.DATABASE_URL, "public", {
+//       watchPg: true, // Automatically update schema changes
+//       graphiql: true, // Enable GraphiQL interface
+//       enhanceGraphiql: true, // Better UI for GraphiQL
+//       dynamicJson: true, // Return JSON fields as objects
+//       enableCors: true, // Allow CORS
+//     })
+//   );
   
 
 app.listen(PORT, () => {

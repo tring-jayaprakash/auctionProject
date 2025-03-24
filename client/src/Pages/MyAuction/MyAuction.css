@@ -12,6 +12,7 @@
     height: 99.5%;
 }
 
+
 #my-header-div {
     color: #132E35;
     border-bottom: 2px solid black;
@@ -34,6 +35,7 @@
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 10px;
     padding: 10px;
+    line-height:2px;
 }
 
 .auction-div {

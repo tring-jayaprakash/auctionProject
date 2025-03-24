@@ -121,7 +121,7 @@
     cursor: pointer;
 }
 
-.card-div-body {
+/* .card-div-body {
     background-color: white;
     height: 80%;
     display: flex;
@@ -129,7 +129,7 @@
     align-items: center;
     flex-direction: column;
     gap: 10px;
-}
+} */
 
 .card-div-footer {
     background-color: #DDE1E6;
