@@ -10,12 +10,7 @@ import InputField from "../../components/InputField";
 const Register = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const navigate = useNavigate();
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm();
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
     const onSubmit = async (userData) => {
         async function registerUser() {
@@ -78,7 +73,7 @@ const Register = () => {
                             <div className='input-group'>
                                 <label htmlFor="">Enter your city:</label>
                                 <input
-                                    {...register("user_city", { required: "city is required" })}
+                                    {...register("user_city", { required: "city is required"})}
                                     placeholder="Enter your city"
                                     className='input'
                                 />
@@ -89,7 +84,7 @@ const Register = () => {
 
                             <InputField
                                 label="Enter your phone number"
-                                type="number"
+                                type="tel"
                                 placeholder="Enter your phone number"
                                 register={register}
                                 name="user_phone"
