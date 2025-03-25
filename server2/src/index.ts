@@ -28,10 +28,14 @@ app.use(
     appendPlugins: [AuthPlugin],
     additionalGraphQLContextFromRequest: async (req) => {
       // console.log("request,",req.headers.authorization);
+      console.log("request operation", req?.body?.operationName);
+
       const authHeader = req.headers.authorization || "";
       const token = authHeader.split(" ")[1];
 
-      if (!token) return { user: null };
+      if (!token) return {
+        user: null
+      };
 
       try {
         const decodedUser = jwt.verify(token, process.env.SECRET_KEY!);

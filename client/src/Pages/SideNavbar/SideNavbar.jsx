@@ -10,7 +10,7 @@ const SideNavbar = () => {
 
   const handleLogout = () => {
     setUser(null);
-    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     navigate("/home");
   };
 

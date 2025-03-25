@@ -1,4 +1,25 @@
 
+import { gql } from "@apollo/client";
+
+export const GET_AUCTION_BY_USER = gql`
+    query {
+        getAuctionByUser {
+            auctionId
+            auctionName
+            date
+            time
+            baseBid
+            bidIncreaseBy
+            maxPlayer
+            minPlayer
+            auctionStatus
+            creatorUserId
+        }
+    }
+`;
+
+
+
 export const LOGIN_USER_QUERY = `
     query LoginUser( $email: String!, $password: String! ) 
     {

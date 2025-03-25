@@ -2,8 +2,12 @@ import { gql } from "postgraphile";
 
 export const schema =
     gql`
+
+
+
             extend type Query {
                 getUserProfile: User
+                getAuctionByUser:[Auction]
             }
 
             extend type Mutation{

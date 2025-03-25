@@ -6,12 +6,17 @@ export const getUserProfileService = async (_parent: any, _args: any, context: a
         throw new Error("Unauthorized");
     }
 
+    // console.log(context);
+    
+    console.log(_args);
+    
     const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOne({
         where: { user_id: context.user.user_id },
         select: ["user_id", "user_name", "city", "phone_number", "email"]
     });
-    // console.log(user);
+    console.log(user);
+    
     if (!user) {
         throw new Error("User not found");
     }

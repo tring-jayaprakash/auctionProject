@@ -10,16 +10,18 @@ export const NavBar = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = localStorage.getItem("token");
+        // console.log(storedUser);
+        
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            setUser(storedUser);
         }
         setShowDropdown(false);
     }, []);
 
     const handleLogout = () => {
         setUser(null);
-        localStorage.removeItem("user");
+        localStorage.removeItem("token");
         setShowDropdown(false);
         navigate("/");
     };

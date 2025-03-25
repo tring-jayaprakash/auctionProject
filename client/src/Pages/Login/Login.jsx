@@ -8,52 +8,83 @@ import axios from "axios";
 import { GlobalContext } from "../../context/GlobalContext";
 import { LOGIN_USER_QUERY } from "../../../graphql/query/userQuery";
 import InputField from "../../components/InputField";
+import { gql, useMutation } from "@apollo/client";
 
 
 function Login() {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const navigate = useNavigate();
-    const {  user, setUser } = useContext(GlobalContext)
+    const { user, setUser } = useContext(GlobalContext)
     const { register, handleSubmit, formState: { errors } } = useForm();
 
 
-    const onSubmit = async (data) => {
+    const loginSchema = gql`
+    mutation MyMutation($email: String = "", $password: String = "") {
+        login(email: $email, password: $password)
+      }
+    `
 
-        const query = LOGIN_USER_QUERY;
-        const variables = {
-            email: data.email,
-            password: data.password,
-        };
+    const [loginUser, { loading, error }] = useMutation(loginSchema)
 
-        console.log("Sending variables:", variables);
+    const onSubmit = async (user) => {
         try {
-            const response = await axios.post(url,{ query, variables });
+            const { email, password } = user;
+            console.log(email);
+            console.log(password);
 
-            console.log("Response:", response);
-            if (response.data.errors) {
-                toast.warn("Invalid email or password", { position: "top-right", autoClose: 1000 });
-                return;
-            }
-
-            const userData = response.data.data.login;
-
-            if (userData) {
-                setUser(userData);
-                localStorage.setItem("user", JSON.stringify(userData));
-
+            const res = await loginUser({
+                variables: {
+                    email,
+                    password
+                }
+            })
+            if (res.data.login) {
+                console.log("response", res.data.login)
+                localStorage.setItem("token", res.data.login)
+                setUser(user);
                 toast.success("Login successful..!", { position: "top-right", autoClose: 1000 });
                 setTimeout(() => navigate("/Dashboard"), 1000);
-            } else {
-                toast.warn("Invalid email or password", { position: "top-right", autoClose: 1000 });
             }
-
-        } catch (error) {
-            console.error("Login Error:", error);
-            toast.error("Login failed. Please try again.", { position: "top-right", autoClose: 2000 });
+        } catch (err) {
+            console.table("err", err)
+            alert("cannot login")
         }
-
-
     }
+
+    // const onSubmit = async (data) => {
+    //     const query = LOGIN_USER_QUERY;
+    //     const variables = {
+    //         email: data.email,
+    //         password: data.password,
+    //     };
+
+    //     console.log("Sending variables:", variables);
+    //     try {
+    //         const response = await axios.post(url, { query, variables });
+
+    //         console.log("Response:", response);
+    //         if (response.data.errors) {
+    //             toast.warn("Invalid email or password", { position: "top-right", autoClose: 1000 });
+    //             return;
+    //         }
+
+    //         const userData = response.data.data.login;
+
+    //         if (userData) {
+    //             setUser(userData);
+    //             localStorage.setItem("user", JSON.stringify(userData));
+
+    //             toast.success("Login successful..!", { position: "top-right", autoClose: 1000 });
+    //             setTimeout(() => navigate("/Dashboard"), 1000);
+    //         } else {
+    //             toast.warn("Invalid email or password", { position: "top-right", autoClose: 1000 });
+    //         }
+
+    //     } catch (error) {
+    //         console.error("Login Error:", error);
+    //         toast.error("Login failed. Please try again.", { position: "top-right", autoClose: 2000 });
+    //     }
+    // }
 
     return (
         <>
