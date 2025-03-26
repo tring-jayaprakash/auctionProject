@@ -14,6 +14,7 @@ export const GET_AUCTION_BY_USER = gql`
             minPlayer
             auctionStatus
             creatorUserId
+            sportsType
         }
     }
 `;

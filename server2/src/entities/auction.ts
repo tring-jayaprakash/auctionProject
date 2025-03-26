@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { User } from "./User";
 
-enum Status {
+export  enum Status {
     PENDING = "pending",
     COMPLETED = "completed"
 }
@@ -13,6 +13,9 @@ export class Auction {
 
     @Column()
     auction_name!: string;
+
+    @Column()
+    sports_type!:string;
 
     @Column({ type: "date" })
     date!: Date;

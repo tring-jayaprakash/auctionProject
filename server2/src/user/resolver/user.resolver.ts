@@ -1,7 +1,3 @@
-import { AppDataSource } from "../../db/data-source";
-import { User } from "../../entities/User";
-import bcrypt from 'bcryptjs'
-import jwt from "jsonwebtoken"
 import { loginService } from "../service/login.service";
 import { registerService } from "../service/register.service";
 import { getUserProfileService } from "../service/getUserProfile.service";
@@ -22,8 +18,12 @@ export const resolver = {
         },
         register: async (_parent: any, args: any) => {
             return registerService(args)
-        }
-
+        },
+        // createAuctionForCheck:async(_parent:any,args:any,context: any)=>{
+        //     console.log(args);
+        //     console.log(context.user);  
+        //     return "checked sucessfully"
+        // }
     }
 }
 

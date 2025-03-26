@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { postgraphile } from 'postgraphile';
 import { AuthPlugin } from "./user/plugins/AuthPlugin";
 import jwt from "jsonwebtoken"
+import { AuctionPlugin } from "./auctionModule/plugins/AuctionPlugin";
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ app.use(
     enhanceGraphiql: true,
     dynamicJson: true,
     enableCors: true,
-    appendPlugins: [AuthPlugin],
+    appendPlugins: [AuthPlugin,AuctionPlugin],
     additionalGraphQLContextFromRequest: async (req) => {
       // console.log("request,",req.headers.authorization);
       console.log("request operation", req?.body?.operationName);

@@ -12,7 +12,6 @@ export const NavBar = () => {
     useEffect(() => {
         const storedUser = localStorage.getItem("token");
         // console.log(storedUser);
-        
         if (storedUser) {
             setUser(storedUser);
         }

@@ -14,7 +14,7 @@ export const getAuctionByUserService = async (_parent: any, _args: any, context:
         where: { user_id: context.user.user_id },
         select: ["user_id", "user_name", "city", "phone_number", "email"]
     });
-
+    
     if (!user) {
         throw new Error("User not found");
     }
@@ -35,6 +35,7 @@ export const getAuctionByUserService = async (_parent: any, _args: any, context:
         maxPlayer: a.max_player,
         minPlayer: a.min_player,
         auctionStatus: a.auction_status,
+        sportsType:a.sports_type,
         creatorUserId: a.creator.user_id
     }));
 };
