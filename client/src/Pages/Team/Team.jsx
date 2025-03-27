@@ -2,11 +2,70 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './Team.css'
 import { AiFillEdit } from 'react-icons/ai';
 import { MdDeleteForever } from 'react-icons/md';
 import { GlobalContext } from '../../context/GlobalContext';
+import { gql, useMutation, useQuery } from '@apollo/client';
+
+const GET_TEAM_BY_AUCTION_ID = gql`
+query MyQuery($auctionAuctionId: Int = 0) {
+  allTeams(condition: {auctionAuctionId: $auctionAuctionId}) {
+    edges {
+      node {
+        auctionAuctionId
+        balanceBudget
+        teamName
+        teamShortName
+        totalBudget
+        teamId
+      }
+    }
+  }
+}
+
+`
+const CREATE_TEAM = gql`
+mutation CreateTeam($auctionAuctionId: Int!, $teamName: String!, $teamShortName: String!) {
+  createTeam(
+    input: { team: { teamName: $teamName, teamShortName: $teamShortName, auctionAuctionId: $auctionAuctionId } }
+  ) {
+    team {
+      teamId
+      teamName
+      teamShortName
+      auctionAuctionId
+    }
+  }
+}
+`;
+
+const UPDATE_TEAM = gql`
+mutation MyMutation($teamName: String!, $teamShortName: String!, $teamId: Int!) {
+  updateTeamByTeamId(
+    input: { teamPatch: { teamShortName: $teamShortName, teamName: $teamName }, teamId: $teamId }
+  ) {
+    team {
+      teamId
+      teamName
+      teamShortName
+      auctionAuctionId
+    }
+  }
+}
+`;
+
+const DELETE_TEAM = gql`
+    mutation MyMutation($teamId: Int!) {
+      deleteTeamByTeamId(input: {teamId: $teamId}) {
+        clientMutationId
+        deletedTeamId
+      }
+    }
+
+`
+
 
 const Team = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
@@ -16,142 +75,136 @@ const Team = () => {
     const [eInde, setEIndex] = useState(null)
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
     const [teamFlag, setTeamFlag] = useState(false)
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [createTeam] = useMutation(CREATE_TEAM);
+    const [updateTeam] = useMutation(UPDATE_TEAM);
+    const [deleteTeam] = useMutation(DELETE_TEAM);
 
     useEffect(() => {
-
-        let storedAuction = localStorage.getItem("teamAuction");
-        if (storedAuction) {
-            setTeamAuction(JSON.parse(storedAuction));
+        const params = new URLSearchParams(location.search);
+        const auctionIdFromUrl = params.get("auctionId");
+        if (auctionIdFromUrl) {
+            setTeamAuction({ auctionId: parseInt(auctionIdFromUrl) });
         }
-
     }, []);
 
-    async function fetchTeams(id) {
-        if (!id) return;
-        const query = `
-            query {
-                getTeamsByAuction(auction_id: ${id}) {
-                    team_id
-                    team_logo
-                    team_name
-                    team_short_name
-                    auction_id
-                    budget
-                    total_budget
-                }
-            }
-        `;
-
-        try {
-            const response = await axios.post(url, { query })
-
-            if (response.data.errors) {
-                toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 })
-                return;
-            }
-            console.log(response.data.data.getTeamsByAuction);
-            setTeams(response.data.data.getTeamsByAuction)
-        } catch (error) {
-            console.error("Error fetching teams:", error)
-            toast.error("Failed to fetch teams.", { position: "top-right", autoClose: 2000 })
-        }
-    }
-
-
-
-
     useEffect(() => {
-        if (!teamAuction) return
-
-
-        localStorage.setItem("teamAuction", JSON.stringify(teamAuction))
-        const id = teamAuction.auction_id
-
-        fetchTeams(id)
-
+        if (teamAuction?.auctionId) {
+            navigate(`?auctionId=${teamAuction.auctionId}`, { replace: true });
+        }
     }, [teamAuction]);
 
+    const { data: fetchedTeam, loading, error } = useQuery(GET_TEAM_BY_AUCTION_ID, {
+        fetchPolicy: "no-cache",
+        skip: !teamAuction?.auctionId,
+        variables: { auctionAuctionId: teamAuction?.auctionId || 0 }
+    });
+
+    useEffect(() => {
+        if (fetchedTeam?.allTeams) {
+            const formattedTeams = fetchedTeam.allTeams.edges.map(edge => edge.node);
+            console.log(formattedTeams);
+            setTeams(formattedTeams);
+        }
+    }, [fetchedTeam]);
+
+    // async function fetchTeams(id) {
+    //     if (!id) return;
+    //     const query = `
+    //         query {
+    //             getTeamsByAuction(auction_id: ${id}) {
+    //                 team_id
+    //                 team_logo
+    //                 team_name
+    //                 team_short_name
+    //                 auction_id
+    //                 budget
+    //                 total_budget
+    //             }
+    //         }
+    //     `;
+
+    //     try {
+    //         const response = await axios.post(url, { query })
+
+    //         if (response.data.errors) {
+    //             toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 })
+    //             return;
+    //         }
+    //         console.log(response.data.data.getTeamsByAuction);
+    //         setTeams(response.data.data.getTeamsByAuction)
+    //     } catch (error) {
+    //         console.error("Error fetching teams:", error)
+    //         toast.error("Failed to fetch teams.", { position: "top-right", autoClose: 2000 })
+    //     }
+    // }
+
+
+
+
+    // useEffect(() => {
+    // if (!teamAuction) return
+    // localStorage.setItem("teamAuction", JSON.stringify(teamAuction))
+    // const id = teamAuction.auction_id
+
+    // fetchTeams(id)
+    // }, [teamAuction]);
+
+
     const onSubmit = async (teamData) => {
-        const teamDetails = {
-            team_logo: teamData.team_logo || "",
-            team_name: teamData.team_name,
-            team_short_name: teamData.team_short_name,
-            auction_id: parseInt(teamAuction?.auction_id) || null,
-        };
-
         try {
-            let query;
-            if (editIndex) {
+            const teamDetails = {
+                teamName: teamData.team_name.trim(),
+                teamShortName: teamData.team_short_name.trim(),
+                auctionAuctionId: parseInt(teamAuction?.auctionId, 10),
+            };
 
-                query = `
-                    mutation {
-                        updateTeam(
-                            team_id: ${editIndex},
-                            team_logo: "${teamDetails.team_logo}",
-                            team_name: "${teamDetails.team_name}",
-                            team_short_name: "${teamDetails.team_short_name}",
-                            auction_id: ${teamDetails.auction_id}
-                        )
-                         {
-                            team_id
-                            team_logo
-                            team_name
-                            team_short_name
-                            auction_id
-                        }
-                    }
-                `;
-            } else {
-                query = `
-                    mutation {
-                        addTeam(
-                            team_logo: "${teamDetails.team_logo}",
-                            team_name: "${teamDetails.team_name}",
-                            team_short_name: "${teamDetails.team_short_name}",
-                            auction_id: ${teamDetails.auction_id}
-                        ) {
-                            team_id
-                            team_logo
-                            team_name
-                            team_short_name
-                            auction_id
-                        }
-                    }
-                `;
-            }
-
-            const response = await axios.post(url, { query });
-
-            if (response.data.errors) {
-                toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
+            if (!teamDetails.auctionAuctionId) {
+                toast.error("Auction ID is missing", { position: "top-right", autoClose: 2000 });
                 return;
             }
 
-            if (editIndex) {
-                console.log(eInde);
-                console.log(teams[eInde]);
-                console.log(response.data.data.updateTeam);
+            console.log("Sending Data:", teamDetails);
 
+            if (editIndex !== null) {
+                const updateVariables = {
+                    teamId: editIndex,
+                    teamName: teamDetails.teamName,
+                    teamShortName: teamDetails.teamShortName,
+                };
+                console.log(updateVariables);
 
-                setTeams((prevTeam) => prevTeam[eInde] = response.data.data.updateTeam)
-                localStorage.setItem("teamAuction", JSON.stringify(teamAuction))
-                const id = teamAuction.auction_id
-                fetchTeams(id);
-                toast.success("Team Updated Successfully", { position: "top-right", autoClose: 1000 });
+                const res = await updateTeam({ variables: updateVariables });
+
+                if (res.data) {
+                    console.log("Updated Team:", res.data.updateTeamByTeamId.team);
+                    setTeams((prevTeams) =>
+                        prevTeams.map((team) =>
+                            team.teamId === editIndex ? res.data.updateTeamByTeamId.team : team
+                        )
+                    );
+                    toast.success("Team Updated Successfully!", { position: "top-right", autoClose: 1000 });
+                    reset();
+                    setEditIndex(null);
+                    setTeamFlag(false);
+                }
             } else {
+                const res = await createTeam({
+                    variables: teamDetails,
+                });
 
-                setTeams((prevTeams) => [...prevTeams, response.data.data.addTeam]);
-                toast.success("Team Added Successfully", { position: "top-right", autoClose: 1000 });
+                if (res.data) {
+                    console.log("Response Data:", res.data.createTeam.team);
+                    setTeams((prevTeams) => [...prevTeams, res.data.createTeam.team]);
+                    toast.success("Team Created Successfully!", { position: "top-right", autoClose: 1000 });
+                    reset();
+                    setTeamFlag(null);
+                }
             }
-
-            reset();
-            setTeamFlag(false);
-            setEditIndex(null);
-
-        } catch (error) {
-            console.error("Error processing team:", error);
-            toast.error("Operation failed. Please try again.", { position: "top-right", autoClose: 2000 });
+        } catch (err) {
+            console.error("Error:", err);
+            toast.error("Issue in submission", { position: "top-right", autoClose: 2000 });
         }
     };
 
@@ -162,39 +215,25 @@ const Team = () => {
     };
 
     const handleEdit = (index, team) => {
-
         setTeamFlag(true)
         setEIndex(index)
-        setEditIndex(team.team_id)
-        setValue("team_name", team.team_name)
-        setValue("team_short_name", team.team_short_name)
-
+        setEditIndex(team.teamId)
+        setValue("team_name", team.teamName)
+        setValue("team_short_name", team.teamShortName)
     }
 
     const handleDelete = async (index, team) => {
         console.log("Deleting team at index:", index);
-
+        console.log("Deleting team at team:", team.teamId);
         try {
-            const query = `
-                mutation {
-                    deleteTeam(team_id: ${team.team_id})
-                }
-            `;
-
-            const response = await axios.post(url, { query });
-
-            if (response.data.errors) {
-                toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
-                return;
+            const res = await deleteTeam({ variables: { teamId: team.teamId }, fetchPolicy: "no-cache" })
+            if (res.data) {
+                setTeams((prevTeams) => prevTeams.filter((t) => t.teamId !== team.teamId));
+                toast.success("Team Deleted Successfully!", { position: "top-right", autoClose: 1000 });
             }
-
-            setTeams((prevTeams) => prevTeams.filter((t) => t.team_id !== team.team_id));
-
-            toast.success("Team deleted successfully", { position: "top-right", autoClose: 1000 });
-
-        } catch (error) {
-            console.error("Error deleting team:", error);
-            toast.error("Failed to delete team.", { position: "top-right", autoClose: 2000 });
+        } catch (err) {
+            console.error("Error:", err);
+            toast.error("Issue in deleting Auction", { position: "top-right", autoClose: 2000 });
         }
     };
 
@@ -225,23 +264,23 @@ const Team = () => {
 
                             {teams.length > 0 ? (
                                 teams.map((team, index) => (
-                                    <div key={team.team_id} className='card-div'>
+                                    <div key={team.teamId} className='card-div'>
                                         <div className='card-div-body'>
                                             <div>
-                                                <h2>{team.team_short_name}</h2>
+                                                <h2>{team.teamShortName}</h2>
                                             </div>
                                             <div>
-                                                <h3>{team.team_name}</h3>
+                                                <h3>{team.teamName}</h3>
                                             </div>
                                             {
 
-                                                team.budget &&
+                                                team.balanceBudget &&
                                                 <>
                                                     <div>
-                                                        <h4>Balance : {team.budget}</h4>
+                                                        <h4>Balance : {team.balanceBudget}</h4>
                                                     </div>
                                                     <div>
-                                                        <h4>Total Budget : {team.total_budget}</h4>
+                                                        <h4>Total Budget : {team.totalBudget}</h4>
                                                     </div>
                                                 </>
                                             }
@@ -250,7 +289,7 @@ const Team = () => {
                                         <div className='card-div-footer' style={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
                                             {
 
-                                                !team.budget ?
+                                                !team.balanceBudget ?
 
                                                     <div>
                                                         <p>

@@ -5,10 +5,68 @@ import 'react-toastify/dist/ReactToastify.css';
 import './NewAuction.css'
 import axios from 'axios';
 import { data, useNavigate } from 'react-router-dom';
-import { ADD_AUCTION_MUTATION, UPDATE_AUCTION_MUTATION } from '../../../graphql/mutation/userMutation';
+// import { ADD_AUCTION_MUTATION, UPDATE_AUCTION_MUTATION } from '../../../graphql/mutation/userMutation';
 import { GlobalContext } from '../../context/GlobalContext';
 import { gql, useMutation } from '@apollo/client';
 
+
+const CREATE_AUCTION_MUTATION = gql`
+mutation MyMutation($auctionName: String = "", $baseBid: Int = 0, $bidIncreaseBy: Int = 0, $date: Date = "", $maxPlayer: Int = 0, $minPlayer: Int = 0, $sportsType: String = "", $time: Time = "") {
+  createAuctionByUserId(
+    baseBid: $baseBid
+    bidIncreaseBy: $bidIncreaseBy
+    date: $date
+    maxPlayer: $maxPlayer
+    minPlayer: $minPlayer
+    sportsType: $sportsType
+    time: $time
+    auctionName: $auctionName
+  )
+}
+`
+
+const UPDATE_AUCTION_MUTATION = gql`
+mutation UpdateAuction(
+  $auctionId: Int!
+  $auctionName: String!
+  $baseBid: Int!
+  $bidIncreaseBy: Int!
+  $date: Date!
+  $maxPlayer: Int!
+  $minPlayer: Int!
+  $sportsType: String!
+  $time: Time!
+) {
+  updateAuctionByAuctionId(
+    input: {
+      auctionPatch: {
+        auctionName: $auctionName
+        baseBid: $baseBid
+        bidIncreaseBy: $bidIncreaseBy
+        date: $date
+        maxPlayer: $maxPlayer
+        minPlayer: $minPlayer
+        sportsType: $sportsType
+        time: $time
+      }
+      auctionId: $auctionId
+    }
+  ) {
+    auction {
+      auctionId
+      auctionName
+      date
+      time
+      baseBid
+      bidIncreaseBy
+      maxPlayer
+      minPlayer
+      auctionStatus
+      sportsType
+    }
+  }
+}
+`;
 
 
 const NewAuction = () => {
@@ -16,82 +74,10 @@ const NewAuction = () => {
     const navigator = useNavigate()
     const { auction, setAuction } = useContext(GlobalContext)
     const defaultImage = "https://superplayerauction.com/user/static/media/logo-auction.e6b9bfb3.png";
-    const [image, setImage] = useState(defaultImage);
+    // const [image, setImage] = useState(defaultImage);
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
 
 
-    const CREATE_AUCTION_MUTATION = gql`
-    mutation MyMutation($auctionName: String = "", $baseBid: Int = 0, $bidIncreaseBy: Int = 0, $date: Date = "", $maxPlayer: Int = 0, $minPlayer: Int = 0, $sportsType: String = "", $time: Time = "") {
-      createAuctionByUserId(
-        baseBid: $baseBid
-        bidIncreaseBy: $bidIncreaseBy
-        date: $date
-        maxPlayer: $maxPlayer
-        minPlayer: $minPlayer
-        sportsType: $sportsType
-        time: $time
-        auctionName: $auctionName
-      )
-    }
-    `
-
-    const UPDATE_AUCTION_MUTATION = gql`
-    mutation UpdateAuction(
-      $auctionId: Int!
-      $auctionName: String!
-      $baseBid: Int!
-      $bidIncreaseBy: Int!
-      $date: Date!
-      $maxPlayer: Int!
-      $minPlayer: Int!
-      $sportsType: String!
-      $time: Time!
-    ) {
-      updateAuctionByAuctionId(
-        input: {
-          auctionPatch: {
-            auctionName: $auctionName
-            baseBid: $baseBid
-            bidIncreaseBy: $bidIncreaseBy
-            date: $date
-            maxPlayer: $maxPlayer
-            minPlayer: $minPlayer
-            sportsType: $sportsType
-            time: $time
-          }
-          auctionId: $auctionId
-        }
-      ) {
-        auction {
-          auctionId
-          auctionName
-          date
-          time
-          baseBid
-          bidIncreaseBy
-          maxPlayer
-          minPlayer
-          auctionStatus
-          sportsType
-        }
-      }
-    }
-  `;
-
-    const createAuction = gql`
-    mutation MyMutation($auctionName: String = "", $baseBid: Int = 0, $bidIncreaseBy: Int = 0, $date: Date = "", $maxPlayer: Int = 0, $minPlayer: Int = 0, $sportsType: String = "", $time: Time = "") {
-      createAuctionByUserId(
-        baseBid: $baseBid
-        bidIncreaseBy: $bidIncreaseBy
-        date: $date
-        maxPlayer: $maxPlayer
-        minPlayer: $minPlayer
-        sportsType: $sportsType
-        time: $time
-        auctionName: $auctionName
-      )
-    }
-    `
 
 
 
@@ -199,21 +185,10 @@ const NewAuction = () => {
                         }
                     }
                 });
-                // res = await createAuc({
-                //     variables: newEntity,
-                //     fetchPolicy: "no-cache",
-                //     context: {
-                //         headers: {
-                //             Authorization: `Bearer ${localStorage.getItem("token")}`
-                //         }
-                //     }
-                // })
             }
-
-
-
             if (res.data) {
                 console.log("Response Data:", res.data);
+                setAuction(null)
                 toast.success(auction ? "Auction Updated Successfully!" : "Auction Created Successfully!", { position: "top-right", autoClose: 1000 });
                 navigator('/Dashboard/MyAuction');
             }
@@ -222,11 +197,9 @@ const NewAuction = () => {
             toast.error("Issue in submission", { position: "top-right", autoClose: 2000 });
         }
     }
-    // if (data?.createAuction) console.log(">>>>>>>>>>>>>>>>>>>.", data?.createAuction);
 
 
     const handleCancel = () => {
-        console.log("focus-out")
         setAuction(null)
         reset()
         navigator('/Dashboard/MyAuction')

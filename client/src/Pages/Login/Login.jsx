@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Login.css'
-import axios from "axios";
 import { GlobalContext } from "../../context/GlobalContext";
 import { LOGIN_USER_QUERY } from "../../../graphql/query/userQuery";
 import InputField from "../../components/InputField";
@@ -14,7 +13,7 @@ import { gql, useMutation } from "@apollo/client";
 function Login() {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const navigate = useNavigate();
-    const { user, setUser } = useContext(GlobalContext)
+    const { user, setUser ,active,setActive} = useContext(GlobalContext)
     const { register, handleSubmit, formState: { errors } } = useForm();
 
 
@@ -41,7 +40,8 @@ function Login() {
             if (res.data.login) {
                 console.log("response", res.data.login)
                 localStorage.setItem("token", res.data.login)
-                setUser(user);
+                // setUser(user);
+                setActive(active+1)
                 toast.success("Login successful..!", { position: "top-right", autoClose: 1000 });
                 setTimeout(() => navigate("/Dashboard"), 1000);
             }

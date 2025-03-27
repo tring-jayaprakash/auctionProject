@@ -11,6 +11,27 @@ import { GlobalContext } from '../../context/GlobalContext';
 import { GET_AUCTION_BY_USER } from '../../../graphql/query/userQuery';
 import { gql, useMutation, useQuery } from '@apollo/client';
 
+const FETCH_AUCTION_BY_USER_ID=gql`
+query user($creatorUserId: Int!) {
+  allAuctions(condition: {creatorUserId: $creatorUserId}) {
+    edges {
+      node {
+        creatorUserId
+        auctionId
+        auctionName
+        auctionStatus
+        baseBid
+        bidIncreaseBy
+        date
+        maxPlayer
+        minPlayer
+        sportsType
+        time
+      }
+    }
+  }
+}
+`
 const deleteAuction = gql`
 mutation MyMutation($auctionId: Int = 0)  {
   deleteAuctionByAuctionId(input: {auctionId: $auctionId}) {
@@ -34,36 +55,53 @@ mutation MyMutation($auctionId: Int = 0)  {
 
 const MyAuction = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
-    const { auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal } = useContext(GlobalContext)
+    const {user, setUser, auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal } = useContext(GlobalContext)
     const navigater = useNavigate()
     const [auctionData, setAuctionData] = useState([])
     const [showButton, setShowButton] = useState(true)
     const [deleteAuctionById, { data, loading, error }] = useMutation(deleteAuction, {
-        context: {
+        context: {  
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
         }
     })
 
-    const { data: fetchedData, loading: auctionLoading, error: auctionError } = useQuery(GET_AUCTION_BY_USER, {
+    const { data: fetchedData, loading: auctionLoading, error: auctionError } = useQuery(FETCH_AUCTION_BY_USER_ID, {
+        variables: { creatorUserId : user?.user_id},
         fetchPolicy: "no-cache",
         context: {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
         }
-    });
-    useEffect(() => {
-        if (fetchedData) {
-            setAuctionData(fetchedData.getAuctionByUser);
+      });
+    
+      useEffect(() => {
+        if (fetchedData) {            
+          setAuctionData(fetchedData.allAuctions.edges.map(edge => edge.node)); 
         }
-    }, [fetchedData]);
+      }, [fetchedData]);
 
-    if (auctionLoading) return <p>Loading...</p>;
-    if (auctionError) return <p>Error: {auctionError.message}</p>;
+    // const { data: fetchedData, loading: auctionLoading, error: auctionError } = useQuery(GET_AUCTION_BY_USER, {
+    //     fetchPolicy: "no-cache",
+    //     context: {
+    //         headers: {
+    //             Authorization: `Bearer ${localStorage.getItem("token")}`
+    //         }
+    //     }
 
+    // });
+    // useEffect(() => {
+    //     console.log(user);
+        
+    //     if (fetchedData) {
+    //         setAuctionData(fetchedData.getAuctionByUser);
+    //     }
+    // }, [fetchedData]);
 
+    // if (auctionLoading) return <p>Loading...</p>;
+    // if (auctionError) return <p>Error: {auctionError.message}</p>;
 
 
     const handleDelete = async (index, id) => {

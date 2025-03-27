@@ -2,6 +2,7 @@ import React, { createContext, useState } from 'react'
 import { NavBar } from '../Pages/NavBar/NavBar';
 import Router from '../Routes/Routes';
 import { ToastContainer } from 'react-toastify';
+import { CombinedComponents } from '../components/CombinedComponents/CombinedComponents';
 
 
 export const GlobalContext = createContext();
@@ -14,6 +15,7 @@ const GlobalProvider = () => {
     const [auctionPanal, setAuctionPanal] = useState(null);
     const [teamBudget, setTeamBudget] = useState(0)
     const [teamId,setTeamId] = useState(0)
+    const [active,setActive]=useState(0)
     const theme = {
         background: "#E5E7EB",
         text: "#132E35",
@@ -26,7 +28,7 @@ const GlobalProvider = () => {
     return (
         <>
             <ToastContainer />
-            <GlobalContext.Provider value={{ auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, user, setUser, auctionPanal, setAuctionPanal, teamBudget, setTeamBudget ,teamId,setTeamId , theme}}>
+            <GlobalContext.Provider value={{active,setActive, auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, user, setUser, auctionPanal, setAuctionPanal, teamBudget, setTeamBudget ,teamId,setTeamId , theme}}>
                 <NavBar />
                 <Router />
             </GlobalContext.Provider>

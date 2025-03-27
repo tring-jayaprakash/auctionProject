@@ -2,21 +2,42 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../../context/GlobalContext";
+import { jwtDecode } from "jwt-decode";
 import "./NavBar.css";
 
 export const NavBar = () => {
-    const { user, setUser } = useContext(GlobalContext);
+    const { user, setUser ,active,setActive} = useContext(GlobalContext);
     const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const storedUser = localStorage.getItem("token");
-        // console.log(storedUser);
         if (storedUser) {
-            setUser(storedUser);
+            try {
+                const decodedUser = jwtDecode(storedUser);
+                setUser(decodedUser);
+            } catch (error) {
+                console.error("Invalid token", error);
+                localStorage.removeItem("token");
+                setUser(null);
+            }
         }
-        setShowDropdown(false);
+
     }, []);
+    useEffect(() => {
+        const storedUser = localStorage.getItem("token");
+        if (storedUser) {
+            try {
+                const decodedUser = jwtDecode(storedUser);
+                setUser(decodedUser);
+            } catch (error) {
+                console.error("Invalid token", error);
+                localStorage.removeItem("token");
+                setUser(null);
+            }
+        }
+
+    }, [active,setActive]);
 
     const handleLogout = () => {
         setUser(null);
@@ -40,10 +61,10 @@ export const NavBar = () => {
                 <h1 id="logo">PLAYERS AUCTION..!</h1>
             </div>
             <div className="nav_btn">
-                <button className="btn" style={{border:"none"}}>
+                <button className="btn" style={{ border: "none" }}>
                     <Link to="/Reault" className="link">Explore Auction</Link>
                 </button>
-                <button className="btn" style={{border:"none"}}>
+                <button className="btn" style={{ border: "none" }}>
                     <Link to="/" className="link" >Home</Link>
                 </button>
                 {user ? (

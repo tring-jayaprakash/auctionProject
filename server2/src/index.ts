@@ -7,6 +7,7 @@ import { postgraphile } from 'postgraphile';
 import { AuthPlugin } from "./user/plugins/AuthPlugin";
 import jwt from "jsonwebtoken"
 import { AuctionPlugin } from "./auctionModule/plugins/AuctionPlugin";
+import { error } from "console";
 
 dotenv.config();
 
@@ -26,25 +27,33 @@ app.use(
     enhanceGraphiql: true,
     dynamicJson: true,
     enableCors: true,
-    appendPlugins: [AuthPlugin,AuctionPlugin],
+    appendPlugins: [AuthPlugin, AuctionPlugin],
     additionalGraphQLContextFromRequest: async (req) => {
       // console.log("request,",req.headers.authorization);
-      console.log("request operation", req?.body?.operationName);
-
       const authHeader = req.headers.authorization || "";
       const token = authHeader.split(" ")[1];
 
-      if (!token) return {
-        user: null
-      };
+      console.log("request operation", req?.body?.operationName);
+      const operationName = req?.body?.operationName
+      if (operationName === "guest") {
+        console.log("guest start");
+        return {}
+      } else {
+        
+        console.log("auth start");
 
-      try {
-        const decodedUser = jwt.verify(token, process.env.SECRET_KEY!);
-        // console.log(process.env.SECRET_KEY);
-        // console.table(decodedUser);
-        return { user: decodedUser };
-      } catch (err) {
-        return { user: null };
+        if (!token) return {
+          user: null
+        };
+
+        try {
+          const decodedUser = jwt.verify(token, process.env.SECRET_KEY!);
+          return { user: decodedUser };
+        } catch (err) {
+          throw new Error("error message")
+          // return { user: null };
+        }
+
       }
     },
   })

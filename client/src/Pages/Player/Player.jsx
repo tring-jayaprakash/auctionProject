@@ -312,14 +312,14 @@ const Player = () => {
                                         <input type="text" {...register("player_name", { required: "Name is required" })} />
                                     </div>
                                 </div>
-                                <div className="form-group-players">
+                                {/* <div className="form-group-players">
                                     <div id="div">
                                         <label >Last Name </label>
                                     </div>
                                     <div>
                                         <input type="text" {...register("father_name")} />
                                     </div>
-                                </div>
+                                </div> */}
                                 <div className="form-group-players">
                                     <div id="div">
                                         <label >Phone Number </label>
@@ -377,7 +377,7 @@ const Player = () => {
                                             <tr key={index} id="row">
                                                 <td>{index + 1}</td>
                                                 <td>{player.player_name}</td>
-                                                <td>{player.father_name || "N/A"}</td>
+                                                {/* <td>{player.father_name || "N/A"}</td> */}
                                                 <td>{player.player_ph_number || "N/A"}</td>
                                                 <td>{player.age || "N/A"}</td>
                                                 <td>{player.player_style || "N/A"}</td>

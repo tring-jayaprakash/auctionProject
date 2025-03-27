@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
 import { User } from "./User";
+import { Team } from "./team"; 
 
 export  enum Status {
     PENDING = "pending",
@@ -40,4 +41,7 @@ export class Auction {
 
     @ManyToOne(() => User, (user) => user.auctions,{onDelete:"CASCADE"})
     creator!: User; 
+
+    @OneToMany(() => Team, (team) => team.auction)
+    teams!: Team[];
 }

@@ -39,20 +39,5 @@ export const createAuctionService = async (_parent: any, args: any, context: any
         creator: user
     });
     await auctionRepository.save(newAuction);
-
-    // return {
-    //     auctionId: newAuction.auction_id,
-    //     auctionName: newAuction.auction_name,
-    //     date: newAuction.date,
-    //     time: newAuction.time,
-    //     baseBid: newAuction.base_bid,
-    //     bidIncreaseBy: newAuction.bid_increase_by,
-    //     maxPlayer: newAuction.max_player,
-    //     minPlayer: newAuction.min_player,
-    //     auctionStatus: newAuction.auction_status,
-    //     creatorUserId: newAuction.creator.user_id,
-    //     sportsType: newAuction.sports_type
-    // };
-    
     return "inserted sucessfully"
 };
