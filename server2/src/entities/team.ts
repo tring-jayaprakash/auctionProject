@@ -13,10 +13,10 @@ export class Team {
   @Column()
   teamShortName: string;
 
-  @Column()
+  @Column({nullable:true})
   totalBudget: number;
 
-  @Column()
+  @Column({nullable:true})
   balanceBudget: number;
 
   @ManyToOne(() => Auction, (auction) => auction.teams, { onDelete: "CASCADE" })

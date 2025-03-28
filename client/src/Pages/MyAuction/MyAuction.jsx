@@ -11,7 +11,7 @@ import { GlobalContext } from '../../context/GlobalContext';
 import { GET_AUCTION_BY_USER } from '../../../graphql/query/userQuery';
 import { gql, useMutation, useQuery } from '@apollo/client';
 
-const FETCH_AUCTION_BY_USER_ID=gql`
+const FETCH_AUCTION_BY_USER_ID = gql`
 query user($creatorUserId: Int!) {
   allAuctions(condition: {creatorUserId: $creatorUserId}) {
     edges {
@@ -52,36 +52,53 @@ mutation MyMutation($auctionId: Int = 0)  {
   }
 }
 `
+const GET_TEAM_BY_AUCTION_ID = gql`
+query MyQuery($auctionAuctionId: Int = 0) {
+  allTeams(condition: {auctionAuctionId: $auctionAuctionId}) {
+    edges {
+      node {
+        auctionAuctionId
+        balanceBudget
+        teamName
+        teamShortName
+        totalBudget
+        teamId
+      }
+    }
+  }
+}
+
+`
 
 const MyAuction = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
-    const {user, setUser, auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal } = useContext(GlobalContext)
+    const { user, setUser, auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal } = useContext(GlobalContext)
     const navigater = useNavigate()
     const [auctionData, setAuctionData] = useState([])
     const [showButton, setShowButton] = useState(true)
+    
     const [deleteAuctionById, { data, loading, error }] = useMutation(deleteAuction, {
-        context: {  
+        context: {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
         }
     })
-
     const { data: fetchedData, loading: auctionLoading, error: auctionError } = useQuery(FETCH_AUCTION_BY_USER_ID, {
-        variables: { creatorUserId : user?.user_id},
+        variables: { creatorUserId: user?.user_id },
         fetchPolicy: "no-cache",
         context: {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
         }
-      });
-    
-      useEffect(() => {
-        if (fetchedData) {            
-          setAuctionData(fetchedData.allAuctions.edges.map(edge => edge.node)); 
+    });
+
+    useEffect(() => {
+        if (fetchedData) {
+            setAuctionData(fetchedData.allAuctions.edges.map(edge => edge.node));
         }
-      }, [fetchedData]);
+    }, [fetchedData]);
 
     // const { data: fetchedData, loading: auctionLoading, error: auctionError } = useQuery(GET_AUCTION_BY_USER, {
     //     fetchPolicy: "no-cache",
@@ -94,7 +111,7 @@ const MyAuction = () => {
     // });
     // useEffect(() => {
     //     console.log(user);
-        
+
     //     if (fetchedData) {
     //         setAuctionData(fetchedData.getAuctionByUser);
     //     }
@@ -131,7 +148,7 @@ const MyAuction = () => {
         navigater('/Dashboard/MyAuction/Team')
     }
     const handlePlayer = (index, element) => {
-        console.log(index);
+        // console.log(index);
         console.log(element);
         setPlayerAuction(element)
         navigater('/Dashboard/MyAuction/Player')
@@ -227,55 +244,71 @@ const MyAuction = () => {
         }
     }
 
+    // const { data: fetchedTeam, loading, error } = useQuery(GET_TEAM_BY_AUCTION_ID, {
+    //     fetchPolicy: "no-cache",
+    //     skip: !teamAuction?.auctionId,
+    //     variables: { auctionAuctionId: teamAuction?.auctionId || 0 }
+    // });
+    // console.log(fetchedTeam);
+
     const handleStartAction = async (element, index) => {
+
+        console.log(element);
+        console.log(index);
+
         try {
-            const playerData = await fetchPlayers(element);
-            const teamData = await fetchTeams(element);
-            const minPlayer = Number(element.min_player);
-            console.log(playerData);
 
-            const playerWithTeam = playerData.find(player => player.team_id);
-            if (playerWithTeam) {
-                toast.info("Auction ended", { position: "top-right", autoClose: 2000 });
-
-                setCompletedAuctions(prev => {
-                    const updated = { ...prev, [element.auction_id]: true };
-                    localStorage.setItem("completedAuctions", JSON.stringify(updated));
-                    return updated;
-                });
-
-                return;
-            }
-
-            const budget = element.base_bit * teamData.length * playerData.length
-            const finalBudget = budget + budget * 50 / 100
-            await updateTeamBudget(element, finalBudget);
-            console.log(teamData.length);
-            console.log(minPlayer);
-            console.log(playerData.length);
-
-            if (teamData.length * minPlayer <= playerData.length) {
-                const auctionDate = new Date(Number(element.date));
-                const [hours, minutes, seconds] = element.time.split(":").map(Number);
-                auctionDate.setHours(hours, minutes, seconds, 0);
-                const now = new Date();
-
-                if (now.getTime() >= auctionDate.getTime()) {
-                    setAuctionPanal(element);
-                    navigater('/Dashboard/AuctionalPanel');
-                } else {
-                    toast.info("The auction can only start at the scheduled time!", { position: "top-right", autoClose: 2000 });
-                }
-            } else {
-                toast.error("Not enough players for the auction!", { position: "top-right", autoClose: 2000 });
-            }
         } catch (error) {
-            return
-            // console.error("Error in handleStartAction:", error);
-            // toast.error("An error occurred while starting the auction.", { position: "top-right", autoClose: 2000 });
+            console.log(error);
         }
-    };
 
+        // try {
+        //     const playerData = await fetchPlayers(element);
+        //     const teamData = await fetchTeams(element);
+        //     const minPlayer = Number(element.min_player);
+        //     console.log(playerData);
+
+        //     const playerWithTeam = playerData.find(player => player.team_id);
+        //     if (playerWithTeam) {
+        //         toast.info("Auction ended", { position: "top-right", autoClose: 2000 });
+
+        //         setCompletedAuctions(prev => {
+        //             const updated = { ...prev, [element.auction_id]: true };
+        //             localStorage.setItem("completedAuctions", JSON.stringify(updated));
+        //             return updated;
+        //         });
+
+        //         return;
+        //     }
+
+        //     const budget = element.base_bit * teamData.length * playerData.length
+        //     const finalBudget = budget + budget * 50 / 100
+        //     await updateTeamBudget(element, finalBudget);
+        //     console.log(teamData.length);
+        //     console.log(minPlayer);
+        //     console.log(playerData.length);
+
+        //     if (teamData.length * minPlayer <= playerData.length) {
+        //         const auctionDate = new Date(Number(element.date));
+        //         const [hours, minutes, seconds] = element.time.split(":").map(Number);
+        //         auctionDate.setHours(hours, minutes, seconds, 0);
+        //         const now = new Date();
+
+        //         if (now.getTime() >= auctionDate.getTime()) {
+        //             setAuctionPanal(element);
+        //             navigater('/Dashboard/AuctionalPanel');
+        //         } else {
+        //             toast.info("The auction can only start at the scheduled time!", { position: "top-right", autoClose: 2000 });
+        //         }
+        //     } else {
+        //         toast.error("Not enough players for the auction!", { position: "top-right", autoClose: 2000 });
+        //     }
+        // } catch (error) {
+        //     return
+        //     // console.error("Error in handleStartAction:", error);
+        //     // toast.error("An error occurred while starting the auction.", { position: "top-right", autoClose: 2000 });
+        // }
+    };
 
 
     return (

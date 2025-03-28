@@ -1,26 +1,30 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { AuctionPlayer } from "./auctionPlayer";
+import { Auction } from "./auction";
 
 @Entity()
-export  class Player{
+export class Player {
     @PrimaryGeneratedColumn()
-    playerId:number;
+    playerId: number;
 
     @Column()
-    playerName:string;
+    playerName: string;
 
-    @Column()
-    PlayerPhoneNumber:number;
+    @Column({ nullable: true })
+    PlayerPhoneNumber: string;
 
-    @Column()
-    playerAge:number;
+    @Column({ nullable: true })
+    playerAge: number;
 
-    @Column()
-    playerStyle:string
+    @Column({ nullable: true })
+    playerStyle: string
 
-    @Column()
-    playerBidAmount:number;
+    @Column({ nullable: true })
+    playerBidAmount: number;
 
     @OneToMany(() => AuctionPlayer, (auctionPlayer) => auctionPlayer.player)
     auctionPlayers: AuctionPlayer[];
+
+    @ManyToOne(() => Auction, (auction) => auction.teams, { onDelete: "CASCADE" })
+    auction: Auction;
 }

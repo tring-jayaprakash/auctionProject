@@ -35,29 +35,29 @@ app.use(
 
       console.log("request operation", req?.body?.operationName);
       const operationName = req?.body?.operationName
-      if (operationName === "guest") {
-        console.log("guest start");
-        return {}
-      } else {
-        
-        console.log("auth start");
+      // if (operationName === "guest") {
+      //   console.log("guest start");
+      //   return {}
+      // } else {
 
-        if (!token) return {
-          user: null
-        };
+      console.log("auth start");
 
-        try {
-          const decodedUser = jwt.verify(token, process.env.SECRET_KEY!);
-          return { user: decodedUser };
-        } catch (err) {
-          throw new Error("error message")
-          // return { user: null };
-        }
+      if (!token) return {
+        user: null
+      };
 
+      try {
+        const decodedUser = jwt.verify(token, process.env.SECRET_KEY!);
+        return { user: decodedUser };
+      } catch (err) {
+        throw new Error("error message")
+        // return { user: null };
       }
+      // }
     },
   })
 );
+
 
 
 AppDataSource.initialize()

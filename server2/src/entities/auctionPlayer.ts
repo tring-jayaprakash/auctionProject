@@ -6,7 +6,7 @@ import { Auction } from "./auction";
 @Entity()
 export class AuctionPlayer {
     @PrimaryGeneratedColumn()
-    id: number;
+    AuctionPlayerId: number;
 
     @ManyToOne(() => Player, (player) => player.auctionPlayers, { onDelete: "CASCADE" })
     player: Player;
@@ -16,7 +16,4 @@ export class AuctionPlayer {
 
     @ManyToOne(() => Auction, (auction) => auction.teams, { onDelete: "CASCADE" })
     auction: Auction;
-
-    @Column()
-    bid_amount: number;
 }
