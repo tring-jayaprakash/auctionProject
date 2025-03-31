@@ -2,17 +2,67 @@ import React, { useContext, useEffect, useState } from 'react'
 import './AuctionalPanel.css'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { GlobalContext } from '../../context/GlobalContext'
+import { gql, useLazyQuery, useQuery } from '@apollo/client'
 
+const GET_AUCTION_BY_AUCTION_ID = gql`
+query MyQuery($auctionId: Int = 0) {
+  allAuctions(condition: {auctionId: $auctionId}) {
+    edges {
+      node {
+        auctionId
+        auctionName
+        auctionStatus
+        baseBid
+        bidIncreaseBy
+        date
+        maxPlayer
+        minPlayer
+      }
+    }
+  }
+}
+`
+const GET_TEAM_BY_AUCTION_ID = gql`
+query MyQuery($auctionAuctionId: Int = 0) {
+  allTeams(condition: {auctionAuctionId: $auctionAuctionId}) {
+    edges {
+      node {
+        auctionAuctionId
+        balanceBudget
+        teamName
+        teamShortName
+        totalBudget
+        teamId
+      }
+    }
+  }
+}
 
+`
+const ALL_AUCTION_PLAYER = gql`
+query MyQuery($auctionAuctionId: Int = 0) {
+  allPlayers(condition: {auctionAuctionId: $auctionAuctionId}) {
+    edges {
+      node {
+        playerAge
+        playerId
+        playerName
+        playerPhoneNumber
+        playerStyle
+      }
+    }
+  }
+}
+`
 
 const AuctionalPanel = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
-
     const navigator = useNavigate()
-
+    const location = useLocation();
     const { auctionPanal, setAuctionPanal } = useContext(GlobalContext)
+    const [auctionPanalAuction, setAuctionPanalAuction] = useState(null)
     const [start, setStart] = useState(true)
     const [auctionTeam, setAuctionTeam] = useState([]) //fetchTeams
     const [auctionPlayer, setAuctionPlayer] = useState([]) //fetchPlayers
@@ -26,172 +76,224 @@ const AuctionalPanel = () => {
     const [bidIncrese, setBidIncrese] = useState(0)
     const [endAuction, setEndAuction] = useState(true)
     const [bidCheck, setBitCheck] = useState("")
+    const { data: fetchedData, loading: auctionLoading, error: auctionError } = useQuery(GET_AUCTION_BY_AUCTION_ID,
+        {
+            variables: { auctionId: auctionPanal?.auctionId },
+            fetchPolicy: "cache-and-network"
+        }
+    )
+    const { loading: teamLoding, error: teamError, data: teamData } = useQuery(GET_TEAM_BY_AUCTION_ID,
+        {
+            variables: { auctionAuctionId: auctionPanal?.auctionId },
+            fetchPolicy: "cache-and-network"
+        }
+    );
 
-    
-
+    const { data: fetchedPlayer, loading, error } = useQuery(ALL_AUCTION_PLAYER, {
+        fetchPolicy: "no-cache",
+        skip: !auctionPanal?.auctionId,
+        variables: { auctionAuctionId: auctionPanal?.auctionId || 0 }
+    });
 
     useEffect(() => {
-        let storedPanel = localStorage.getItem("AuctionPanel")
-        console.log(storedPanel);
-
-        if (storedPanel) {
-            const storedAuction = JSON.parse(storedPanel)
-            console.log(storedAuction);
-            setAuctionPanal(storedAuction)
-            setBidIncrese(storedAuction.base_bit);
-
-            console.log(storedAuction);
+        if (fetchedPlayer?.allPlayers) {
+            const formattedPlayers = fetchedPlayer.allPlayers.edges.map(edge => edge.node);
+            console.log(formattedPlayers);
+            setAuctionPlayer(formattedPlayers);
+            setPlayerWithNull(formattedPlayers);
         }
-
-
-    }, [])
-
+    }, [fetchedPlayer]);
 
     useEffect(() => {
-
-        if (!auctionPanal) return;
-
-        localStorage.setItem("AuctionPanel", JSON.stringify(auctionPanal))
-        console.log(auctionPanal.auction_id);
-        const id = Number(auctionPanal.auction_id)
-
-        async function fetchAuction() {
-            if (!id) return
-            const query = `
-                        query{
-                          getAuctionByauction_id(auction_id:${id}){
-                            auction_id
-                            logo
-                            sports
-                            auction_name
-                            date
-                            time
-                            base_bit
-                            bit_increse_by
-                            max_player
-                            min_player
-                            user_id
-                          }
-                        }     
-                    `
-            try {
-                const response = await axios.post(url, { query })
-                const condetion = response.data.data.getAuctionByauction_id
-                console.log(condetion);
-            } catch (error) {
-                console.log(error.message)
-            }
+        if (teamData) {
+            const dta = teamData.allTeams.edges.map((m) => m.node)
+            setAuctionTeam(dta)
+            // console.log(dta);
         }
+    }, [teamData]);
 
-        async function fetchTeams() {
-            if (!id) return;
-            const query = `
-                query {
-                    getTeamsByAuction(auction_id: ${id}) {
-                        team_id
-                        team_logo
-                        team_name
-                        team_short_name
-                        auction_id
-                        budget
-                        total_budget
-                    }
-                }
-            `
-
-            try {
-                const response = await axios.post(url, { query })
-
-                if (response.data.errors) {
-                    toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 })
-                    return;
-                }
-                console.log(response.data.data.getTeamsByAuction);
-
-                setAuctionTeam(response.data.data.getTeamsByAuction)
-            } catch (error) {
-                console.error("Error fetching teams:", error)
-                toast.error("Failed to fetch teams.", { position: "top-right", autoClose: 2000 })
-            }
+    useEffect(() => {
+        if (fetchedData) {
+            const dta = fetchedData.allAuctions.edges.map((m) => m.node)
+            setAuctionPanalAuction(dta[0])
         }
+    }, [fetchedData]);
 
+    // useEffect(() => {
+    //     let storedPanel = localStorage.getItem("AuctionPanel")
+    //     console.log(storedPanel);
+    //     if (storedPanel) {
+    //         const storedAuction = JSON.parse(storedPanel)
+    //         console.log(storedAuction);
+    //         setAuctionPanal(storedAuction)
+    //         setBidIncrese(storedAuction.base_bit);
+    //         console.log(storedAuction);
+    //     }
+    // }, [])
 
-        async function fetchPlayers() {
-            if (!id) return;
-            const query = `
-                query{
-                    getPlayersByAuction(auction_id:${id})
-                    {
-                        player_id
-                        player_pic
-                        player_name
-                        father_name
-                        player_ph_number
-                        age
-                        form_number
-                        player_style
-                        team_id
-                    }
-                }
-            `
-
-            try {
-                const response = await axios.post(url, { query });
-
-                if (response.data.errors) {
-                    toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
-                    return;
-                }
-                console.log(response.data.data.getPlayersByAuction);
-                setAuctionPlayer(response.data.data.getPlayersByAuction);
-            } catch (error) {
-                console.error("Error fetching players:", error);
-                toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
-            }
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const auctionIdFromUrl = params.get("auctionId");
+        if (auctionIdFromUrl) {
+            setAuctionPanal({ auctionId: parseInt(auctionIdFromUrl) });
         }
+    }, []);
 
-        async function fetchPlayersWithTeam() {
-            if (!id) return;
-            const query = `
-                query{
-                    getPlayersByAuctionTeamNull(auction_id:${id})
-                    {
-                        player_id
-                        player_pic
-                        player_name
-                        father_name
-                        player_ph_number
-                        age
-                        form_number
-                        player_style
-                        team_id
-                    }
-                }
-            `
-
-            try {
-                const response = await axios.post(url, { query });
-
-                if (response.data.errors) {
-                    toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
-                    return;
-                }
-                console.log(response.data.data.getPlayersByAuctionTeamNull);
-                setPlayerWithNull(response.data.data.getPlayersByAuctionTeamNull)
-            } catch (error) {
-                console.error("Error fetching players:", error);
-                toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
-            }
+    useEffect(() => {
+        if (auctionPanal?.auctionId) {
+            navigator(`?auctionId=${auctionPanal.auctionId}`, { replace: true });
         }
+        if (teamData) {
+            const dta = teamData.allTeams.edges.map((m) => m.node)
+            setAuctionTeam(dta)
+            console.log(dta);
+        }
+    }, [auctionPanal]);
+
+    // useEffect(() => {
+
+    //     if (!auctionPanal) return;
+
+    //     // localStorage.setItem("AuctionPanel", JSON.stringify(auctionPanal))
+    //     console.log(auctionPanal.auctionId);
+    //     const id = Number(auctionPanal.auction_id)
+
+    //     async function fetchAuction() {
+    //         if (!id) return
+    //         const query = `
+    //                     query{
+    //                       getAuctionByauction_id(auction_id:${id}){
+    //                         auction_id
+    //                         logo
+    //                         sports
+    //                         auction_name
+    //                         date
+    //                         time
+    //                         base_bit
+    //                         bit_increse_by
+    //                         max_player
+    //                         min_player
+    //                         user_id
+    //                       }
+    //                     }     
+    //                 `
+    //         try {
+    //             const response = await axios.post(url, { query })
+    //             const condetion = response.data.data.getAuctionByauction_id
+    //             console.log(condetion);
+    //         } catch (error) {
+    //             console.log(error.message)
+    //         }
+    //     }
+
+    //     async function fetchTeams() {
+    //         if (!id) return;
+    //         const query = `
+    //             query {
+    //                 getTeamsByAuction(auction_id: ${id}) {
+    //                     team_id
+    //                     team_logo
+    //                     team_name
+    //                     team_short_name
+    //                     auction_id
+    //                     budget
+    //                     total_budget
+    //                 }
+    //             }
+    //         `
+
+    //         try {
+    //             const response = await axios.post(url, { query })
+
+    //             if (response.data.errors) {
+    //                 toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 })
+    //                 return;
+    //             }
+    //             console.log(response.data.data.getTeamsByAuction);
+
+    //             setAuctionTeam(response.data.data.getTeamsByAuction)
+    //         } catch (error) {
+    //             console.error("Error fetching teams:", error)
+    //             toast.error("Failed to fetch teams.", { position: "top-right", autoClose: 2000 })
+    //         }
+    //     }
 
 
-        fetchPlayers();
-        fetchTeams()
-        fetchAuction()
-        fetchPlayersWithTeam()
+    //     async function fetchPlayers() {
+    //         if (!id) return;
+    //         const query = `
+    //             query{
+    //                 getPlayersByAuction(auction_id:${id})
+    //                 {
+    //                     player_id
+    //                     player_pic
+    //                     player_name
+    //                     father_name
+    //                     player_ph_number
+    //                     age
+    //                     form_number
+    //                     player_style
+    //                     team_id
+    //                 }
+    //             }
+    //         `
 
-    }, [auctionPanal])
+    //         try {
+    //             const response = await axios.post(url, { query });
 
+    //             if (response.data.errors) {
+    //                 toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
+    //                 return;
+    //             }
+    //             console.log(response.data.data.getPlayersByAuction);
+    //            setAuctionPlayer(response.data.data.getPlayersByAuction);
+    //         } catch (error) {
+    //             console.error("Error fetching players:", error);
+    //             toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
+    //         }
+    //     }
+
+    //     async function fetchPlayersWithTeam() {
+    //         if (!id) return;
+    //         const query = `
+    //             query{
+    //                 getPlayersByAuctionTeamNull(auction_id:${id})
+    //                 {
+    //                     player_id
+    //                     player_pic
+    //                     player_name
+    //                     father_name
+    //                     player_ph_number
+    //                     age
+    //                     form_number
+    //                     player_style
+    //                     team_id
+    //                 }
+    //             }
+    //         `
+
+    //         try {
+    //             const response = await axios.post(url, { query });
+
+    //             if (response.data.errors) {
+    //                 toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
+    //                 return;
+    //             }
+    //             console.log(response.data.data.getPlayersByAuctionTeamNull);
+    //             setPlayerWithNull(response.data.data.getPlayersByAuctionTeamNull)
+    //         } catch (error) {
+    //             console.error("Error fetching players:", error);
+    //             toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
+    //         }
+    //     }
+
+
+    //     fetchPlayers();
+    //     fetchTeams()
+    //     fetchAuction()
+    //     fetchPlayersWithTeam()
+
+    // }, [auctionPanal])
 
     useEffect(() => {
         if (count == 1) {
@@ -203,21 +305,28 @@ const AuctionalPanel = () => {
         }
     }, [count])
 
-
     const handleName = (element, index) => {
-        if (start) return
-
-
-        setBitCheck(element.team_short_name)
-        if (bidCheck == element.team_short_name) return
-        if (bidCheck > auctionTeam.total_budget) return
-        setTeamName(element.team_short_name)
-        setTeamIndex(element.team_id)
-        setBidIncrese((prevBid) => prevBid + auctionPanal.bit_increse_by);
+        // if (start) return
+        if (count == 0) return
+        // console.log(count);
+        
+        
+        setBitCheck(element.teamShortName)
+        if (bidCheck == element.teamShortName) return
+        // if (bidCheck > auctionTeam.totalBudget) return
+        setTeamName(element.teamShortName)
+        setTeamIndex(element.teamId)
+        // console.log(auctionPanalAuction);
+        setBidIncrese((prevBid) => prevBid + auctionPanalAuction.bidIncreaseBy);
     }
 
 
-    const handleStart = () => {
+    const handleStart = async () => {
+        // const teams = await getTeams({ variables: { auctionAuctionId: auctionPanal.auctionId } });
+        // const sTeam = teams.data.allTeams.edges.map((m)=>m.node)
+        // console.log(sTeam);
+        // setAuctionTeam(sTeam);
+
         if (!auctionPanal) {
             toast.error("There is no Auction active yet..!", { position: "top-right", autoClose: 1000 });
             return
@@ -225,7 +334,9 @@ const AuctionalPanel = () => {
 
         toast.success("Auction Started Successfully", { position: "top-right", autoClose: 1000 });
         setStart(false);
-        setBidIncrese(auctionPanal.base_bit);
+        setBidIncrese(auctionPanalAuction.bidIncreaseBy);
+        // console.log(auctionPanalAuction.bidIncreaseBy);
+        
         setTeamName("");
 
         if (!playerWithNull[count]) {
@@ -233,30 +344,30 @@ const AuctionalPanel = () => {
             return;
         }
 
-        setOnePlayerNull(playerWithNull[count]) 
-        setOnePlayer(playerWithNull[count]) 
+        setOnePlayerNull(playerWithNull[count])
+        setOnePlayer(playerWithNull[count])
         setCount(count + 1);
     };
 
     const handleEnd = () => {
         setAuctionPanal(null)
-        
-        
+
+
         async function updateAuctionStatus(auction_id, auction_status) {
             const query = `
             mutation {
                 updateAuctionStatus(auction_id: ${Number(auction_id)}, auction_status: "${auction_status}")
                 }
                 `;
-        
-                try {
+
+            try {
                 const response = await axios.post(url, { query });
-                
+
                 if (response.data.errors) {
                     toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
                     return;
                 }
-                
+
                 console.log("Auction status updated:", response.data);
                 toast.success("Auction status updated successfully!", { position: "top-right", autoClose: 2000 });
             } catch (error) {
@@ -264,19 +375,18 @@ const AuctionalPanel = () => {
                 toast.error("Failed to update auction status. Please try again.", { position: "top-right", autoClose: 2000 });
             }
         }
-        
 
-        updateAuctionStatus(auctionPanal.auction_id,"completed")
+
+        updateAuctionStatus(auctionPanal.auction_id, "completed")
 
         console.log(auctionPanal.auction_id);
-        
+
         navigator('/Dashboard/MyAuction')
     }
 
-
     const handleSold = () => {
 
-        if (bidIncrese > auctionPanal.base_bit) {
+        if (bidIncrese > auctionPanal.baseBid) {
             setTeamName("")
             if (!auctionPlayer[count - 1]) {
                 toast.info("Auction ended successfully", { position: "top-right", autoClose: 2000 });
@@ -285,7 +395,7 @@ const AuctionalPanel = () => {
 
             setBitCheck("")
 
-            const playerWithTeam = auctionPlayer.find(player => player.team_id);
+            const playerWithTeam = auctionPlayer.find(player => player.teamId);
             console.log(playerWithTeam)
             console.log(playerWithTeam)
 
@@ -360,7 +470,7 @@ const AuctionalPanel = () => {
                 )
             );
 
-            
+
 
 
             updatePlayerForTeam();
@@ -369,8 +479,6 @@ const AuctionalPanel = () => {
             toast.warn("Bid not started yet", { position: "top-right", autoClose: 2000 });
         }
     };
-
-
 
 
     return (
@@ -406,16 +514,13 @@ const AuctionalPanel = () => {
                                 <div id='body-div1'>
 
                                     <div id='auction-name-div'>
-
-                                        <h1>Auction Name : {auctionPanal.auction_name}</h1>
-
+                                        <h1>Auction Name : {auctionPanalAuction?.auctionName}</h1>
                                     </div>
-
                                     {!start &&
                                         <>
                                             {
 
-                                                !onePlayer.team_id &&
+                                                !onePlayer.teamId &&
                                                 (<>
 
                                                     <div id='auction-player-div'>
@@ -429,10 +534,10 @@ const AuctionalPanel = () => {
                                                                     <div id='player-content-div'>
                                                                         <p>Player No : {count}</p>
                                                                         {
-                                                                            !onePlayer.team_id &&
+                                                                            !onePlayer.teamId &&
                                                                             <>
-                                                                                <p>Player Name : {onePlayer.player_name}</p>
-                                                                                <p>Player Style : {onePlayer.player_style}</p>
+                                                                                <p>Player Name : {onePlayer.playerName}</p>
+                                                                                <p>Player Style : {onePlayer.playerStyle}</p>
                                                                             </>
                                                                         }
 
@@ -460,7 +565,7 @@ const AuctionalPanel = () => {
                                                                         <thead>
                                                                             <tr>
                                                                                 {auctionTeam.map((element, index) => (
-                                                                                    <th id='item' key={index} onClick={() => handleName(element, index)}>{element.team_short_name}</th>
+                                                                                    <th id='item' key={index} onClick={() => handleName(element, index)}>{element.teamShortName}</th>
                                                                                 ))
                                                                                 }
                                                                             </tr>
@@ -495,13 +600,13 @@ const AuctionalPanel = () => {
                         <div id='body-div2'>
                             {auctionPanal &&
                                 auctionTeam.map((teamElement, index) => {
-                                    const playerCount = auctionPlayer.filter(player => player.team_id === teamElement.team_id).length;
+                                    const playerCount = auctionPlayer.filter(player => player.team_id === teamElement.teamId).length;
                                     return (
                                         <div key={index}>
-                                            <h3 style={{ textAlign: "center", borderBottom: "1px solid black", marginBottom: "5px", paddingBottom: "5px" }}>{teamElement.team_name}</h3>
+                                            <h3 style={{ textAlign: "center", borderBottom: "1px solid black", marginBottom: "5px", paddingBottom: "5px" }}>{teamElement.teamName}</h3>
                                             <p>player count : {playerCount}</p>
-                                            <p>Balance : <span style={{ fontWeight: "bolder" }}> {teamElement.budget}</span></p>
-                                            <h4>total Budget : {teamElement.total_budget}</h4>
+                                            <p>Balance : <span style={{ fontWeight: "bolder" }}> {teamElement.balanceBudget}</span></p>
+                                            <h4>total Budget : {teamElement.totalBudget}</h4>
                                         </div>
                                     )
                                 })

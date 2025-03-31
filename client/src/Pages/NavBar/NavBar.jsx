@@ -6,7 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import "./NavBar.css";
 
 export const NavBar = () => {
-    const { user, setUser ,active,setActive} = useContext(GlobalContext);
+    const { user, setUser, active, setActive } = useContext(GlobalContext);
     const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ export const NavBar = () => {
             }
         }
 
-    }, [active,setActive]);
+    }, [active, setActive]);
 
     const handleLogout = () => {
         setUser(null);

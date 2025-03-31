@@ -110,17 +110,6 @@
     box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.4);
 }
 
-.card-div-head {
-    height: 30%;
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
 .card-div-body {
     background-color: white;
     height: 80%;
@@ -132,7 +121,7 @@
 }
 .card-div-body >div{
     /* border: 1px solid  black; */
-    line-height: 0;
+    line-height: 2;
 }
 
 .card-div-footer {

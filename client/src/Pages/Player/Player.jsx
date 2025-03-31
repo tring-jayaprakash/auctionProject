@@ -87,7 +87,6 @@ const Player = () => {
     const [updatePlayer] = useMutation(UPDATE_PLAYER)
     const [deletePlayer] = useMutation(DELETE_PLAYER)
 
-
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const auctionIdFromUrl = params.get("auctionId");

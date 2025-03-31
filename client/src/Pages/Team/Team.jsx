@@ -24,7 +24,6 @@ query MyQuery($auctionAuctionId: Int = 0) {
     }
   }
 }
-
 `
 const CREATE_TEAM = gql`
 mutation CreateTeam($auctionAuctionId: Int!, $teamName: String!, $teamShortName: String!) {

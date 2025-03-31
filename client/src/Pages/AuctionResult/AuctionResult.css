@@ -55,7 +55,8 @@
 }
 
 .auction-div-head {
-    height: 50%;
+    /* border: 1px solid black; */
+    height: 45%;
     display: flex;
     gap: 10px;
     justify-content: center;
@@ -64,11 +65,11 @@
     border-radius: 5px;
     cursor: pointer;
     background-color: white;
-    margin-top: 5px;
+    /* padding-top: 5px; */
 }
 .auction-result-div-body > div{
     /* border: 1px solid black; */
-    display: flex;
+    /* display: flex; */
     gap: 10px;
 }
 

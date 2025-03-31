@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { GlobalContext } from '../../context/GlobalContext';
 import { GET_AUCTION_BY_USER } from '../../../graphql/query/userQuery';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 
 const FETCH_AUCTION_BY_USER_ID = gql`
 query user($creatorUserId: Int!) {
@@ -69,6 +69,33 @@ query MyQuery($auctionAuctionId: Int = 0) {
 }
 
 `
+const ALL_AUCTION_PLAYER = gql`
+query MyQuery($auctionAuctionId: Int = 0) {
+  allPlayers(condition: {auctionAuctionId: $auctionAuctionId}) {
+    edges {
+      node {
+        playerAge
+        playerId
+        playerName
+        playerPhoneNumber
+        playerStyle
+      }
+    }
+  }
+}
+`
+const UPDATE_TEAM_TOTAL_BUDGET = gql`
+mutation UpdateTeamByTeamId($teamId: Int!, $budget: Int!) {
+  updateTeamByTeamId(input: { teamId: $teamId, teamPatch: { totalBudget: $budget } }) {
+    team {
+      teamId
+      teamName
+      teamShortName
+      totalBudget
+    }
+  }
+}
+`
 
 const MyAuction = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
@@ -76,22 +103,26 @@ const MyAuction = () => {
     const navigater = useNavigate()
     const [auctionData, setAuctionData] = useState([])
     const [showButton, setShowButton] = useState(true)
-    
+    const [getTeams, { loading: teamLoding, error: teamError, data: teamData }] = useLazyQuery(GET_TEAM_BY_AUCTION_ID);
+    const [getPlayers, { loading: playerLoding, error: playerError, data: playerData }] = useLazyQuery(ALL_AUCTION_PLAYER);
+    const [updateTeamBudget] = useMutation(UPDATE_TEAM_TOTAL_BUDGET)
     const [deleteAuctionById, { data, loading, error }] = useMutation(deleteAuction, {
         context: {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-        }
+        },
+        fetchPolicy:"no-cache"
     })
+    
     const { data: fetchedData, loading: auctionLoading, error: auctionError } = useQuery(FETCH_AUCTION_BY_USER_ID, {
         variables: { creatorUserId: user?.user_id },
-        fetchPolicy: "no-cache",
         context: {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
             }
-        }
+        },
+        fetchPolicy:"no-cache"
     });
 
     useEffect(() => {
@@ -100,30 +131,7 @@ const MyAuction = () => {
         }
     }, [fetchedData]);
 
-    // const { data: fetchedData, loading: auctionLoading, error: auctionError } = useQuery(GET_AUCTION_BY_USER, {
-    //     fetchPolicy: "no-cache",
-    //     context: {
-    //         headers: {
-    //             Authorization: `Bearer ${localStorage.getItem("token")}`
-    //         }
-    //     }
-
-    // });
-    // useEffect(() => {
-    //     console.log(user);
-
-    //     if (fetchedData) {
-    //         setAuctionData(fetchedData.getAuctionByUser);
-    //     }
-    // }, [fetchedData]);
-
-    // if (auctionLoading) return <p>Loading...</p>;
-    // if (auctionError) return <p>Error: {auctionError.message}</p>;
-
-
     const handleDelete = async (index, id) => {
-        console.log(index);
-        console.log(id);
 
         try {
             const res = await deleteAuctionById({ variables: { auctionId: id } });
@@ -153,8 +161,6 @@ const MyAuction = () => {
         setPlayerAuction(element)
         navigater('/Dashboard/MyAuction/Player')
     }
-
-
 
     async function fetchTeams(element) {
 
@@ -224,25 +230,25 @@ const MyAuction = () => {
         }
     }
 
-    async function updateTeamBudget(element, finalBudget) {
-        const query = `
-            mutation{
-            updateTeamBudget(auction_id:${element.auction_id},budget:${finalBudget},total_budget:${finalBudget})
-            }
-            `
-        try {
-            const response = await axios.post(url, { query });
+    // async function updateTeamBudget(element, finalBudget) {
+    //     const query = `
+    //         mutation{
+    //         updateTeamBudget(auction_id:${element.auction_id},budget:${finalBudget},total_budget:${finalBudget})
+    //         }
+    //         `
+    //     try {
+    //         const response = await axios.post(url, { query });
 
-            if (response.data.errors) {
-                toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
-                return [];
-            }
-            console.log("Fetched Players:", response.data.data.updateTeamBudget);
-        } catch (error) {
-            console.error("Error fetching players:", error);
-            toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
-        }
-    }
+    //         if (response.data.errors) {
+    //             toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
+    //             return [];
+    //         }
+    //         console.log("Fetched Players:", response.data.data.updateTeamBudget);
+    //     } catch (error) {
+    //         console.error("Error fetching players:", error);
+    //         toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
+    //     }
+    // }
 
     // const { data: fetchedTeam, loading, error } = useQuery(GET_TEAM_BY_AUCTION_ID, {
     //     fetchPolicy: "no-cache",
@@ -252,63 +258,59 @@ const MyAuction = () => {
     // console.log(fetchedTeam);
 
     const handleStartAction = async (element, index) => {
-
-        console.log(element);
-        console.log(index);
-
         try {
 
+            const teams = await getTeams({ variables: { auctionAuctionId: element.auctionId } });
+            const teamsList = teams?.data?.allTeams?.edges?.map(edge => edge.node) || [];
+            console.log(teamsList);
+            
+            if (!teamsList.length) return toast.error("No teams found for this auction!", { position: "top-right", autoClose: 2000 });
+
+            const players = await getPlayers({ variables: { auctionAuctionId: element.auctionId } })
+            const playersLength = players?.data?.allPlayers?.edges?.length || 0;
+
+            if (!playersLength) return toast.error("No players found for this auction!", { position: "top-right", autoClose: 2000 });
+
+            const currentDate = new Date();
+            const auctionDate = new Date(element.date);
+            const [hours, minutes] = element.time.split(":").map(Number);
+            auctionDate.setHours(hours, minutes, 0, 0);
+
+            if (currentDate < auctionDate) {
+                return toast.info("Auction can only start at the scheduled date and time!", { position: "top-right", autoClose: 2000 });
+            }
+            console.log(element.minPlayer);
+            console.log(teamsList.length);
+            console.log(playersLength);
+            
+            console.log(element.minPlayer * teamsList.length <= playersLength);
+            
+            if (element.minPlayer * teamsList.length <= playersLength) {
+                const budget = element.baseBid * teamsList.length * playersLength;
+                const finalBudget = budget + (budget * 50 / 100);
+
+                await Promise.all(
+                    teamsList.map(async (team) => {
+                        await updateTeamBudget({
+                            variables: {
+                                teamId: parseInt(team.teamId, 10),
+                                budget: finalBudget
+                            }
+                        });
+                    })
+                );
+
+                setAuctionPanal({ ...element }); 
+                navigater('/Dashboard/AuctionalPanel');
+            } else {
+                return toast.info("Not enough players found for this auction!", { position: "top-right", autoClose: 2000 });
+            }
         } catch (error) {
-            console.log(error);
+            console.error("Error starting auction:", error);
+            toast.error("Failed to start auction!", { position: "top-right", autoClose: 2000 });
         }
-
-        // try {
-        //     const playerData = await fetchPlayers(element);
-        //     const teamData = await fetchTeams(element);
-        //     const minPlayer = Number(element.min_player);
-        //     console.log(playerData);
-
-        //     const playerWithTeam = playerData.find(player => player.team_id);
-        //     if (playerWithTeam) {
-        //         toast.info("Auction ended", { position: "top-right", autoClose: 2000 });
-
-        //         setCompletedAuctions(prev => {
-        //             const updated = { ...prev, [element.auction_id]: true };
-        //             localStorage.setItem("completedAuctions", JSON.stringify(updated));
-        //             return updated;
-        //         });
-
-        //         return;
-        //     }
-
-        //     const budget = element.base_bit * teamData.length * playerData.length
-        //     const finalBudget = budget + budget * 50 / 100
-        //     await updateTeamBudget(element, finalBudget);
-        //     console.log(teamData.length);
-        //     console.log(minPlayer);
-        //     console.log(playerData.length);
-
-        //     if (teamData.length * minPlayer <= playerData.length) {
-        //         const auctionDate = new Date(Number(element.date));
-        //         const [hours, minutes, seconds] = element.time.split(":").map(Number);
-        //         auctionDate.setHours(hours, minutes, seconds, 0);
-        //         const now = new Date();
-
-        //         if (now.getTime() >= auctionDate.getTime()) {
-        //             setAuctionPanal(element);
-        //             navigater('/Dashboard/AuctionalPanel');
-        //         } else {
-        //             toast.info("The auction can only start at the scheduled time!", { position: "top-right", autoClose: 2000 });
-        //         }
-        //     } else {
-        //         toast.error("Not enough players for the auction!", { position: "top-right", autoClose: 2000 });
-        //     }
-        // } catch (error) {
-        //     return
-        //     // console.error("Error in handleStartAction:", error);
-        //     // toast.error("An error occurred while starting the auction.", { position: "top-right", autoClose: 2000 });
-        // }
     };
+
 
 
     return (
@@ -344,20 +346,24 @@ const MyAuction = () => {
 
                                 return (
                                     <div className='auction-div' key={index}>
-                                        <div className='auction-div-head' onClick={() => handleStartAction(element, index)}>
-                                            <h1>{element.auctionName}</h1>
+                                        <div className='auction-div-head' title='Click to  Start the Auction' onClick={() => handleStartAction(element, index)}>
+                                            <div style={{ marginTop: "25px" }}>
+                                                <h1>{element.auctionName}</h1>
+                                            </div>
                                             <div>
                                                 {/* <time dateTime={dateObj.toISOString()}>{formattedDate}   {timeString}</time> */}
                                                 <time dateTime="">{element.date}--{element.time}</time>
                                             </div>
-                                            <p>
-                                                Auction State :
-                                                {element.auctionStatus === "pending" ? (
-                                                    <b style={{ color: "orange" }}>{" " + element.auctionStatus}</b>
-                                                ) : (
-                                                    <b style={{ color: "green" }}>{" " + element.auctionStatus}</b>
-                                                )}
-                                            </p>
+                                            <div>
+                                                <p>
+                                                    Auction State :
+                                                    {element.auctionStatus === "pending" ? (
+                                                        <b style={{ color: "orange" }}>{" " + element.auctionStatus}</b>
+                                                    ) : (
+                                                        <b style={{ color: "green" }}>{" " + element.auctionStatus}</b>
+                                                    )}
+                                                </p>
+                                            </div>
                                         </div>
                                         <div className='auction-div-body'>
                                             <div>
