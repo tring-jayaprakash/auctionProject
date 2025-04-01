@@ -1,103 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { GrCursor, GrGroup } from "react-icons/gr";
+import { GrGroup } from "react-icons/gr";
 import { GiBabyfootPlayers } from "react-icons/gi";
 import { AiFillEdit } from "react-icons/ai";
 import { MdDeleteForever } from "react-icons/md";
 import './MyAuction.css'
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { GlobalContext } from '../../context/GlobalContext';
-import { GET_AUCTION_BY_USER } from '../../../graphql/query/userQuery';
-import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { DELETE_AUCTION, FETCH_AUCTION_BY_USER_ID, UPDATE_TEAM_TOTAL_BUDGET } from '../../../graphql/mutation/userMutation';
+import { ALL_AUCTION_PLAYER, GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery';
 
-const FETCH_AUCTION_BY_USER_ID = gql`
-query user($creatorUserId: Int!) {
-  allAuctions(condition: {creatorUserId: $creatorUserId}) {
-    edges {
-      node {
-        creatorUserId
-        auctionId
-        auctionName
-        auctionStatus
-        baseBid
-        bidIncreaseBy
-        date
-        maxPlayer
-        minPlayer
-        sportsType
-        time
-      }
-    }
-  }
-}
-`
-const deleteAuction = gql`
-mutation MyMutation($auctionId: Int = 0)  {
-  deleteAuctionByAuctionId(input: {auctionId: $auctionId}) {
-    auction {
-      auctionId
-      auctionName
-      auctionStatus
-      baseBid
-      bidIncreaseBy
-      creatorUserId
-      date
-      maxPlayer
-      minPlayer
-      nodeId
-      sportsType
-      time
-    }
-  }
-}
-`
-const GET_TEAM_BY_AUCTION_ID = gql`
-query MyQuery($auctionAuctionId: Int = 0) {
-  allTeams(condition: {auctionAuctionId: $auctionAuctionId}) {
-    edges {
-      node {
-        auctionAuctionId
-        balanceBudget
-        teamName
-        teamShortName
-        totalBudget
-        teamId
-      }
-    }
-  }
-}
-
-`
-const ALL_AUCTION_PLAYER = gql`
-query MyQuery($auctionAuctionId: Int = 0) {
-  allPlayers(condition: {auctionAuctionId: $auctionAuctionId}) {
-    edges {
-      node {
-        playerAge
-        playerId
-        playerName
-        playerPhoneNumber
-        playerStyle
-      }
-    }
-  }
-}
-`
-const UPDATE_TEAM_TOTAL_BUDGET = gql`
-mutation UpdateTeamByTeamId($teamId: Int!, $budget: Int!, $balanceBudget: Int = 0) {
-  updateTeamByTeamId(
-    input: {teamId: $teamId, teamPatch: {totalBudget: $budget, balanceBudget: $balanceBudget}}
-  ) {
-    team {
-      teamId
-      teamName
-      teamShortName
-      totalBudget
-    }
-  }
-}
-`
 
 const MyAuction = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
@@ -108,7 +21,7 @@ const MyAuction = () => {
     const [getTeams, { loading: teamLoding, error: teamError, data: teamData }] = useLazyQuery(GET_TEAM_BY_AUCTION_ID);
     const [getPlayers, { loading: playerLoding, error: playerError, data: playerData }] = useLazyQuery(ALL_AUCTION_PLAYER);
     const [updateTeamBudget] = useMutation(UPDATE_TEAM_TOTAL_BUDGET)
-    const [deleteAuctionById, { data, loading, error }] = useMutation(deleteAuction, {
+    const [deleteAuctionById, { data, loading, error }] = useMutation(DELETE_AUCTION, {
         context: {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -157,27 +70,23 @@ const MyAuction = () => {
         setTeamAuction(element)
         navigater('/Dashboard/MyAuction/Team')
     }
+
     const handlePlayer = (index, element) => {
-        console.log(element);
         setPlayerAuction(element)
         navigater('/Dashboard/MyAuction/Player')
     }
 
-
     const handleStartAction = async (element, index) => {
         try {
-            console.log(element);
             if (element.auctionStatus == "COMPLETED") return toast.dark("This auction have completed already", { position: "top-right", autoClose: 2000 })
             
             const teams = await getTeams({ variables: { auctionAuctionId: element.auctionId } });
             const teamsList = teams?.data?.allTeams?.edges?.map(edge => edge.node) || [];
-            console.log(teamsList);
 
             if (!teamsList.length) return toast.error("No teams found for this auction!", { position: "top-right", autoClose: 2000 });
 
             const players = await getPlayers({ variables: { auctionAuctionId: element.auctionId } })
             const playersLength = players?.data?.allPlayers?.edges?.length || 0;
-
             if (!playersLength) return toast.error("No players found for this auction!", { position: "top-right", autoClose: 2000 });
 
             const currentDate = new Date();
@@ -215,8 +124,6 @@ const MyAuction = () => {
             toast.error("Failed to start auction!", { position: "top-right", autoClose: 2000 });
         }
     };
-
-
 
     return (
         <>

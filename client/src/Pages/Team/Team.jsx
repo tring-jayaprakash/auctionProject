@@ -7,64 +7,9 @@ import './Team.css'
 import { AiFillEdit } from 'react-icons/ai';
 import { MdDeleteForever } from 'react-icons/md';
 import { GlobalContext } from '../../context/GlobalContext';
-import { gql, useMutation, useQuery } from '@apollo/client';
-
-const GET_TEAM_BY_AUCTION_ID = gql`
-query MyQuery($auctionAuctionId: Int = 0) {
-  allTeams(condition: {auctionAuctionId: $auctionAuctionId}) {
-    edges {
-      node {
-        auctionAuctionId
-        balanceBudget
-        teamName
-        teamShortName
-        totalBudget
-        teamId
-      }
-    }
-  }
-}
-`
-const CREATE_TEAM = gql`
-mutation CreateTeam($auctionAuctionId: Int!, $teamName: String!, $teamShortName: String!) {
-  createTeam(
-    input: { team: { teamName: $teamName, teamShortName: $teamShortName, auctionAuctionId: $auctionAuctionId } }
-  ) {
-    team {
-      teamId
-      teamName
-      teamShortName
-      auctionAuctionId
-    }
-  }
-}
-`;
-
-const UPDATE_TEAM = gql`
-mutation MyMutation($teamName: String!, $teamShortName: String!, $teamId: Int!) {
-  updateTeamByTeamId(
-    input: { teamPatch: { teamShortName: $teamShortName, teamName: $teamName }, teamId: $teamId }
-  ) {
-    team {
-      teamId
-      teamName
-      teamShortName
-      auctionAuctionId
-    }
-  }
-}
-`;
-
-const DELETE_TEAM = gql`
-    mutation MyMutation($teamId: Int!) {
-      deleteTeamByTeamId(input: {teamId: $teamId}) {
-        clientMutationId
-        deletedTeamId
-      }
-    }
-
-`
-
+import { useMutation, useQuery } from '@apollo/client';
+import { CREATE_TEAM, DELETE_TEAM, UPDATE_TEAM } from '../../../graphql/mutation/userMutation';
+import { GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery';
 
 const Team = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
@@ -103,53 +48,9 @@ const Team = () => {
     useEffect(() => {
         if (fetchedTeam?.allTeams) {
             const formattedTeams = fetchedTeam.allTeams.edges.map(edge => edge.node);
-            console.log(formattedTeams);
             setTeams(formattedTeams);
         }
     }, [fetchedTeam]);
-
-    // async function fetchTeams(id) {
-    //     if (!id) return;
-    //     const query = `
-    //         query {
-    //             getTeamsByAuction(auction_id: ${id}) {
-    //                 team_id
-    //                 team_logo
-    //                 team_name
-    //                 team_short_name
-    //                 auction_id
-    //                 budget
-    //                 total_budget
-    //             }
-    //         }
-    //     `;
-
-    //     try {
-    //         const response = await axios.post(url, { query })
-
-    //         if (response.data.errors) {
-    //             toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 })
-    //             return;
-    //         }
-    //         console.log(response.data.data.getTeamsByAuction);
-    //         setTeams(response.data.data.getTeamsByAuction)
-    //     } catch (error) {
-    //         console.error("Error fetching teams:", error)
-    //         toast.error("Failed to fetch teams.", { position: "top-right", autoClose: 2000 })
-    //     }
-    // }
-
-
-
-
-    // useEffect(() => {
-    // if (!teamAuction) return
-    // localStorage.setItem("teamAuction", JSON.stringify(teamAuction))
-    // const id = teamAuction.auction_id
-
-    // fetchTeams(id)
-    // }, [teamAuction]);
-
 
     const onSubmit = async (teamData) => {
         try {
@@ -164,20 +65,15 @@ const Team = () => {
                 return;
             }
 
-            console.log("Sending Data:", teamDetails);
-
             if (editIndex !== null) {
                 const updateVariables = {
                     teamId: editIndex,
                     teamName: teamDetails.teamName,
                     teamShortName: teamDetails.teamShortName,
                 };
-                console.log(updateVariables);
-
                 const res = await updateTeam({ variables: updateVariables });
 
                 if (res.data) {
-                    console.log("Updated Team:", res.data.updateTeamByTeamId.team);
                     setTeams((prevTeams) =>
                         prevTeams.map((team) =>
                             team.teamId === editIndex ? res.data.updateTeamByTeamId.team : team
@@ -199,14 +95,13 @@ const Team = () => {
                     toast.success("Team Created Successfully!", { position: "top-right", autoClose: 1000 });
                     reset();
                     setTeamFlag(null);
-                }
+                }   
             }
         } catch (err) {
             console.error("Error:", err);
             toast.error("Issue in submission", { position: "top-right", autoClose: 2000 });
         }
     };
-
 
     const handleCancel = () => {
         reset();
@@ -222,8 +117,6 @@ const Team = () => {
     }
 
     const handleDelete = async (index, team) => {
-        console.log("Deleting team at index:", index);
-        console.log("Deleting team at team:", team.teamId);
         try {
             const res = await deleteTeam({ variables: { teamId: team.teamId }, fetchPolicy: "no-cache" })
             if (res.data) {

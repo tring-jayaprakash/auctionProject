@@ -2,19 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import "./MyProfile.css";
 import { gql, useQuery } from "@apollo/client";
 import { GlobalContext } from "../../context/GlobalContext";
-
-const GET_USER_BY_USER_ID = gql`
-query MyQuery($userId: Int = 0) {
-  allUsers(condition: {userId: $userId}) {
-    nodes {
-      city
-      email
-      phoneNumber
-      userName
-    }
-  }
-}
-`
+import { GET_USER_BY_USER_ID } from "../../../graphql/query/userQuery";
 
 const MyProfile = () => {
     const {user, setUser}=useContext(GlobalContext)
@@ -28,15 +16,11 @@ const MyProfile = () => {
 
     useEffect(()=>{
         if(data){
-            console.log(data.allUsers.nodes); 
             setUserData(...data.allUsers.nodes)
         }
     },[data])
 
     
-
-
-
     return (
         <>
 

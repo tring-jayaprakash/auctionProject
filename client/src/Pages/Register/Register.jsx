@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { REGISTER_USER_MUTATION } from "../../../graphql/mutation/userMutation";
+import { REGISTER_USER} from "../../../graphql/mutation/userMutation";
 import InputField from "../../components/InputField";
 import { gql, useMutation } from "@apollo/client";
 
@@ -12,19 +12,8 @@ const Register = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const navigate = useNavigate();
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
-
-    const registerSchema = gql`
-    mutation MyMutation($city: String = "", $email: String = "", $password: String = "", $phone_number: String = "", $user_name: String = "") {
-      register(
-        city: $city
-        email: $email
-        password: $password
-        phone_number: $phone_number
-        user_name: $user_name
-      )
-    }
-    `
-    const [registerUser, { loading, error }] = useMutation(registerSchema)
+    const [registerUser, { loading, error }] = useMutation(REGISTER_USER)
+    
     const onSubmit = async (user) => {
         try {
             console.log(user);
@@ -44,8 +33,6 @@ const Register = () => {
             
             if (res.data.register) {
                 console.log("response", res.data.register)
-                // localStorage.setItem("token", res.data.login)
-                // setUser(user);
                 toast.success("register successful..!", { position: "top-right", autoClose: 1000 });
             setTimeout(() => navigate("/login"), 1000);
             }
@@ -54,48 +41,6 @@ const Register = () => {
             alert("cannot login")
         }
     }
-
-    // const onSubmit = async (userData) => {
-    //     async function registerUser() {
-    //         const query = REGISTER_USER_MUTATION;
-    //         const variables = {
-    //             city: userData.user_city,
-    //             ph_number: userData.user_phone,
-    //             user_name: userData.user_name,
-    //             email: userData.user_email,
-    //             password: userData.user_password,
-    //         };
-    //         console.log(variables);
-
-    //         try {
-    //             const response = await axios.post(url, { query, variables, });
-
-    //             console.log(response.data.data.register);
-
-    //             if (response.data.errors) {
-    //                 toast.error(response.data.errors[0].message, {
-    //                     position: "top-right",
-    //                     autoClose: 2000,
-    //                 });
-    //                 return;
-    //             }
-
-    //             toast.success("Registration successful..! You can now login.", {
-    //                 position: "top-right",
-    //                 autoClose: 1000,
-    //             });
-
-    //             setTimeout(() => navigate("/login"), 1000);
-    //         } catch (error) {
-    //             toast.error("Registration failed. Please try again.", {
-    //                 position: "top-right",
-    //                 autoClose: 2000,
-    //             });
-    //         }
-    //     }
-
-    //     registerUser();
-    // };
 
     return (
         <>

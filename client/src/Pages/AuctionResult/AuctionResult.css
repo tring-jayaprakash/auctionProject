@@ -1,6 +1,6 @@
 #result-main-div {
     background-color: white;
-    border: 1px solid  black;
+    /* border: 1px solid  black; */
     min-height: 91.5vh;
     width: 90%;
     padding: 0 76px;
@@ -9,7 +9,7 @@
     transition: all 0.3s ease-in-out;
 }
 
-#my-inner-div {
+#result-inner-div {
     height: 99.5%;
 }
 

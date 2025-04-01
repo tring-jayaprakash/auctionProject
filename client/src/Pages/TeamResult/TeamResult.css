@@ -20,11 +20,13 @@
     margin-bottom: 10px;
 }
 
-#team-header-div > div {
-    width: 50%;
+#team-result-header-div > div {
+    /* border: 1px solid black; */
+    /* width: 50%; */
     display: flex;
     justify-content: end;
     align-items: center;
+    /* margin-top: 10px; */
 }
 
 #team-body-div {

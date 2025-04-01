@@ -5,31 +5,29 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Login.css'
 import { GlobalContext } from "../../context/GlobalContext";
-import { LOGIN_USER_QUERY } from "../../../graphql/query/userQuery";
 import InputField from "../../components/InputField";
 import { gql, useMutation } from "@apollo/client";
+import { LOGIN_USER } from "../../../graphql/mutation/userMutation";
 
 
 function Login() {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const navigate = useNavigate();
-    const { user, setUser ,active,setActive} = useContext(GlobalContext)
+    const { user, setUser, active, setActive } = useContext(GlobalContext)
     const { register, handleSubmit, formState: { errors } } = useForm();
 
 
-    const loginSchema = gql`
-    mutation MyMutation($email: String = "", $password: String = "") {
-        login(email: $email, password: $password)
-      }
-    `
+    // const LOGIN_USER = gql`
+    // mutation MyMutation($email: String = "", $password: String = "") {
+    //     login(email: $email, password: $password)
+    //   }
+    // `
 
-    const [loginUser, { loading, error }] = useMutation(loginSchema)
+    const [loginUser, { loading, error }] = useMutation(LOGIN_USER)
 
     const onSubmit = async (user) => {
         try {
             const { email, password } = user;
-            console.log(email);
-            console.log(password);
 
             const res = await loginUser({
                 variables: {
@@ -38,53 +36,17 @@ function Login() {
                 }
             })
             if (res.data.login) {
-                console.log("response", res.data.login)
+                // console.log("response", res.data.login)
                 localStorage.setItem("token", res.data.login)
-                // setUser(user);
-                setActive(active+1)
+                setActive(active + 1)
                 toast.success("Login successful..!", { position: "top-right", autoClose: 1000 });
                 setTimeout(() => navigate("/Dashboard"), 1000);
             }
         } catch (err) {
-            console.table("err", err)
-            alert("cannot login")
+            // console.table("err", err)
+            toast.error("Insert valid username & password", { position: "top-right", autoClose: 2000 });
         }
     }
-
-    // const onSubmit = async (data) => {
-    //     const query = LOGIN_USER_QUERY;
-    //     const variables = {
-    //         email: data.email,
-    //         password: data.password,
-    //     };
-
-    //     console.log("Sending variables:", variables);
-    //     try {
-    //         const response = await axios.post(url, { query, variables });
-
-    //         console.log("Response:", response);
-    //         if (response.data.errors) {
-    //             toast.warn("Invalid email or password", { position: "top-right", autoClose: 1000 });
-    //             return;
-    //         }
-
-    //         const userData = response.data.data.login;
-
-    //         if (userData) {
-    //             setUser(userData);
-    //             localStorage.setItem("user", JSON.stringify(userData));
-
-    //             toast.success("Login successful..!", { position: "top-right", autoClose: 1000 });
-    //             setTimeout(() => navigate("/Dashboard"), 1000);
-    //         } else {
-    //             toast.warn("Invalid email or password", { position: "top-right", autoClose: 1000 });
-    //         }
-
-    //     } catch (error) {
-    //         console.error("Login Error:", error);
-    //         toast.error("Login failed. Please try again.", { position: "top-right", autoClose: 2000 });
-    //     }
-    // }
 
     return (
         <>

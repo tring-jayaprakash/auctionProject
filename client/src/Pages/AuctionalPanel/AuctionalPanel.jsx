@@ -5,105 +5,108 @@ import { toast } from 'react-toastify'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { GlobalContext } from '../../context/GlobalContext'
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client'
+import { ALL_AUCTION_PLAYER, GET_ALL_AUCTION_PLAYER, GET_AUCTION_BY_AUCTION_ID, GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery'
+import { CREATE_AUCTION_PLAYER, UPDATE_AUCTION_STATUS, UPDATE_PLAYER_BID_AMOUNT, UPDATE_TEAM_BALANCE_BUDGET } from '../../../graphql/mutation/userMutation'
 
-const GET_AUCTION_BY_AUCTION_ID = gql`
-query MyQuery($auctionId: Int = 0) {
-  allAuctions(condition: {auctionId: $auctionId}) {
-    edges {
-      node {
-        auctionId
-        auctionName
-        auctionStatus
-        baseBid
-        bidIncreaseBy
-        date
-        maxPlayer
-        minPlayer
-      }
-    }
-  }
-}
-`
-const GET_TEAM_BY_AUCTION_ID = gql`
-query MyQuery($auctionAuctionId: Int = 0) {
-  allTeams(condition: {auctionAuctionId: $auctionAuctionId}) {
-    edges {
-      node {
-        auctionAuctionId
-        balanceBudget
-        teamName
-        teamShortName
-        totalBudget
-        teamId
-      }
-    }
-  }
-}
+// const GET_AUCTION_BY_AUCTION_ID = gql`
+// query MyQuery($auctionId: Int = 0) {
+//   allAuctions(condition: {auctionId: $auctionId}) {
+//     edges {
+//       node {
+//         auctionId
+//         auctionName
+//         auctionStatus
+//         baseBid
+//         bidIncreaseBy
+//         date
+//         maxPlayer
+//         minPlayer
+//       }
+//     }
+//   }
+// }
+// `
+// const GET_TEAM_BY_AUCTION_ID = gql`
+// query MyQuery($auctionAuctionId: Int = 0) {
+//   allTeams(condition: {auctionAuctionId: $auctionAuctionId}) {
+//     edges {
+//       node {
+//         auctionAuctionId
+//         balanceBudget
+//         teamName
+//         teamShortName
+//         totalBudget
+//         teamId
+//       }
+//     }
+//   }
+// }
 
-`
-const ALL_AUCTION_PLAYER = gql`
-query MyQuery($auctionAuctionId: Int = 0) {
-  allPlayers(condition: {auctionAuctionId: $auctionAuctionId}) {
-    edges {
-      node {
-        playerAge
-        playerId
-        playerName
-        playerPhoneNumber
-        playerStyle
-      }
-    }
-  }
-}
-`
-const UPDATE_PLAYER_BID_AMOUNT = gql`
-mutation MyMutation($playerId: Int = 0, $playerBidAmount: Int = 0) {
-  updatePlayerByPlayerId(
-    input: {playerPatch: {playerBidAmount: $playerBidAmount}, playerId: $playerId}
-  ) {
-    clientMutationId
-  }
-}
-`
+// `
+// const ALL_AUCTION_PLAYER = gql`
+// query MyQuery($auctionAuctionId: Int = 0) {
+//   allPlayers(condition: {auctionAuctionId: $auctionAuctionId}) {
+//     edges {
+//       node {
+//         playerAge
+//         playerId
+//         playerName
+//         playerPhoneNumber
+//         playerStyle
+//       }
+//     }
+//   }
+// }
+// `
 
-const CREATE_AUCTION_PLAYER = gql`
-mutation MyMutation($auctionAuctionId: Int = 0, $playerPlayerId: Int = 0, $teamTeamId: Int = 0) {
-  createAuctionPlayer(
-    input: {auctionPlayer: {auctionAuctionId: $auctionAuctionId, playerPlayerId: $playerPlayerId, teamTeamId: $teamTeamId}}
-  ) {
-    clientMutationId
-  }
-}
-`
-const UPDATE_TEAM_BALANCE_BUDGET = gql`
-mutation MyMutation($teamId: Int = 0, $balanceBudget: Int = 0) {
-  updateTeamByTeamId(
-    input: {teamPatch: {balanceBudget: $balanceBudget}, teamId: $teamId}
-  ) {
-    clientMutationId
-  }
-}
-`
-const GET_ALL_AUCTION_PLAYER = gql`
-query MyQuery {
-  allAuctionPlayers {
-    nodes {
-      auctionAuctionId
-      playerPlayerId
-      teamTeamId
-    }
-  }
-}
-`
-const UPDATE_AUCTION_STATUS = gql`
-mutation MyMutation($auctionId: Int = 0, $auctionStatus: AuctionAuctionStatusEnum!) {
-  updateAuctionByAuctionId(
-    input: {auctionPatch: {auctionStatus: $auctionStatus}, auctionId: $auctionId}
-  ){
-    clientMutationId
-  }
-}
-`
+// const UPDATE_PLAYER_BID_AMOUNT = gql`
+// mutation MyMutation($playerId: Int = 0, $playerBidAmount: Int = 0) {
+//   updatePlayerByPlayerId(
+//     input: {playerPatch: {playerBidAmount: $playerBidAmount}, playerId: $playerId}
+//   ) {
+//     clientMutationId
+//   }
+// }
+// ` 
+// const CREATE_AUCTION_PLAYER = gql`
+// mutation MyMutation($auctionAuctionId: Int = 0, $playerPlayerId: Int = 0, $teamTeamId: Int = 0) {
+//   createAuctionPlayer(
+//     input: {auctionPlayer: {auctionAuctionId: $auctionAuctionId, playerPlayerId: $playerPlayerId, teamTeamId: $teamTeamId}}
+//   ) {
+//     clientMutationId
+//   }
+// }
+// `
+// const UPDATE_TEAM_BALANCE_BUDGET = gql`
+// mutation MyMutation($teamId: Int = 0, $balanceBudget: Int = 0) {
+//   updateTeamByTeamId(
+//     input: {teamPatch: {balanceBudget: $balanceBudget}, teamId: $teamId}
+//   ) {
+//     clientMutationId
+//   }
+// }
+// `
+// const GET_ALL_AUCTION_PLAYER = gql`
+// query MyQuery {
+//   allAuctionPlayers {
+//     nodes {
+//       auctionAuctionId
+//       playerPlayerId
+//       teamTeamId
+//     }
+//   }
+// }
+// `
+// const UPDATE_AUCTION_STATUS = gql`
+// mutation MyMutation($auctionId: Int = 0, $auctionStatus: AuctionAuctionStatusEnum!) {
+//   updateAuctionByAuctionId(
+//     input: {auctionPatch: {auctionStatus: $auctionStatus}, auctionId: $auctionId}
+//   ){
+//     clientMutationId
+//   }
+// }
+// ` 
+
 const AuctionalPanel = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const navigator = useNavigate()
@@ -135,7 +138,6 @@ const AuctionalPanel = () => {
     useEffect(() => {
         if (allAuctionPlayersData) {
             setForCount(allAuctionPlayersData.allAuctionPlayers.nodes);
-            console.log("Updated forCount:", allAuctionPlayersData.allAuctionPlayers.nodes);
         }
     }, [allAuctionPlayersData]);
     const { data: fetchedData, loading: auctionLoading, error: auctionError } = useQuery(GET_AUCTION_BY_AUCTION_ID,
@@ -283,6 +285,8 @@ const AuctionalPanel = () => {
                 return;
             }
 
+            const prevPlayer = auctionPlayer[count - 1];
+
             const updatePlayeRes = await updatePlayerBidAmount({
                 variables: {
                     playerId: Number(prevPlayer.playerId),
@@ -319,7 +323,6 @@ const AuctionalPanel = () => {
             if (auctionPlayer[count]) {
                 setOnePlayer(playerWithNull[count])
                 setCount(prevCount => prevCount + 1);
-                // setBidIncrese(auctionPanal.base_bit);
                 setBidIncrese(0)
 
             } else {

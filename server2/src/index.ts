@@ -29,38 +29,29 @@ app.use(
     dynamicJson: true,
     enableCors: true,
     appendPlugins: [AuthPlugin, AuctionPlugin],
-    additionalGraphQLContextFromRequest: async (req) => {
-      // console.log("request,",req.headers.authorization);
+    additionalGraphQLContextFromRequest: async (req, res) => {
       const authHeader = req.headers.authorization || "";
       const token = authHeader.split(" ")[1];
 
       console.log("request operation", req?.body?.operationName);
       const operationName = req?.body?.operationName
-      // if (operationName === "guest") {
-      //   console.log("guest start");
-      //   return {}
-      // } else {
-
-      console.log("auth start");
-
+      // if (operationName !== "guest") {
+      //   return { req, res }
+      // }
+      // else {
       if (!token) return {
         user: null
       };
-
       try {
         const decodedUser = jwt.verify(token, process.env.SECRET_KEY!);
         return { user: decodedUser };
       } catch (err) {
         throw new Error("error message")
-        // return { user: null };
       }
       // }
     },
   })
 );
-
-
-
 AppDataSource.initialize()
   .then(() => {
     console.log("Database connected successfully!");

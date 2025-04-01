@@ -8,88 +8,8 @@ import "./Player.css";
 import { GlobalContext } from "../../context/GlobalContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
-
-const CREATE_PLAYER = gql`
-mutation MyMutation($playerName: String = "", $playerAge: Int = 0, $playerPhoneNumber: String = "", $playerStyle: String = "", $auctionAuctionId: Int = 0) {
-  createPlayer(
-    input: {player: {playerName: $playerName, playerAge: $playerAge, playerPhoneNumber: $playerPhoneNumber, playerStyle: $playerStyle, auctionAuctionId: $auctionAuctionId}}
-  ) {
-    clientMutationId
-    player {
-      playerId
-      playerAge
-      playerBidAmount
-      playerName
-      playerPhoneNumber
-      playerStyle
-    }
-  }
-}
-`
-const UPDATE_PLAYER = gql`
-mutation MyMutation($playerId: Int = 0, $playerAge: Int = 0, $playerName: String = "", $playerPhoneNumber: String = "", $playerStyle: String = "") {
-  updatePlayerByPlayerId(
-    input: {playerPatch: {playerAge: $playerAge, playerName: $playerName, playerPhoneNumber: $playerPhoneNumber, playerStyle: $playerStyle}, playerId: $playerId}
-  ) {
-    player {
-      playerAge
-      playerBidAmount
-      playerName
-      playerPhoneNumber
-      playerStyle
-    }
-  }
-}
-`
-// const CREATE_AUCTION_PLAYER = gql`
-// mutation MyMutation($auctionAuctionId: Int = 0, $playerPlayerId: Int = 0) {
-//   createAuctionPlayer(
-//     input: {auctionPlayer: {auctionAuctionId: $auctionAuctionId, playerPlayerId: $playerPlayerId}}
-//   ) {
-//     clientMutationId
-//   } 
-// }
-// `
-const ALL_AUCTION_PLAYER = gql`
-query MyQuery($auctionAuctionId: Int = 0) {
-  allPlayers(condition: {auctionAuctionId: $auctionAuctionId}) {
-    edges {
-      node {
-        playerAge
-        playerId
-        playerName
-        playerPhoneNumber
-        playerStyle
-      }
-    }
-  }
-}
-`
-const DELETE_PLAYER = gql`
-mutation MyMutation($playerId: Int = 0) {
-  deletePlayerByPlayerId(input: {playerId: $playerId})
-   {
-        clientMutationId
-    }
-}
-`
-const GET_PLAYER_BY_TEAM_ID = gql`
-query MyQuery($teamTeamId: Int = 0) {
-  allAuctionPlayers(condition: {teamTeamId: $teamTeamId}) {
-    nodes {
-      playerByPlayerPlayerId {
-        playerAge
-        playerBidAmount
-        playerId
-        playerName
-        playerPhoneNumber
-        playerStyle
-      }
-    }
-  }
-}
-`
-
+import { CREATE_PLAYER, DELETE_PLAYER, UPDATE_PLAYER } from "../../../graphql/mutation/userMutation";
+import { ALL_AUCTION_PLAYER, GET_PLAYER_BY_TEAM_ID } from "../../../graphql/query/userQuery";
 
 const Player = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
@@ -143,7 +63,6 @@ const Player = () => {
     useEffect(() => {
         if (fetchedPlayer?.allPlayers) {
             const formattedPlayers = fetchedPlayer.allPlayers.edges.map(edge => edge.node);
-            console.log(formattedPlayers);
             setPlayers(formattedPlayers);
         }
     }, [fetchedPlayer]);
@@ -286,14 +205,6 @@ const Player = () => {
                                         <input type="text" {...register("player_name", { required: "Name is required" })} />
                                     </div>
                                 </div>
-                                {/* <div className="form-group-players">
-                                    <div id="div">
-                                        <label >Last Name </label>
-                                    </div>
-                                    <div>
-                                        <input type="text" {...register("father_name")} />
-                                    </div>
-                                </div> */}
                                 <div className="form-group-players">
                                     <div id="div">
                                         <label >Phone Number </label>

@@ -5,90 +5,22 @@ import 'react-toastify/dist/ReactToastify.css';
 import './NewAuction.css'
 import axios from 'axios';
 import { data, useNavigate } from 'react-router-dom';
-// import { ADD_AUCTION_MUTATION, UPDATE_AUCTION_MUTATION } from '../../../graphql/mutation/userMutation';
 import { GlobalContext } from '../../context/GlobalContext';
 import { gql, useMutation } from '@apollo/client';
-
-
-const CREATE_AUCTION_MUTATION = gql`
-mutation MyMutation($auctionName: String = "", $baseBid: Int = 0, $bidIncreaseBy: Int = 0, $date: Date = "", $maxPlayer: Int = 0, $minPlayer: Int = 0, $sportsType: String = "", $time: Time = "") {
-  createAuctionByUserId(
-    baseBid: $baseBid
-    bidIncreaseBy: $bidIncreaseBy
-    date: $date
-    maxPlayer: $maxPlayer
-    minPlayer: $minPlayer
-    sportsType: $sportsType
-    time: $time
-    auctionName: $auctionName
-  )
-}
-`
-
-const UPDATE_AUCTION_MUTATION = gql`
-mutation UpdateAuction(
-  $auctionId: Int!
-  $auctionName: String!
-  $baseBid: Int!
-  $bidIncreaseBy: Int!
-  $date: Date!
-  $maxPlayer: Int!
-  $minPlayer: Int!
-  $sportsType: String!
-  $time: Time!
-) {
-  updateAuctionByAuctionId(
-    input: {
-      auctionPatch: {
-        auctionName: $auctionName
-        baseBid: $baseBid
-        bidIncreaseBy: $bidIncreaseBy
-        date: $date
-        maxPlayer: $maxPlayer
-        minPlayer: $minPlayer
-        sportsType: $sportsType
-        time: $time
-      }
-      auctionId: $auctionId
-    }
-  ) {
-    auction {
-      auctionId
-      auctionName
-      date
-      time
-      baseBid
-      bidIncreaseBy
-      maxPlayer
-      minPlayer
-      auctionStatus
-      sportsType
-    }
-  }
-}
-`;
-
+import { CREATE_AUCTION_MUTATION, UPDATE_AUCTION_MUTATION } from '../../../graphql/mutation/userMutation';
 
 const NewAuction = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const navigator = useNavigate()
     const { auction, setAuction } = useContext(GlobalContext)
     const defaultImage = "https://superplayerauction.com/user/static/media/logo-auction.e6b9bfb3.png";
-    // const [image, setImage] = useState(defaultImage);
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
-
-
-
-
-
-    // const [createAuc, { data, loading, error }] = useMutation(createAuction)
     const [createAuctionMutation] = useMutation(CREATE_AUCTION_MUTATION);
     const [updateAuctionMutation] = useMutation(UPDATE_AUCTION_MUTATION);
 
 
     useEffect(() => {
         if (auction) {
-            // setValue("logo", auction.logo || "");
             setValue("sports", auction.sportsType || "");
             setValue("name", auction.auctionName || "");
 
@@ -105,55 +37,13 @@ const NewAuction = () => {
             setValue("bit_increse_by", auction.bidIncreaseBy || 0);
             setValue("max_player", auction.maxPlayer || 0);
             setValue("min_player", auction.minPlayer || 0);
-            // setImage(auction.logo || defaultImage);
         }
     }, [auction, setValue]);
-
-
-    // let localUser = localStorage.getItem("user")
-    // const jsonUser = JSON.parse(localUser)
-    // const onSubmit = async (auctionData) => {
-    //     const newEntity = {
-    //         logo: auctionData.logo || "",
-    //         sports: auctionData.sports || "",
-    //         auction_name: auctionData.name || "",
-    //         date: auctionData.date || "",
-    //         time: auctionData.time || "",
-    //         base_bit: parseInt(auctionData.base_bit, 10) || 0,
-    //         bit_increse_by: parseInt(auctionData.bit_increse_by, 10) || 0,
-    //         max_player: parseInt(auctionData.max_player, 10) || 0,
-    //         min_player: parseInt(auctionData.min_player, 10) || 0
-    //     };
-
-    //     try {
-    //         const query = auction ? UPDATE_AUCTION_MUTATION : ADD_AUCTION_MUTATION;
-    //         const variables = auction ? { auction_id: auction.auction_id, ...newEntity } : { ...newEntity, user_id: parseInt(jsonUser.user_id, 10)};
-
-    //         console.log("Sending to GraphQL:", { query, variables });
-
-    //         const response = await axios.post(url, { query, variables });
-
-    //         if (response.data.errors) {
-    //             console.error("GraphQL Error:", response.data.errors);
-    //             toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
-    //             return;
-    //         }
-
-    //         toast.success(auction ? "Auction Updated Successfully" : "Auction Created Successfully", { position: "top-right", autoClose: 1000 });
-    //         navigator('/Dashboard/MyAuction');
-    //         setAuction(null);
-    //         reset();
-    //     } catch (error) {
-    //         console.error("Request Failed:", error.response ? error.response.data : error.message);
-    //         toast.error("Something went wrong. Please try again.", { position: "top-right", autoClose: 2000 });
-    //     }
-    // };
 
     const onSubmit = async (auctionData) => {
         try {
 
             const newEntity = {
-                //logo: auctionData.logo || "",
                 sportsType: auctionData.sports || "",
                 auctionName: auctionData.name || "",
                 date: auctionData.date || "",
@@ -163,7 +53,7 @@ const NewAuction = () => {
                 maxPlayer: parseInt(auctionData.max_player, 10) || 0,
                 minPlayer: parseInt(auctionData.min_player, 10) || 0
             };
-            console.log("New Entity:", newEntity);
+            // console.log("New Entity:", newEntity);
             let res;
             if (auction?.auctionId) {
                 res = await updateAuctionMutation({
@@ -187,7 +77,7 @@ const NewAuction = () => {
                 });
             }
             if (res.data) {
-                console.log("Response Data:", res.data);
+                // console.log("Response Data:", res.data);
                 setAuction(null)
                 toast.success(auction ? "Auction Updated Successfully!" : "Auction Created Successfully!", { position: "top-right", autoClose: 1000 });
                 navigator('/Dashboard/MyAuction');
@@ -197,7 +87,6 @@ const NewAuction = () => {
             toast.error("Issue in submission", { position: "top-right", autoClose: 2000 });
         }
     }
-
 
     const handleCancel = () => {
         setAuction(null)
