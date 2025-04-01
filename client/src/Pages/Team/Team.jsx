@@ -238,9 +238,8 @@ const Team = () => {
 
     const handleViewPlayers = (index, team) => {
 
-        console.log(index);
-        console.log(team);
         setTeamId(team)
+        console.log(team);
         navigate('/Dashboard/MyAuction/Player')
     }
 

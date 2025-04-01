@@ -85,8 +85,10 @@ query MyQuery($auctionAuctionId: Int = 0) {
 }
 `
 const UPDATE_TEAM_TOTAL_BUDGET = gql`
-mutation UpdateTeamByTeamId($teamId: Int!, $budget: Int!) {
-  updateTeamByTeamId(input: { teamId: $teamId, teamPatch: { totalBudget: $budget } }) {
+mutation UpdateTeamByTeamId($teamId: Int!, $budget: Int!, $balanceBudget: Int = 0) {
+  updateTeamByTeamId(
+    input: {teamId: $teamId, teamPatch: {totalBudget: $budget, balanceBudget: $balanceBudget}}
+  ) {
     team {
       teamId
       teamName
@@ -112,9 +114,9 @@ const MyAuction = () => {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
         },
-        fetchPolicy:"no-cache"
+        fetchPolicy: "no-cache"
     })
-    
+
     const { data: fetchedData, loading: auctionLoading, error: auctionError } = useQuery(FETCH_AUCTION_BY_USER_ID, {
         variables: { creatorUserId: user?.user_id },
         context: {
@@ -122,7 +124,7 @@ const MyAuction = () => {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
             }
         },
-        fetchPolicy:"no-cache"
+        fetchPolicy: "no-cache"
     });
 
     useEffect(() => {
@@ -156,114 +158,21 @@ const MyAuction = () => {
         navigater('/Dashboard/MyAuction/Team')
     }
     const handlePlayer = (index, element) => {
-        // console.log(index);
         console.log(element);
         setPlayerAuction(element)
         navigater('/Dashboard/MyAuction/Player')
     }
 
-    async function fetchTeams(element) {
-
-        let localUser = localStorage.getItem("user")
-        const jsonUser = JSON.parse(localUser)
-
-        const query = `
-                query {
-                    getTeamsByAuction(auction_id: ${element.auction_id}) {
-                        team_id
-                        team_logo
-                        team_name
-                        team_short_name
-                        auction_id
-                    }
-                }
-            `;
-        try {
-            const response = await axios.post(url, { query });
-
-            if (response.data.errors) {
-                toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
-                return [];
-            }
-            console.log("Fetched Teams:", response.data.data.getTeamsByAuction);
-            // toast.success("sucessfully fetch teams.", { position: "top-right", autoClose: 2000 });
-            return response.data.data.getTeamsByAuction;
-        } catch (error) {
-            console.error("Error fetching teams:", error);
-            toast.error("Failed to fetch teams.", { position: "top-right", autoClose: 2000 });
-            return [];
-        }
-    }
-
-
-    async function fetchPlayers(element) {
-        const query = `
-                query {
-                    getPlayersByAuction(auction_id: ${element.auction_id}) {
-                        player_id
-                        player_pic
-                        player_name
-                        father_name
-                        player_ph_number
-                        age
-                        form_number
-                        player_style
-                        team_id
-                        bid_amount
-                    }
-                }
-            `;
-
-        try {
-            const response = await axios.post(url, { query });
-
-            if (response.data.errors) {
-                toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
-                return [];
-            }
-            console.log("Fetched Players:", response.data.data.getPlayersByAuction);
-            return response.data.data.getPlayersByAuction;
-        } catch (error) {
-            console.error("Error fetching players:", error);
-            toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
-            return [];
-        }
-    }
-
-    // async function updateTeamBudget(element, finalBudget) {
-    //     const query = `
-    //         mutation{
-    //         updateTeamBudget(auction_id:${element.auction_id},budget:${finalBudget},total_budget:${finalBudget})
-    //         }
-    //         `
-    //     try {
-    //         const response = await axios.post(url, { query });
-
-    //         if (response.data.errors) {
-    //             toast.error(response.data.errors[0].message, { position: "top-right", autoClose: 2000 });
-    //             return [];
-    //         }
-    //         console.log("Fetched Players:", response.data.data.updateTeamBudget);
-    //     } catch (error) {
-    //         console.error("Error fetching players:", error);
-    //         toast.error("Failed to fetch players.", { position: "top-right", autoClose: 2000 });
-    //     }
-    // }
-
-    // const { data: fetchedTeam, loading, error } = useQuery(GET_TEAM_BY_AUCTION_ID, {
-    //     fetchPolicy: "no-cache",
-    //     skip: !teamAuction?.auctionId,
-    //     variables: { auctionAuctionId: teamAuction?.auctionId || 0 }
-    // });
-    // console.log(fetchedTeam);
 
     const handleStartAction = async (element, index) => {
         try {
-
+            console.log(element);
+            if (element.auctionStatus == "COMPLETED") return toast.dark("This auction have completed already", { position: "top-right", autoClose: 2000 })
+            
             const teams = await getTeams({ variables: { auctionAuctionId: element.auctionId } });
             const teamsList = teams?.data?.allTeams?.edges?.map(edge => edge.node) || [];
             console.log(teamsList);
-            
+
             if (!teamsList.length) return toast.error("No teams found for this auction!", { position: "top-right", autoClose: 2000 });
 
             const players = await getPlayers({ variables: { auctionAuctionId: element.auctionId } })
@@ -279,12 +188,7 @@ const MyAuction = () => {
             if (currentDate < auctionDate) {
                 return toast.info("Auction can only start at the scheduled date and time!", { position: "top-right", autoClose: 2000 });
             }
-            console.log(element.minPlayer);
-            console.log(teamsList.length);
-            console.log(playersLength);
-            
-            console.log(element.minPlayer * teamsList.length <= playersLength);
-            
+
             if (element.minPlayer * teamsList.length <= playersLength) {
                 const budget = element.baseBid * teamsList.length * playersLength;
                 const finalBudget = budget + (budget * 50 / 100);
@@ -294,13 +198,14 @@ const MyAuction = () => {
                         await updateTeamBudget({
                             variables: {
                                 teamId: parseInt(team.teamId, 10),
-                                budget: finalBudget
+                                budget: finalBudget,
+                                balanceBudget: finalBudget
                             }
                         });
                     })
                 );
 
-                setAuctionPanal({ ...element }); 
+                setAuctionPanal({ ...element });
                 navigater('/Dashboard/AuctionalPanel');
             } else {
                 return toast.info("Not enough players found for this auction!", { position: "top-right", autoClose: 2000 });
@@ -332,18 +237,6 @@ const MyAuction = () => {
                     <div id='my-body-div'>
                         {
                             auctionData.map((element, index) => {
-                                const auction_date = Number(element.date);
-                                const timeString = element.time;
-                                if (isNaN(auction_date)) {
-                                    // console.log("Invalid Date:", element.date);
-                                }
-
-                                const dateObj = new Date(auction_date);
-                                const day = dateObj.getDate().toString().padStart(2, '0');
-                                const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
-                                const year = dateObj.getFullYear();
-                                const formattedDate = `${day}-${month}-${year}`;
-
                                 return (
                                     <div className='auction-div' key={index}>
                                         <div className='auction-div-head' title='Click to  Start the Auction' onClick={() => handleStartAction(element, index)}>
@@ -351,13 +244,12 @@ const MyAuction = () => {
                                                 <h1>{element.auctionName}</h1>
                                             </div>
                                             <div>
-                                                {/* <time dateTime={dateObj.toISOString()}>{formattedDate}   {timeString}</time> */}
                                                 <time dateTime="">{element.date}--{element.time}</time>
                                             </div>
                                             <div>
                                                 <p>
                                                     Auction State :
-                                                    {element.auctionStatus === "pending" ? (
+                                                    {element.auctionStatus === "PENDING" ? (
                                                         <b style={{ color: "orange" }}>{" " + element.auctionStatus}</b>
                                                     ) : (
                                                         <b style={{ color: "green" }}>{" " + element.auctionStatus}</b>

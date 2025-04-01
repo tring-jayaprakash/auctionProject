@@ -41,15 +41,15 @@ mutation MyMutation($playerId: Int = 0, $playerAge: Int = 0, $playerName: String
   }
 }
 `
-const CREATE_AUCTION_PLAYER = gql`
-mutation MyMutation($auctionAuctionId: Int = 0, $playerPlayerId: Int = 0) {
-  createAuctionPlayer(
-    input: {auctionPlayer: {auctionAuctionId: $auctionAuctionId, playerPlayerId: $playerPlayerId}}
-  ) {
-    clientMutationId
-  } 
-}
-`
+// const CREATE_AUCTION_PLAYER = gql`
+// mutation MyMutation($auctionAuctionId: Int = 0, $playerPlayerId: Int = 0) {
+//   createAuctionPlayer(
+//     input: {auctionPlayer: {auctionAuctionId: $auctionAuctionId, playerPlayerId: $playerPlayerId}}
+//   ) {
+//     clientMutationId
+//   } 
+// }
+// `
 const ALL_AUCTION_PLAYER = gql`
 query MyQuery($auctionAuctionId: Int = 0) {
   allPlayers(condition: {auctionAuctionId: $auctionAuctionId}) {
@@ -73,6 +73,24 @@ mutation MyMutation($playerId: Int = 0) {
     }
 }
 `
+const GET_PLAYER_BY_TEAM_ID = gql`
+query MyQuery($teamTeamId: Int = 0) {
+  allAuctionPlayers(condition: {teamTeamId: $teamTeamId}) {
+    nodes {
+      playerByPlayerPlayerId {
+        playerAge
+        playerBidAmount
+        playerId
+        playerName
+        playerPhoneNumber
+        playerStyle
+      }
+    }
+  }
+}
+`
+
+
 const Player = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const { playerAuction, setPlayerAuction, teamId, setTeamId } = useContext(GlobalContext)
@@ -86,6 +104,20 @@ const Player = () => {
     const [createPlayer] = useMutation(CREATE_PLAYER)
     const [updatePlayer] = useMutation(UPDATE_PLAYER)
     const [deletePlayer] = useMutation(DELETE_PLAYER)
+    const { data: playerByTeamId } = useQuery(GET_PLAYER_BY_TEAM_ID, {
+        variables: {
+            teamTeamId: teamId.teamId
+        },
+        fetchPolicy: "no-cache"
+    })
+
+    useEffect(() => {
+        if (playerByTeamId?.allAuctionPlayers?.nodes?.length > 0) {
+            console.log("Setting playerAuction:", playerByTeamId.allAuctionPlayers.nodes);
+            const mapedPlayer = playerByTeamId.allAuctionPlayers.nodes.map((m) => m.playerByPlayerPlayerId)
+            setPlayers(mapedPlayer);
+        }
+    }, [playerByTeamId, teamId]);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -197,9 +229,9 @@ const Player = () => {
                 variables: {
                     playerId: player.playerId
                 },
-                fetchPolicy:"no-cache"
+                fetchPolicy: "no-cache"
             })
-            setPlayers((prev)=>prev.filter((p)=>p.playerId !== player.playerId))
+            setPlayers((prev) => prev.filter((p) => p.playerId !== player.playerId))
         } catch (error) {
             console.log(error);
         }

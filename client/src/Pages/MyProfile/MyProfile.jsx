@@ -1,16 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./MyProfile.css";
+import { gql, useQuery } from "@apollo/client";
+import { GlobalContext } from "../../context/GlobalContext";
+
+const GET_USER_BY_USER_ID = gql`
+query MyQuery($userId: Int = 0) {
+  allUsers(condition: {userId: $userId}) {
+    nodes {
+      city
+      email
+      phoneNumber
+      userName
+    }
+  }
+}
+`
 
 const MyProfile = () => {
-    const [user, setUser] = useState(null);
+    const {user, setUser}=useContext(GlobalContext)
+    const [userData, setUserData] = useState([]);
+    const {data} = useQuery(GET_USER_BY_USER_ID,{
+        variables :{
+            userId : user?.user_id
+        },
+        fetchPolicy:"cache-and-network"
+    })
 
-    useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        if (storedUser) {
-            setUser(storedUser);
+    useEffect(()=>{
+        if(data){
+            console.log(data.allUsers.nodes); 
+            setUserData(...data.allUsers.nodes)
         }
-        console.log(storedUser);
-    }, []);
+    },[data])
+
+    
+
+
 
     return (
         <>
@@ -28,12 +53,12 @@ const MyProfile = () => {
                         </div>
 
                         <div id="profile-data">
-                        {user ? (
+                        {userData ? (
                             <div className="profile-container">
-                                <p><b>Name:</b> {user.user_name}</p>
-                                <p><b>Email:</b> {user.email}</p>
-                                <p><b>City:</b> {user.city}</p>
-                                <p><b>Phone number:</b> {user.ph_number}</p>
+                                <p><b>Name:</b> {userData.userName}</p>
+                                <p><b>Email:</b> {userData.email}</p>
+                                <p><b>City:</b> {userData.city}</p>
+                                <p><b>Phone number:</b> {userData.phoneNumber}</p>
                             </div>
                         ) : (
                             <p>Loading user details...</p>
