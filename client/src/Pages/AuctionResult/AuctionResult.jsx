@@ -6,28 +6,7 @@ import { GlobalContext } from '../../context/GlobalContext';
 import { gql, useQuery } from '@apollo/client';
 import { GrGroup } from 'react-icons/gr';
 import { GiBabyfootPlayers } from 'react-icons/gi';
-
-const FETCH_ALL_AUCTION = gql`
-query  {
-  allAuctions {
-    edges {
-      node {
-        creatorUserId
-        auctionId
-        auctionName
-        auctionStatus
-        baseBid
-        bidIncreaseBy
-        date
-        maxPlayer
-        minPlayer
-        sportsType
-        time
-      }
-    }
-  }
-}
-`
+import { FETCH_ALL_AUCTION } from '../../../graphql/query/userQuery';
 
 const AuctionResult = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
@@ -63,7 +42,7 @@ const AuctionResult = () => {
                     <div id='result-header-div'>
                         <div >
                             <h1>
-                                My Auction
+                                Explore Auction
                             </h1>
                         </div>
                     </div>
@@ -73,7 +52,7 @@ const AuctionResult = () => {
                                 if (element.auctionStatus === "COMPLETED") {
                                     return (
                                         <div className='auction-div' key={index}>
-                                            <div className='auction-div-head' style={{cursor:"default"}}>
+                                            <div className='auction-div-head' style={{ cursor: "default" }}>
                                                 <div style={{ marginTop: "25px" }}>
                                                     <h1>{element.auctionName}</h1>
                                                 </div>

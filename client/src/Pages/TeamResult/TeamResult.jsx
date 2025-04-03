@@ -8,62 +8,7 @@ import { AiFillEdit } from 'react-icons/ai';
 import { MdDeleteForever } from 'react-icons/md';
 import { GlobalContext } from '../../context/GlobalContext';
 import { gql, useMutation, useQuery } from '@apollo/client';
-
-const GET_TEAM_BY_AUCTION_ID = gql`
-query MyQuery($auctionAuctionId: Int = 0) {
-  allTeams(condition: {auctionAuctionId: $auctionAuctionId}) {
-    edges {
-      node {
-        auctionAuctionId
-        balanceBudget
-        teamName
-        teamShortName
-        totalBudget
-        teamId
-      }
-    }
-  }
-}
-`
-const CREATE_TEAM = gql`
-mutation CreateTeam($auctionAuctionId: Int!, $teamName: String!, $teamShortName: String!) {
-  createTeam(
-    input: { team: { teamName: $teamName, teamShortName: $teamShortName, auctionAuctionId: $auctionAuctionId } }
-  ) {
-    team {
-      teamId
-      teamName
-      teamShortName
-      auctionAuctionId
-    }
-  }
-}
-`;
-
-const UPDATE_TEAM = gql`
-mutation MyMutation($teamName: String!, $teamShortName: String!, $teamId: Int!) {
-  updateTeamByTeamId(
-    input: { teamPatch: { teamShortName: $teamShortName, teamName: $teamName }, teamId: $teamId }
-  ) {
-    team {
-      teamId
-      teamName
-      teamShortName
-      auctionAuctionId
-    }
-  }
-}
-`;
-
-const DELETE_TEAM = gql`
-    mutation MyMutation($teamId: Int!) {
-      deleteTeamByTeamId(input: {teamId: $teamId}) {
-        clientMutationId
-        deletedTeamId
-      }
-    }
-
-`
+import { GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery';
 
 const TeamResult = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
@@ -96,7 +41,6 @@ const TeamResult = () => {
     useEffect(() => {
         if (fetchedTeam?.allTeams) {
             const formattedTeams = fetchedTeam.allTeams.edges.map(edge => edge.node);
-            console.log(formattedTeams);
             setTeams(formattedTeams);
         }
     }, [fetchedTeam]);

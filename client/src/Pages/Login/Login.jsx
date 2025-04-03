@@ -1,27 +1,22 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@apollo/client";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import './Login.css'
+
 import { GlobalContext } from "../../context/GlobalContext";
 import InputField from "../../components/InputField";
-import { gql, useMutation } from "@apollo/client";
+
 import { LOGIN_USER } from "../../../graphql/mutation/userMutation";
 
+import './Login.css';
 
 function Login() {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const navigate = useNavigate();
     const { user, setUser, active, setActive } = useContext(GlobalContext)
     const { register, handleSubmit, formState: { errors } } = useForm();
-
-
-    // const LOGIN_USER = gql`
-    // mutation MyMutation($email: String = "", $password: String = "") {
-    //     login(email: $email, password: $password)
-    //   }
-    // `
 
     const [loginUser, { loading, error }] = useMutation(LOGIN_USER)
 
@@ -36,14 +31,12 @@ function Login() {
                 }
             })
             if (res.data.login) {
-                // console.log("response", res.data.login)
                 localStorage.setItem("token", res.data.login)
                 setActive(active + 1)
                 toast.success("Login successful..!", { position: "top-right", autoClose: 1000 });
                 setTimeout(() => navigate("/Dashboard"), 1000);
             }
         } catch (err) {
-            // console.table("err", err)
             toast.error("Insert valid username & password", { position: "top-right", autoClose: 2000 });
         }
     }

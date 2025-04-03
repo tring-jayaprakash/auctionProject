@@ -5,7 +5,6 @@ import { User } from '../../entities/User';
 export const registerService = async (args: any) => {
     const { user_name, city, phone_number, email, password } = args
     const hashedPassword = await bcrypt.hash(password, 10)
-    console.table(args);
     console.table(hashedPassword);
     const userRepository = AppDataSource.getRepository(User)
     const user = await userRepository.create({

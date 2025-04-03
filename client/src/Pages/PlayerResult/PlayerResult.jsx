@@ -41,7 +41,7 @@ mutation MyMutation($playerId: Int = 0, $playerAge: Int = 0, $playerName: String
 }
 `
 const ALL_AUCTION_PLAYER = gql`
-query MyQuery($auctionAuctionId: Int = 0) {
+query guest($auctionAuctionId: Int = 0) {
   allPlayers(condition: {auctionAuctionId: $auctionAuctionId}) {
     edges {
       node {
@@ -65,7 +65,7 @@ mutation MyMutation($playerId: Int = 0) {
 }
 `
 const GET_PLAYER_BY_TEAM_ID = gql`
-query MyQuery($teamTeamId: Int = 0) {
+query guest($teamTeamId: Int = 0) {
   allAuctionPlayers(condition: {teamTeamId: $teamTeamId}) {
     nodes {
       playerByPlayerPlayerId {

@@ -28,6 +28,11 @@ const Player = () => {
         variables: {
             teamTeamId: teamId.teamId
         },
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        },
         fetchPolicy: "no-cache"
     })
 
@@ -57,7 +62,12 @@ const Player = () => {
     const { data: fetchedPlayer, loading, error } = useQuery(ALL_AUCTION_PLAYER, {
         fetchPolicy: "no-cache",
         skip: !playerAuction?.auctionId,
-        variables: { auctionAuctionId: playerAuction?.auctionId || 0 }
+        variables: { auctionAuctionId: playerAuction?.auctionId || 0 },
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        },
     });
 
     useEffect(() => {
