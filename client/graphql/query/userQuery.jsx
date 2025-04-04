@@ -27,6 +27,7 @@ query guest($auctionAuctionId: Int = 0) {
         playerName
         playerPhoneNumber
         playerStyle
+        playerBidAmount
       }
     }
   }

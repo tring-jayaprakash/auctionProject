@@ -77,7 +77,6 @@ const NewAuction = () => {
                 });
             }
             if (res.data) {
-                // console.log("Response Data:", res.data);
                 setAuction(null)
                 toast.success(auction ? "Auction Updated Successfully!" : "Auction Created Successfully!", { position: "top-right", autoClose: 1000 });
                 navigator('/Dashboard/MyAuction');

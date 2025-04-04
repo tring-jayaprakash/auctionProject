@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { AiFillEdit } from "react-icons/ai";
@@ -9,7 +8,7 @@ import { GlobalContext } from "../../context/GlobalContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { CREATE_PLAYER, DELETE_PLAYER, UPDATE_PLAYER } from "../../../graphql/mutation/userMutation";
-import { ALL_AUCTION_PLAYER, GET_PLAYER_BY_TEAM_ID } from "../../../graphql/query/userQuery";
+import { ALL_AUCTION_PLAYER, GET_PLAYER_BY_TEAM_ID, GET_AUCTION_BY_AUCTION_ID } from "../../../graphql/query/userQuery";
 
 const Player = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
@@ -19,46 +18,45 @@ const Player = () => {
     const [formVisible, setFormVisible] = useState(false);
     const [editIndex, setEditIndex] = useState(null)
     const [playerEditData, setPlayerEditData] = useState(null)
+    const [auctionStatus, setAuctionStatus] = useState("")
     const navigate = useNavigate();
-    const location = useLocation();
-    const [createPlayer] = useMutation(CREATE_PLAYER)
-    const [updatePlayer] = useMutation(UPDATE_PLAYER)
-    const [deletePlayer] = useMutation(DELETE_PLAYER)
-    const { data: playerByTeamId } = useQuery(GET_PLAYER_BY_TEAM_ID, {
-        variables: {
-            teamTeamId: teamId.teamId
-        },
+    const locations = useLocation();
+    const [createPlayer] = useMutation(CREATE_PLAYER, {
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    })
+    const [updatePlayer] = useMutation(UPDATE_PLAYER, {
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    })
+    const [deletePlayer] = useMutation(DELETE_PLAYER, {
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    })
+    const { data: gatAuction } = useQuery(GET_AUCTION_BY_AUCTION_ID, {
         context: {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
             }
         },
-        fetchPolicy: "no-cache"
+        variables: {
+            auctionId: playerAuction?.auctionId
+        }
     })
-
     useEffect(() => {
-        if (playerByTeamId?.allAuctionPlayers?.nodes?.length > 0) {
-            console.log("Setting playerAuction:", playerByTeamId.allAuctionPlayers.nodes);
-            const mapedPlayer = playerByTeamId.allAuctionPlayers.nodes.map((m) => m.playerByPlayerPlayerId)
-            setPlayers(mapedPlayer);
+        if (gatAuction) {
+            setAuctionStatus(gatAuction.allAuctions.edges[0]?.node.auctionStatus);
         }
-    }, [playerByTeamId, teamId]);
-
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const auctionIdFromUrl = params.get("auctionId");
-        if (auctionIdFromUrl) {
-            setPlayerAuction({ auctionId: parseInt(auctionIdFromUrl) });
-        }
-    }, []);
-
-    useEffect(() => {
-        if (playerAuction?.auctionId) {
-            navigate(`?auctionId=${playerAuction.auctionId}`, { replace: true });
-        }
-    }, [playerAuction]);
-
-
+    }, [gatAuction])
     const { data: fetchedPlayer, loading, error } = useQuery(ALL_AUCTION_PLAYER, {
         fetchPolicy: "no-cache",
         skip: !playerAuction?.auctionId,
@@ -76,6 +74,39 @@ const Player = () => {
             setPlayers(formattedPlayers);
         }
     }, [fetchedPlayer]);
+
+    const { data: playerByTeamId ,loading : load} = useQuery(GET_PLAYER_BY_TEAM_ID, {
+        variables: {
+            teamTeamId: teamId.teamId
+        },
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        },
+        fetchPolicy: "no-cache"
+    })
+
+    useEffect(() => {
+        if (teamId?.teamId && playerByTeamId?.allAuctionPlayers?.nodes?.length > 0) {
+            const mappedPlayers = playerByTeamId.allAuctionPlayers.nodes.map(m => m.playerByPlayerPlayerId);
+            setPlayers(mappedPlayers);
+        }
+    }, [playerByTeamId, teamId]);
+
+    useEffect(() => {
+        const params = new URLSearchParams(locations.search);
+        const auctionIdFromUrl = params.get("auctionId");
+        if (auctionIdFromUrl) {
+            setPlayerAuction({ auctionId: parseInt(auctionIdFromUrl) });
+        }
+    }, []);
+
+    useEffect(() => {
+        if (playerAuction?.auctionId) {
+            navigate(`?auctionId=${playerAuction.auctionId}`, { replace: true });
+        }
+    }, [playerAuction]);
 
     const onSubmit = async (playerData) => {
 
@@ -125,11 +156,7 @@ const Player = () => {
             console.log(err);
 
         }
-
-
         setFormVisible(false);
-        // setEditIndex(-1)
-        // setPlayerEditData(null)
 
     }
 
@@ -173,9 +200,8 @@ const Player = () => {
     }
 
     const handleBack = () => {
-        navigate('/Dashboard/MyAuction/Team')
-        setTeamId(0)
-    }
+        window.history.back();
+    };
     return (
         <>
             <div id="player-main-div">
@@ -186,7 +212,7 @@ const Player = () => {
                             <h1> PLAYERS</h1>
                         </div>
                         <div>
-                            {!teamId.team_name ?
+                            {auctionStatus == "PENDING" ?
 
                                 <button id="add-btn" onClick={handleAddPlayer}>
                                     <b>
@@ -256,12 +282,11 @@ const Player = () => {
                                         <tr>
                                             <th>Sno</th>
                                             <th>Name</th>
-                                            {/* <th>Last name</th> */}
                                             <th>Phone</th>
                                             <th>Age</th>
                                             <th>Style</th>
                                             {
-                                                !teamId.team_id ?
+                                                auctionStatus == "PENDING" ?
                                                     <th>Actions</th> :
                                                     <th>bid amount</th>
                                             }
@@ -272,19 +297,18 @@ const Player = () => {
                                             <tr key={index} id="row">
                                                 <td>{index + 1}</td>
                                                 <td>{player.playerName}</td>
-                                                {/* <td>{player.father_name || "N/A"}</td> */}
                                                 <td>{player.playerPhoneNumber || "-"}</td>
                                                 <td>{player.playerAge || "-"}</td>
                                                 <td>{player.playerStyle || "-"}</td>
 
                                                 {
-                                                    !teamId.team_id ?
+                                                    auctionStatus == "PENDING" ?
                                                         < td id="action">
                                                             <AiFillEdit size={20} className="edit-icon" onClick={() => handleEdit(player, index)} style={{ cursor: "pointer" }} />
                                                             <MdDeleteForever size={20} className="delete-icon" onClick={() => handleDelete(player, index)} style={{ cursor: "pointer" }} />
                                                         </td>
                                                         :
-                                                        <td>{player.bid_amount || "N/A"}</td>
+                                                        <td>{player.playerBidAmount || "N/A"}</td>
                                                 }
                                             </tr>
                                         ))}

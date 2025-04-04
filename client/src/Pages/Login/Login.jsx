@@ -4,20 +4,15 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@apollo/client";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 import { GlobalContext } from "../../context/GlobalContext";
 import InputField from "../../components/InputField";
-
 import { LOGIN_USER } from "../../../graphql/mutation/userMutation";
-
 import './Login.css';
 
 function Login() {
-    const url = import.meta.env.VITE_GRAPHQL_URL
     const navigate = useNavigate();
     const { user, setUser, active, setActive } = useContext(GlobalContext)
     const { register, handleSubmit, formState: { errors } } = useForm();
-
     const [loginUser, { loading, error }] = useMutation(LOGIN_USER)
 
     const onSubmit = async (user) => {

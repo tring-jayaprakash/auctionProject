@@ -1,12 +1,13 @@
-import { useState } from "react";
-import "./LandingPage.css";
 import { useNavigate } from "react-router-dom";
+import "./LandingPage.css";
 
 function LandingPage() {
+
     const navigator = useNavigate()
-    const handleExplore = ()=>{
+    const handleExplore = () => {
         navigator('/Reault')
     }
+
     return (
         <div className="home-container">
             <div className="landing">
@@ -16,7 +17,7 @@ function LandingPage() {
                 <p className="landing-subtitle">
                     Join the most exciting auction platform and grab amazing deals in real time.
                 </p>
-                <button 
+                <button
                     className="explore-btn" onClick={handleExplore}>
                     Explore Auctions
                 </button>

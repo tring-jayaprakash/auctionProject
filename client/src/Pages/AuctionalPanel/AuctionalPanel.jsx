@@ -28,10 +28,34 @@ const AuctionalPanel = () => {
     const [endAuction, setEndAuction] = useState(true)
     const [bidCheck, setBitCheck] = useState("")
     const [forCount, setForCount] = useState([])
-    const [updatePlayerBidAmount] = useMutation(UPDATE_PLAYER_BID_AMOUNT)
-    const [createAuctionPlayer] = useMutation(CREATE_AUCTION_PLAYER)
-    const [updateTeamBalanceBudget] = useMutation(UPDATE_TEAM_BALANCE_BUDGET)
-    const [updateAuctionStatus] = useMutation(UPDATE_AUCTION_STATUS)
+    const [updatePlayerBidAmount] = useMutation(UPDATE_PLAYER_BID_AMOUNT,{
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    })
+    const [createAuctionPlayer] = useMutation(CREATE_AUCTION_PLAYER,{
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    })
+    const [updateTeamBalanceBudget] = useMutation(UPDATE_TEAM_BALANCE_BUDGET,{
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    })
+    const [updateAuctionStatus] = useMutation(UPDATE_AUCTION_STATUS,{
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    })
     const [allAuctionPlayers,{ data: allAuctionPlayersData }] = useLazyQuery(GET_ALL_AUCTION_PLAYER, {
         fetchPolicy: "network-only"
     });

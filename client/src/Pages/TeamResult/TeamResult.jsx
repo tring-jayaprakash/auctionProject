@@ -12,7 +12,7 @@ import { GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery';
 
 const TeamResult = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
-    const { teamAuction, setTeamAuction, teamId, setTeamId } = useContext(GlobalContext)
+    const { teamAuction, setTeamAuction, teamId, setTeamId, playerAuction, setPlayerAuction}  = useContext(GlobalContext)
     const [teams, setTeams] = useState([])
     const navigate = useNavigate();
     const location = useLocation();
@@ -47,6 +47,7 @@ const TeamResult = () => {
 
     const handleViewPlayers = (index, team) => {
         setTeamId(team)
+        setPlayerAuction(null)
         navigate('/Reault/PlayerResult')
     }
 

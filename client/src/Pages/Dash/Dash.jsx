@@ -1,13 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { RiAuctionFill, RiAuctionLine } from "react-icons/ri";
 import { CgProfile } from "react-icons/cg";
-import { useNavigate } from 'react-router-dom';
-import '../Dash/Dash.css';
 import DashboardItem from '../../components/DashboardItem';
 import { GlobalContext } from '../../context/GlobalContext';
+import '../Dash/Dash.css';
 
 const Dash = () => {
-    const navigate = useNavigate();
     const { theme } = useContext(GlobalContext);
 
     const dashboardItems = [
@@ -21,7 +20,7 @@ const Dash = () => {
             <div id='main-div'>
                 <div id='inner-div'>
                     <div id='header-div' style={{ color: theme.text, borderBottom: `2px solid ${theme.primary}` }}>
-                        <h1>DASHBOARD</h1>
+                        <h1 >DASHBOARD</h1>
                     </div>
                     <div id='body-div'>
                         {dashboardItems.map((item, index) => (
@@ -29,7 +28,7 @@ const Dash = () => {
                         ))}
                     </div>
                 </div>
-            </div>
+            </div>  
         </>
     );
 }

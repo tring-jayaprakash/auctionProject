@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
-import { GlobalContext } from "../../context/GlobalContext";
+import { FaUserCircle } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
+import { GlobalContext } from "../../context/GlobalContext";
 import "./NavBar.css";
 
 export const NavBar = () => {
@@ -36,7 +36,6 @@ export const NavBar = () => {
                 setUser(null);
             }
         }
-
     }, [active, setActive]);
 
     const handleLogout = () => {

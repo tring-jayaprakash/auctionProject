@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './Team.css'
 import { AiFillEdit } from 'react-icons/ai';
 import { MdDeleteForever } from 'react-icons/md';
 import { GlobalContext } from '../../context/GlobalContext';
 import { useMutation, useQuery } from '@apollo/client';
 import { CREATE_TEAM, DELETE_TEAM, UPDATE_TEAM } from '../../../graphql/mutation/userMutation';
-import { GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery';
+import { GET_AUCTION_BY_AUCTION_ID, GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery';
+import './Team.css'
 
 const Team = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
@@ -19,14 +18,48 @@ const Team = () => {
     const [eInde, setEIndex] = useState(null)
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
     const [teamFlag, setTeamFlag] = useState(false)
+    const [auctionStatus, setAuctionStatus] = useState("")
     const navigate = useNavigate();
-    const location = useLocation();
-    const [createTeam] = useMutation(CREATE_TEAM);
-    const [updateTeam] = useMutation(UPDATE_TEAM);
-    const [deleteTeam] = useMutation(DELETE_TEAM);
+    const locations = useLocation();
+    const { data: gatAuction } = useQuery(GET_AUCTION_BY_AUCTION_ID, {
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        },
+        variables: {
+            auctionId: teamAuction?.auctionId
+        }
+    })
+    useEffect(() => {
+        if (gatAuction) {
+            setAuctionStatus(gatAuction.allAuctions.edges[0].node.auctionStatus);
+        }
+    }, [gatAuction])
+    const [createTeam] = useMutation(CREATE_TEAM, {
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    });
+    const [updateTeam] = useMutation(UPDATE_TEAM, {
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    });
+    const [deleteTeam] = useMutation(DELETE_TEAM, {
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        }
+    });
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search);
+        const params = new URLSearchParams(locations.search);
         const auctionIdFromUrl = params.get("auctionId");
         if (auctionIdFromUrl) {
             setTeamAuction({ auctionId: parseInt(auctionIdFromUrl) });
@@ -95,7 +128,7 @@ const Team = () => {
                     toast.success("Team Created Successfully!", { position: "top-right", autoClose: 1000 });
                     reset();
                     setTeamFlag(null);
-                }   
+                }
             }
         } catch (err) {
             console.error("Error:", err);
@@ -130,10 +163,11 @@ const Team = () => {
     };
 
     const handleViewPlayers = (index, team) => {
-
         setTeamId(team)
-        console.log(team);
         navigate('/Dashboard/MyAuction/Player')
+    }
+    const handleBack = () => {
+        navigate('/Dashboard/MyAuction')
     }
 
     return (
@@ -145,9 +179,18 @@ const Team = () => {
                             <h1>TEAMS</h1>
                         </div>
                         <div>
-                            <button id='add-bt' onClick={() => setTeamFlag(!teamFlag)}>
-                                <b>+  ADD</b>
-                            </button>
+                            {auctionStatus == "PENDING" ?
+
+                                <button id='add-bt' onClick={() => setTeamFlag(!teamFlag)}>
+                                    <b>+  ADD</b>
+                                </button>
+                                :
+                                <button id="add-btn" onClick={handleBack}  style={{ width: "100px" }}>
+                                    <b>
+                                        BACK
+                                    </b>
+                                </button>
+                            }
                         </div>
                     </div>
                     <div id='team-body-div'>
@@ -180,7 +223,7 @@ const Team = () => {
                                         <div className='card-div-footer' style={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
                                             {
 
-                                                !team.balanceBudget ?
+                                                auctionStatus == "PENDING" ?
 
                                                     <div>
                                                         <p>
@@ -192,7 +235,7 @@ const Team = () => {
                                                     </div>
                                                     :
                                                     <div >
-                                                        <h4 style={{ cursor: "pointer", border: "1px  solid black ", padding: "5px", borderRadius: "5px", backgroundColor: "#000066", color: "white" }} onClick={() => handleViewPlayers(index, team)}>view players </h4>
+                                                        <h4 style={{ cursor: "pointer", padding: "5px", borderRadius: "5px", backgroundColor: "#10B981", color: "white" }} onClick={() => handleViewPlayers(index, team)}>view players </h4>
                                                     </div>
                                             }
                                         </div>

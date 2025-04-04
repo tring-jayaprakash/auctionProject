@@ -2,8 +2,6 @@ import React, { createContext, useState } from 'react'
 import { NavBar } from '../Pages/NavBar/NavBar';
 import Router from '../Routes/Routes';
 import { ToastContainer } from 'react-toastify';
-import { CombinedComponents } from '../components/CombinedComponents/CombinedComponents';
-
 
 export const GlobalContext = createContext();
 

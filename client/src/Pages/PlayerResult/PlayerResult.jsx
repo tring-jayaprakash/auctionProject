@@ -142,7 +142,7 @@ const PlayerResult = () => {
 
 
     const handleBack = () => {
-        navigate('/Reault')
+        window.history.back()
         setTeamId(0)
     }
     

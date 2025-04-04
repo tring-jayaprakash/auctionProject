@@ -14,13 +14,18 @@ import { ALL_AUCTION_PLAYER, GET_TEAM_BY_AUCTION_ID } from '../../../graphql/que
 
 const MyAuction = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
-    const { user, setUser, auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal } = useContext(GlobalContext)
+    const { user, setUser, auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal ,teamId, setTeamId } = useContext(GlobalContext)
     const navigater = useNavigate()
     const [auctionData, setAuctionData] = useState([])
-    const [showButton, setShowButton] = useState(true)
     const [getTeams, { loading: teamLoding, error: teamError, data: teamData }] = useLazyQuery(GET_TEAM_BY_AUCTION_ID);
     const [getPlayers, { loading: playerLoding, error: playerError, data: playerData }] = useLazyQuery(ALL_AUCTION_PLAYER);
-    const [updateTeamBudget] = useMutation(UPDATE_TEAM_TOTAL_BUDGET)
+    const [updateTeamBudget] = useMutation(UPDATE_TEAM_TOTAL_BUDGET, {
+        context: {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        }
+    })
     const [deleteAuctionById, { data, loading, error }] = useMutation(DELETE_AUCTION, {
         context: {
             headers: {
@@ -45,6 +50,9 @@ const MyAuction = () => {
             setAuctionData(fetchedData.allAuctions.edges.map(edge => edge.node));
         }
     }, [fetchedData]);
+
+    // useEffect(()=>{
+    // },[])
 
     const handleDelete = async (index, id) => {
 
@@ -73,13 +81,14 @@ const MyAuction = () => {
 
     const handlePlayer = (index, element) => {
         setPlayerAuction(element)
+        setTeamId(0 )
         navigater('/Dashboard/MyAuction/Player')
     }
 
     const handleStartAction = async (element, index) => {
         try {
             if (element.auctionStatus == "COMPLETED") return toast.dark("This auction have completed already", { position: "top-right", autoClose: 2000 })
-            
+
             const teams = await getTeams({ variables: { auctionAuctionId: element.auctionId } });
             const teamsList = teams?.data?.allTeams?.edges?.map(edge => edge.node) || [];
 
@@ -146,7 +155,7 @@ const MyAuction = () => {
                             auctionData.map((element, index) => {
                                 return (
                                     <div className='auction-div' key={index}>
-                                        <div className='auction-div-head' title='Click to  Start the Auction' onClick={() => handleStartAction(element, index)}>
+                                        <div className='auction-div-head' title={element.auctionStatus === "PENDING" && 'Click to  Start the Auction' } onClick={() => handleStartAction(element, index)}>
                                             <div style={{ marginTop: "25px" }}>
                                                 <h1>{element.auctionName}</h1>
                                             </div>

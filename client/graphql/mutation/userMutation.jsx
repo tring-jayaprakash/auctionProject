@@ -18,7 +18,6 @@ mutation guest($email: String = "", $password: String = "") {
     login(email: $email, password: $password)
 }
 `
-// NEW AUCTION
 export const CREATE_AUCTION_MUTATION = gql`
 mutation MyMutation($auctionName: String = "", $baseBid: Int = 0, $bidIncreaseBy: Int = 0, $date: Date = "", $maxPlayer: Int = 0, $minPlayer: Int = 0, $sportsType: String = "", $time: Time = "") {
   createAuctionByUserId(

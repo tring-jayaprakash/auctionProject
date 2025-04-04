@@ -1,15 +1,13 @@
 import { useForm } from "react-hook-form";
-import "./Register.css";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
 import { REGISTER_USER} from "../../../graphql/mutation/userMutation";
 import InputField from "../../components/InputField";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
+import "./Register.css";
 
 const Register = () => {
-    const url = import.meta.env.VITE_GRAPHQL_URL
     const navigate = useNavigate();
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [registerUser, { loading, error }] = useMutation(REGISTER_USER)

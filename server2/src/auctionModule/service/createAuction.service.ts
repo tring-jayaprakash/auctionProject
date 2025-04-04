@@ -9,7 +9,7 @@ export const createAuctionService = async (_parent: any, args: any, context: any
         throw new Error("Unauthorized");
     }
 
-    // console.log(args);
+
     
     const creatorUserId = context.user.user_id; 
     console.log("User ID from Token:", creatorUserId);
