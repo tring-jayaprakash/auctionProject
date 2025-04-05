@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { AuctionPlayer } from "./auctionPlayer";
-import { Auction } from "./auction";
+import { AuctionPlayer } from "../../auction/entities/auctionPlayer";
+import { Auction } from "../../auction/entities/auction";
 
 @Entity()
 export class Player {

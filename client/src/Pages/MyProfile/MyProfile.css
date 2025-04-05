@@ -29,6 +29,16 @@
     height: 40%;
     box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.332);
 }
+#profile-edit-btn{
+    /* border: 1px solid black; */
+    border: none;
+    height: 25px;
+    width: 100px;
+    border-radius: 5px;
+    background-color: #FFA500;
+    font-weight: bolder;
+    cursor: pointer;
+}
 
 #profile_img{
     height: 90%;
@@ -48,7 +58,18 @@
     align-items: start;
     gap: 20px;
 }
-
+#profile-edit{
+    background: #7f807a47;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+}
 @media screen and (min-width: 1355px) {
     #profile-main-div {
         margin-left: 278px;

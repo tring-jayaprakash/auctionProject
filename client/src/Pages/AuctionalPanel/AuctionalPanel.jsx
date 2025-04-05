@@ -131,13 +131,10 @@ const AuctionalPanel = () => {
             if (!auctionTeam) return;
             console.log(auctionTeam);
             setBudget(auctionPlayer[count].budget)
-            // console.log(playerWithNull);
-
         }
     }, [count])
 
     const handleName = (element, index) => {
-        // if (start) return
         if (bidIncrese == 0) {
             setBidIncrese(auctionPanalAuction.bidIncreaseBy)
         }
@@ -146,7 +143,6 @@ const AuctionalPanel = () => {
 
         setBitCheck(element.teamShortName)
         if (bidCheck == element.teamShortName) return
-        // if (bidCheck > auctionTeam.totalBudget) return
         setTeamName(element.teamShortName)
         setTeamIndex(element.teamId)
         setBidIncrese((prevBid) => prevBid + auctionPanalAuction.bidIncreaseBy);
@@ -189,16 +185,12 @@ const AuctionalPanel = () => {
 
     const handleEnd = async () => {
         setAuctionPanal(null)
-
         const res = await updateAuctionStatus({
             variables: {
                 auctionId: auctionPanal.auctionId,
                 auctionStatus: "COMPLETED"
             }
         })
-        console.log(res.data);
-        console.log(auctionPanal.auctionId);
-
         navigator('/Dashboard/MyAuction')
     }
 

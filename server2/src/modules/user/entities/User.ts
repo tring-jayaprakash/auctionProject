@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { Auction } from "./auction"; 
+import { Auction } from "../../auction/entities/auction"; 
 
 @Entity({ name: "user" }) 
 export class User {

@@ -19,19 +19,26 @@ mutation guest($email: String = "", $password: String = "") {
 }
 `
 export const CREATE_AUCTION_MUTATION = gql`
-mutation MyMutation($auctionName: String = "", $baseBid: Int = 0, $bidIncreaseBy: Int = 0, $date: Date = "", $maxPlayer: Int = 0, $minPlayer: Int = 0, $sportsType: String = "", $time: Time = "") {
-  createAuctionByUserId(
-    baseBid: $baseBid
-    bidIncreaseBy: $bidIncreaseBy
-    date: $date
-    maxPlayer: $maxPlayer
-    minPlayer: $minPlayer
-    sportsType: $sportsType
-    time: $time
-    auctionName: $auctionName
-  )
+mutation MyMutation($auctionName: String = "", $auctionStatus: AuctionAuctionStatusEnum = PENDING, $baseBid: Int = 0, $bidIncreaseBy: Int = 0, $maxPlayer: Int = 10, $date: Date = "", $minPlayer: Int = 0, $sportsType: String = "", $time: Time = "", $creatorUserId: Int = 0) {
+  createAuction(
+    input: {auction: {auctionName: $auctionName, date: $date, time: $time, baseBid: $baseBid, bidIncreaseBy: $bidIncreaseBy, maxPlayer: $maxPlayer, minPlayer: $minPlayer, auctionStatus: $auctionStatus, sportsType: $sportsType, creatorUserId: $creatorUserId}}
+  ) {
+    clientMutationId
+  }
 }
 `
+// mutation MyMutation($auctionName: String = "", $baseBid: Int = 0, $bidIncreaseBy: Int = 0, $date: Date = "", $maxPlayer: Int = 0, $minPlayer: Int = 0, $sportsType: String = "", $time: Time = "") {
+//   createAuctionByUserId(
+//     baseBid: $baseBid
+//     bidIncreaseBy: $bidIncreaseBy
+//     date: $date
+//     maxPlayer: $maxPlayer
+//     minPlayer: $minPlayer
+//     sportsType: $sportsType
+//     time: $time
+//     auctionName: $auctionName
+//   )
+// }
 export const UPDATE_AUCTION_MUTATION = gql`
 mutation UpdateAuction(
   $auctionId: Int!

@@ -1,6 +1,6 @@
-import { AppDataSource } from "../../db/data-source";
-import { Auction } from "../../entities/auction";
-import { User } from "../../entities/User";
+import { AppDataSource } from "../../../db/data-source";
+import { Auction } from "../../auction/entities/auction";
+import { User } from "../entities/User";
 
 export const getAuctionByUserService = async (_parent: any, _args: any, context: any) => {
     if (!context.user) {

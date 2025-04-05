@@ -1,5 +1,5 @@
-import { AppDataSource } from "../../db/data-source";
-import { User } from "../../entities/User";
+import { AppDataSource } from "../../../db/data-source";
+import { User } from "../entities/User";
 
 export const getUserProfileService = async (_parent: any, _args: any, context: any) => {
     if (!context.user) {

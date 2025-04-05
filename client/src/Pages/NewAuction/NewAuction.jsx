@@ -12,8 +12,8 @@ import { CREATE_AUCTION_MUTATION, UPDATE_AUCTION_MUTATION } from '../../../graph
 const NewAuction = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
     const navigator = useNavigate()
-    const { auction, setAuction } = useContext(GlobalContext)
-    const defaultImage = "https://superplayerauction.com/user/static/media/logo-auction.e6b9bfb3.png";
+    const {user, setUser, auction, setAuction } = useContext(GlobalContext)
+    // const defaultImage = "https://superplayerauction.com/user/static/media/logo-auction.e6b9bfb3.png";
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
     const [createAuctionMutation] = useMutation(CREATE_AUCTION_MUTATION);
     const [updateAuctionMutation] = useMutation(UPDATE_AUCTION_MUTATION);
@@ -53,7 +53,6 @@ const NewAuction = () => {
                 maxPlayer: parseInt(auctionData.max_player, 10) || 0,
                 minPlayer: parseInt(auctionData.min_player, 10) || 0
             };
-            // console.log("New Entity:", newEntity);
             let res;
             if (auction?.auctionId) {
                 res = await updateAuctionMutation({
@@ -67,7 +66,7 @@ const NewAuction = () => {
                 });
             } else {
                 res = await createAuctionMutation({
-                    variables: newEntity,
+                    variables:{ ...newEntity, creatorUserId : user?.user_id , auctionStatus : "PENDING" },
                     fetchPolicy: "no-cache",
                     context: {
                         headers: {

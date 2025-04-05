@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from "typeorm";
-import { Player } from "./player";
-import { Team } from "./team";
-import { Auction } from "./auction";
+import { Player } from "../../player/entities/player";
+import { Team } from "../../team/entities/team";
+import { Auction } from "../../auction/entities/auction";
 
 @Entity()
 export class AuctionPlayer {

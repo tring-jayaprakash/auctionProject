@@ -3,17 +3,16 @@ import { GrGroup } from "react-icons/gr";
 import { GiBabyfootPlayers } from "react-icons/gi";
 import { AiFillEdit } from "react-icons/ai";
 import { MdDeleteForever } from "react-icons/md";
-import './MyAuction.css'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { GlobalContext } from '../../context/GlobalContext';
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { GlobalContext } from '../../context/GlobalContext';
 import { DELETE_AUCTION, FETCH_AUCTION_BY_USER_ID, UPDATE_TEAM_TOTAL_BUDGET } from '../../../graphql/mutation/userMutation';
 import { ALL_AUCTION_PLAYER, GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery';
+import './MyAuction.css'
 
 
 const MyAuction = () => {
-    const url = import.meta.env.VITE_GRAPHQL_URL
     const { user, setUser, auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal ,teamId, setTeamId } = useContext(GlobalContext)
     const navigater = useNavigate()
     const [auctionData, setAuctionData] = useState([])
@@ -44,15 +43,12 @@ const MyAuction = () => {
         },
         fetchPolicy: "no-cache"
     });
-
     useEffect(() => {
         if (fetchedData) {
             setAuctionData(fetchedData.allAuctions.edges.map(edge => edge.node));
         }
     }, [fetchedData]);
 
-    // useEffect(()=>{
-    // },[])
 
     const handleDelete = async (index, id) => {
 
