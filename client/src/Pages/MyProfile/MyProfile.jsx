@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import "./MyProfile.css";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { GlobalContext } from "../../context/GlobalContext";
 import { GET_USER_BY_USER_ID } from "../../../graphql/query/userQuery";
 import { useForm } from "react-hook-form";
+import "./MyProfile.css";
+import { toast } from "react-toastify";
 
 const UPDATE_USER_BY_EMAIL = gql`
 mutation MyMutation($email: String = "", $city: String = "", $phoneNumber: String = "", $userName: String = "") {
@@ -42,7 +43,6 @@ const MyProfile = () => {
 
     const onSubmit = async (userdata) => {
         setEditFlag(!editFlag)
-        console.log(userdata);
         const res = await updateUserByEmail({
             variables: {
                 email: userdata.email,
@@ -58,6 +58,7 @@ const MyProfile = () => {
         });
         if (res.data) {
             setUserData(res.data.updateUserByEmail.user);
+            toast.success("Updated Sucessfully", { position: "top-right", autoClose: 1000 })
         }
 
     }

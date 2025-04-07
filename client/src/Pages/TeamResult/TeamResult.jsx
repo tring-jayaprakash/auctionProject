@@ -1,18 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
-import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './TeamResult.css'
-import { AiFillEdit } from 'react-icons/ai';
-import { MdDeleteForever } from 'react-icons/md';
+import { useQuery } from '@apollo/client';
 import { GlobalContext } from '../../context/GlobalContext';
-import { gql, useMutation, useQuery } from '@apollo/client';
 import { GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery';
+import './TeamResult.css'
 
 const TeamResult = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
-    const { teamAuction, setTeamAuction, teamId, setTeamId, playerAuction, setPlayerAuction}  = useContext(GlobalContext)
+    const { teamAuction, setTeamAuction, teamId, setTeamId, playerAuction, setPlayerAuction } = useContext(GlobalContext)
     const [teams, setTeams] = useState([])
     const navigate = useNavigate();
     const location = useLocation();
@@ -23,7 +18,6 @@ const TeamResult = () => {
         if (auctionIdFromUrl) {
             setTeamAuction({ auctionId: parseInt(auctionIdFromUrl) });
         }
-        // setTeamId(0)
     }, []);
 
     useEffect(() => {
@@ -50,14 +44,23 @@ const TeamResult = () => {
         setPlayerAuction(null)
         navigate('/Reault/PlayerResult')
     }
-
+    const handleBack = () => {
+        window.history.back()
+    }
     return (
         <>
             <div id='team-result-main-div'>
-                <div id='team-inner-div'>
-                    <div id='team-result-header-div'>
-                        <div >
-                            <h1>TEAMS</h1>
+                <div id='team-inner-div'>player_ph_number
+                    <div id="player-header-div">
+                        <div>
+                            <h1> TEAMS</h1>
+                        </div>
+                        <div>
+                            <button id="add-btn" onClick={handleBack} style={{ width: "100px", margin: "10px" }}>
+                                <b>
+                                    BACK
+                                </b>
+                            </button>
                         </div>
                     </div>
                     <div id='team-body-div'>
@@ -100,7 +103,7 @@ const TeamResult = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 };

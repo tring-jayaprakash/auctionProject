@@ -3,12 +3,12 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { AiFillEdit } from "react-icons/ai";
 import { MdDeleteForever } from "react-icons/md";
-import "./Player.css";
 import { GlobalContext } from "../../context/GlobalContext";
 import { useLocation, useNavigate } from "react-router-dom";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_PLAYER, DELETE_PLAYER, UPDATE_PLAYER } from "../../../graphql/mutation/userMutation";
 import { ALL_AUCTION_PLAYER, GET_PLAYER_BY_TEAM_ID, GET_AUCTION_BY_AUCTION_ID } from "../../../graphql/query/userQuery";
+import "./Player.css";
 
 const Player = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL
@@ -50,7 +50,8 @@ const Player = () => {
         },
         variables: {
             auctionId: playerAuction?.auctionId
-        }
+        },
+        fetchPolicy: "no-cache"
     })
     useEffect(() => {
         if (gatAuction) {
@@ -75,7 +76,7 @@ const Player = () => {
         }
     }, [fetchedPlayer]);
 
-    const { data: playerByTeamId ,loading : load} = useQuery(GET_PLAYER_BY_TEAM_ID, {
+    const { data: playerByTeamId, loading: load } = useQuery(GET_PLAYER_BY_TEAM_ID, {
         variables: {
             teamTeamId: teamId.teamId
         },
@@ -246,7 +247,13 @@ const Player = () => {
                                         <label >Phone Number </label>
                                     </div>
                                     <div>
-                                        <input type="text" {...register("player_ph_number")} />
+                                        <input type="text" {...register("player_ph_number", {
+                                            pattern: {
+                                                value: /^\d{10}$/,
+                                                message: "Phone number must be exactly 10 digits",
+                                            },
+                                        })} />
+                                        {errors.player_ph_number && toast.error("Phone number should have 10 character",{autoClose:1000,position:"top-right"})}
                                     </div>
                                 </div>
                                 <div className="form-group-players">
@@ -267,7 +274,7 @@ const Player = () => {
                                     </div>
                                 </div>
                                 <div className="form-group-players" id="btn-div">
-                                    <button type="submit" className="submit_bt" id="team-submit" ><b>{editIndex !== -1 ? "UPDATE" : "SUBMIT"}</b></button>
+                                    <button type="submit" className="submit_bt" id="team-submit" ><b>{editIndex ? "UPDATE" : "SUBMIT"}</b></button>
                                     <button type="button" className="submit_bt" id="team-cancel" onClick={handleCancel}><b>CANCEL</b></button>
                                 </div>
                             </form>

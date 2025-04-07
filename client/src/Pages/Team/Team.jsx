@@ -29,7 +29,8 @@ const Team = () => {
         },
         variables: {
             auctionId: teamAuction?.auctionId
-        }
+        },
+        fetchPolicy:"no-cache"
     })
     useEffect(() => {
         if (gatAuction) {

@@ -19,7 +19,7 @@ const Dash = () => {
         <>
             <div id='main-div'>
                 <div id='inner-div'>
-                    <div id='header-div' style={{ color: theme.text, borderBottom: `2px solid ${theme.primary}` }}>
+                    <div id='header-div' style={{ color: theme.text, borderBottom: `2px solid ${theme.primary}`}}>
                         <h1 >DASHBOARD</h1>
                     </div>
                     <div id='body-div'>

@@ -2,12 +2,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import './NewAuction.css'
-import axios from 'axios';
-import { data, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { GlobalContext } from '../../context/GlobalContext';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { CREATE_AUCTION_MUTATION, UPDATE_AUCTION_MUTATION } from '../../../graphql/mutation/userMutation';
+import './NewAuction.css'
 
 const NewAuction = () => {
     const url = import.meta.env.VITE_GRAPHQL_URL

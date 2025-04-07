@@ -11,11 +11,12 @@ import { DELETE_AUCTION, FETCH_AUCTION_BY_USER_ID, UPDATE_TEAM_TOTAL_BUDGET } fr
 import { ALL_AUCTION_PLAYER, GET_TEAM_BY_AUCTION_ID } from '../../../graphql/query/userQuery';
 import './MyAuction.css'
 
-
 const MyAuction = () => {
-    const { user, setUser, auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal ,teamId, setTeamId } = useContext(GlobalContext)
+    const { user, setUser, auction, setAuction, teamAuction, setTeamAuction, playerAuction, setPlayerAuction, auctionPanal, setAuctionPanal, teamId, setTeamId } = useContext(GlobalContext)
     const navigater = useNavigate()
     const [auctionData, setAuctionData] = useState([])
+    const [confromFlag, setConfromFlag] = useState(false)
+    const [deleteIndex, setDeleteIndex] = useState(null)
     const [getTeams, { loading: teamLoding, error: teamError, data: teamData }] = useLazyQuery(GET_TEAM_BY_AUCTION_ID);
     const [getPlayers, { loading: playerLoding, error: playerError, data: playerData }] = useLazyQuery(ALL_AUCTION_PLAYER);
     const [updateTeamBudget] = useMutation(UPDATE_TEAM_TOTAL_BUDGET, {
@@ -43,26 +44,31 @@ const MyAuction = () => {
         },
         fetchPolicy: "no-cache"
     });
+
     useEffect(() => {
         if (fetchedData) {
             setAuctionData(fetchedData.allAuctions.edges.map(edge => edge.node));
         }
     }, [fetchedData]);
 
-
-    const handleDelete = async (index, id) => {
-
+    const handleConfrom = (index, id) => {
+        setConfromFlag(true)
+        setDeleteIndex(id)
+    }
+    const handleDelete = async () => {
+        
         try {
-            const res = await deleteAuctionById({ variables: { auctionId: id } });
+            const res = await deleteAuctionById({ variables: { auctionId: deleteIndex } });
             if (res.data) {
-                setAuctionData((prev) => prev.filter((auction) => auction.auctionId !== id));
+                setAuctionData((prev) => prev.filter((auction) => auction.auctionId !== deleteIndex));
                 toast.success("Auction Deleted Successfully!", { position: "top-right", autoClose: 1000 });
             }
         } catch (err) {
             console.error("Error:", err);
             toast.error("Issue in deleting Auction", { position: "top-right", autoClose: 2000 });
         }
-
+        setConfromFlag(false)
+        setDeleteIndex(null)
     }
 
     const handleEdit = (index, element) => {
@@ -77,7 +83,7 @@ const MyAuction = () => {
 
     const handlePlayer = (index, element) => {
         setPlayerAuction(element)
-        setTeamId(0 )
+        setTeamId(0)
         navigater('/Dashboard/MyAuction/Player')
     }
 
@@ -151,7 +157,7 @@ const MyAuction = () => {
                             auctionData.map((element, index) => {
                                 return (
                                     <div className='auction-div' key={index}>
-                                        <div className='auction-div-head' title={element.auctionStatus === "PENDING" && 'Click to  Start the Auction' } onClick={() => handleStartAction(element, index)}>
+                                        <div className='auction-div-head' title={element.auctionStatus === "PENDING" ? 'Click to Start the Auction' : undefined} onClick={() => handleStartAction(element, index)}>
                                             <div style={{ marginTop: "25px" }}>
                                                 <h1>{element.auctionName}</h1>
                                             </div>
@@ -195,7 +201,7 @@ const MyAuction = () => {
                                                 }
                                                 <p>
                                                     <MdDeleteForever size={25} title='delete' style={{ cursor: "pointer", color: "#FF0000" }}
-                                                        onClick={() => { handleDelete(index, element.auctionId) }} />
+                                                        onClick={() => { handleConfrom(index, element.auctionId) }} />
                                                 </p>
                                             </div>
 
@@ -206,6 +212,18 @@ const MyAuction = () => {
                         }
                     </div>
                 </div>
+                {
+                    confromFlag &&
+                    <div id='team-from-pop'>
+                        <div id='team-from'>
+                            <h1>CONFROM TO DELETE</h1>
+                            <div className='form-group-btn'>
+                                <button type="submit" className="submit_bt" id='team-submit' onClick={handleDelete}><b>SUBMIT</b></button>
+                                <button type="button" className="submit_bt" id='team-cancel' onClick={() => setConfromFlag(!confromFlag)} ><b> CANCEL </b></button>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </>
     )
